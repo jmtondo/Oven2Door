@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'routes.dart';
+import '../app/theme.dart';
+import '../core/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Oven2DoorApp extends StatelessWidget {
+  const Oven2DoorApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Oven2Door',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        useMaterial3: true,
-      ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('Welcome to Oven2Door'),
-        ),
+    return ChangeNotifierProvider<AuthService>(
+      create: (_) => AuthService(),
+      child: MaterialApp(
+        title: 'Oven2Door',
+        theme: AppTheme.light(),
+        initialRoute: Routes.login,
+        onGenerateRoute: Routes.onGenerateRoute,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
