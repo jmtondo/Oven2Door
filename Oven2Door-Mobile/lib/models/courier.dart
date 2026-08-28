@@ -1,0 +1,2 @@
+// Courier model
+class CourierModel {}

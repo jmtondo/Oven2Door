@@ -1,0 +1,2 @@
+// Order model
+class OrderModel {}

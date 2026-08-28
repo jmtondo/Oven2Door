@@ -1,0 +1,2 @@
+// Delivery model
+class DeliveryModel {}
