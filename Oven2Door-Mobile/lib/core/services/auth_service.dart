@@ -31,6 +31,19 @@ class AuthService extends ChangeNotifier {
     return AuthResult(success: false, message: 'Invalid credentials');
   }
 
+  Future<AuthResult> signUp({
+    required String email,
+    required String password,
+  }) async {
+    // TODO: Replace with call to your API client (auth_api.dart)
+    await Future.delayed(const Duration(seconds: 1));
+
+    // For now, accept any email/password as "new account"
+    _token = 'fake_signup_token';
+    notifyListeners();
+    return AuthResult(success: true, message: 'Account created successfully');
+  }
+
   void signOut() {
     _token = null;
     notifyListeners();

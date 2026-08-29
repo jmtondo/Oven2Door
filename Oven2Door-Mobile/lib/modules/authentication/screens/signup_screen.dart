@@ -6,43 +6,53 @@ import '../../../core/services/auth_service.dart';
 import '../../authentication/controllers/auth_controller.dart';
 import '../../../../../app/routes.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _emailController;
-  late final TextEditingController _passwordController;
-  bool _obscure = true;
-  bool _loading = false;
-  bool _remember = false;
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _mobileController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
-  }
+  bool _obscure = true;
+  bool _obscureConfirm = true; // ✅ new state for confirm password
+  bool _loading = false;
+  bool _agree = false;
 
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
+    _mobileController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (!_agree) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must agree to the Terms & Privacy Policy')),
+      );
+      return;
+    }
+
     setState(() => _loading = true);
 
     final authService = Provider.of<AuthService>(context, listen: false);
     final controller = AuthController(authService: authService);
 
-    final result = await controller.signIn(
+    final result = await controller.signUp(
       email: _emailController.text.trim(),
       password: _passwordController.text,
     );
@@ -52,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (result.success) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login successful')),
+        const SnackBar(content: Text('Account created successfully')),
       );
       Navigator.of(context).pushReplacementNamed(Routes.home);
     } else {
@@ -74,8 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
-            constraints:
-                BoxConstraints(maxWidth: isWide ? 480 : double.infinity),
+            constraints: BoxConstraints(maxWidth: isWide ? 480 : double.infinity),
             child: Card(
               color: Colors.grey[900],
               elevation: 6,
@@ -89,18 +98,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(height: 8),
                       const Oven2DoorLogo(),
                       const SizedBox(height: 18),
+                      const Text(
+                        'Create Account',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      const SizedBox(height: 18),
+                      CustomTextField(
+                        controller: _firstNameController,
+                        label: 'First Name',
+                        validator: (v) => v == null || v.isEmpty ? 'Enter first name' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      CustomTextField(
+                        controller: _lastNameController,
+                        label: 'Last Name',
+                        validator: (v) => v == null || v.isEmpty ? 'Enter last name' : null,
+                      ),
+                      const SizedBox(height: 12),
                       CustomTextField(
                         controller: _emailController,
-                        label: 'Email',
+                        label: 'Email Address',
                         keyboardType: TextInputType.emailAddress,
-                        prefix: const Icon(Icons.email, color: Colors.white),
                         validator: (v) {
-                          if (v == null || v.isEmpty) {
-                            return 'Please enter your email';
-                          }
+                          if (v == null || v.isEmpty) return 'Enter email';
                           final re = RegExp(r'^[^@]+@[^@]+\.[^@]+');
                           if (!re.hasMatch(v)) return 'Enter a valid email';
                           return null;
@@ -108,10 +130,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 12),
                       CustomTextField(
+                        controller: _mobileController,
+                        label: 'Mobile Number',
+                        keyboardType: TextInputType.phone,
+                        validator: (v) => v == null || v.isEmpty ? 'Enter mobile number' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      CustomTextField(
                         controller: _passwordController,
                         label: 'Password',
                         obscure: _obscure,
-                        prefix: const Icon(Icons.lock, color: Colors.white),
                         suffix: IconButton(
                           icon: Icon(
                             _obscure ? Icons.visibility : Icons.visibility_off,
@@ -120,36 +148,41 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () => setState(() => _obscure = !_obscure),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (v.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
+                          if (v == null || v.isEmpty) return 'Enter password';
+                          if (v.length < 6) return 'Password must be at least 6 characters';
                           return null;
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
+                      CustomTextField(
+                        controller: _confirmPasswordController,
+                        label: 'Confirm Password',
+                        obscure: _obscureConfirm,
+                        suffix: IconButton(
+                          icon: Icon(
+                            _obscureConfirm ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                        ),
+                        validator: (v) {
+                          if (v != _passwordController.text) return 'Passwords do not match';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
                       Row(
                         children: [
                           Checkbox(
-                            value: _remember,
-                            onChanged: (v) =>
-                                setState(() => _remember = v ?? false),
+                            value: _agree,
+                            onChanged: (v) => setState(() => _agree = v ?? false),
                             checkColor: Colors.black,
                             activeColor: Colors.redAccent,
                           ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Remember me',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text(
-                              'Forgot password?',
-                              style: TextStyle(color: Colors.redAccent),
+                          const Expanded(
+                            child: Text(
+                              'I agree to the Terms & Privacy Policy',
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ],
@@ -164,54 +197,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           child: _loading
-                              ? const SizedBox(
-                                  height: 18,
-                                  width: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
+                              ? const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
                                 )
                               : const Text(
-                                  'Sign in',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
+                                  'Create Account',
+                                  style: TextStyle(fontSize: 16, color: Colors.white),
                                 ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Row(
-                        children: [
-                          Expanded(
-                            child: Divider(color: Colors.white54),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            child: Text(
-                              'or',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(color: Colors.white54),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.login, color: Colors.white),
-                          label: const Text(
-                            'Continue with Google',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.redAccent),
-                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -219,15 +212,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            "Don't have an account?",
+                            'Already have an account?',
                             style: TextStyle(color: Colors.white),
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pushNamed(Routes.signup);
+                              Navigator.of(context).pushReplacementNamed(Routes.login);
                             },
                             child: const Text(
-                              'Sign up',
+                              'Log In',
                               style: TextStyle(color: Colors.redAccent),
                             ),
                           ),
