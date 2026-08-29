@@ -1,6 +1,7 @@
 library oven2door_mobile.core.services.auth_service;
 
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// Result object for authentication attempts
 class AuthResult {
@@ -11,41 +12,44 @@ class AuthResult {
 }
 
 /// AuthService handles login/logout and token management.
-/// Replace the stubbed logic with your API integration.
 class AuthService extends ChangeNotifier {
-  String? _token;
-  bool get isLoggedIn => _token != null;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  User? get currentUser => _auth.currentUser;
+  bool get isLoggedIn => currentUser != null;
 
   Future<AuthResult> signIn({
     required String email,
     required String password,
   }) async {
-    // TODO: Replace with call to your API client (auth_api.dart)
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (email == 'demo@oven2door.com' && password == 'password') {
-      _token = 'fake_token';
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       notifyListeners();
       return AuthResult(success: true, message: 'Login successful');
+    } on FirebaseAuthException catch (e) {
+      return AuthResult(success: false, message: e.message ?? 'Login failed');
+    } catch (e) {
+      return AuthResult(success: false, message: 'Unexpected error: $e');
     }
-    return AuthResult(success: false, message: 'Invalid credentials');
   }
 
   Future<AuthResult> signUp({
     required String email,
     required String password,
   }) async {
-    // TODO: Replace with call to your API client (auth_api.dart)
-    await Future.delayed(const Duration(seconds: 1));
-
-    // For now, accept any email/password as "new account"
-    _token = 'fake_signup_token';
-    notifyListeners();
-    return AuthResult(success: true, message: 'Account created successfully');
+    try {
+      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      notifyListeners();
+      return AuthResult(success: true, message: 'Account created successfully');
+    } on FirebaseAuthException catch (e) {
+      return AuthResult(success: false, message: e.message ?? 'Signup failed');
+    } catch (e) {
+      return AuthResult(success: false, message: 'Unexpected error: $e');
+    }
   }
 
-  void signOut() {
-    _token = null;
+  Future<void> signOut() async {
+    await _auth.signOut();
     notifyListeners();
   }
 }

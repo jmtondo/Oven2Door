@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "670039143562",
+    "project_id": "oven2door",
+    "storage_bucket": "oven2door.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670039143562:android:e386ee5848e71394c62973",
+        "android_client_info": {
+          "package_name": "com.example.oven2door_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsuB9iC79iQMn3jC9kEiY11ciKz4Wohhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
