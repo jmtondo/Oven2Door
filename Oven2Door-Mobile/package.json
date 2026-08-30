@@ -1,5 +1,25 @@
 {
   "dependencies": {
-    "firebase": "^12.18.0"
-  }
+    "body-parser": "^2.3.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "firebase": "^12.18.0",
+    "firebase-admin": "^14.3.0",
+    "mysql2": "^3.24.2"
+  },
+  "name": "oven2door-mobile",
+  "version": "1.0.0",
+  "description": "Mobile application for Oven2Door built with Flutter.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }

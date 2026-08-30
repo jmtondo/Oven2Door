@@ -55,6 +55,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final result = await controller.signUp(
       email: _emailController.text.trim(),
       password: _passwordController.text,
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
+      phone: _mobileController.text.trim(),
     );
 
     setState(() => _loading = false);

@@ -7,11 +7,12 @@ import 'modules/authentication/screens/login_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase before running the app
+  // ✅ Initialize Firebase first
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // ✅ Then call the token function
   runApp(const Oven2DoorApp()); // your real root widget
 }
 

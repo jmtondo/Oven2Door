@@ -15,7 +15,16 @@ class AuthController {
   Future<AuthResult> signUp({
     required String email,
     required String password,
+    required String firstName,
+    required String lastName,
+    required String phone,
   }) async {
-    return await authService.signUp(email: email, password: password);
+    return await authService.signUp(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+      phone: phone,
+    );
   }
 }
