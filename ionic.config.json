@@ -1,0 +1,7 @@
+{
+  "name": "Oven2Door",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
