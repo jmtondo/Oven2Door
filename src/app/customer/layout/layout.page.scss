@@ -163,6 +163,39 @@ ion-router-outlet {
   font-weight: 700;
 }
 
+.cart-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -9px;
+  right: -10px;
+
+  min-width: 18px;
+  height: 18px;
+
+  padding: 0 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #d9251d;
+  color: #ffffff;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+
+  border: 2px solid #101010;
+}
+
 .cart-icon-orange {
   color: #ffb300;
   font-size: 22px;
@@ -233,6 +266,11 @@ ion-router-outlet {
    ========================= */
 
 @media screen and (max-width: 820px) {
+
+  .cart-badge {
+    top: -8px;
+    right: -9px;
+  }
 
   .main-header {
     min-height: 64px;

@@ -1,5 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+
+import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+
+import { Subscription } from 'rxjs';
+
+import { StorefrontService } from '../../services/storefront.service';
 
 import {
   IonHeader,
@@ -23,6 +29,7 @@ import {
   styleUrls: ['./layout.page.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     RouterLink,
     RouterLinkActive,
     IonHeader,
@@ -30,11 +37,15 @@ import {
     IonRouterOutlet
   ]
 })
-export class LayoutPage {
+export class LayoutPage implements OnDestroy {
 
   isMobileMenuOpen = false;
 
-  constructor() {
+  private cartSubscription?: Subscription;
+
+  constructor(
+    public storefront: StorefrontService
+  ) {
     addIcons({
       searchOutline,
       personOutline,
@@ -42,6 +53,14 @@ export class LayoutPage {
       menuOutline,
       closeOutline
     });
+
+    this.cartSubscription = this.storefront.changed.subscribe(() => {
+      // Keeps the layout updated whenever the cart changes.
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.cartSubscription?.unsubscribe();
   }
 
   toggleMobileMenu(): void {

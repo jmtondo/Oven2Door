@@ -92,20 +92,31 @@
         <ion-icon name="person-outline"></ion-icon>
       </button>
 
-      <button
-        type="button"
-        class="cart-btn"
-        routerLink="/cart"
-      >
-        <ion-icon
-          name="cart"
-          class="cart-icon-orange"
-        ></ion-icon>
+      <button 
+          type="button" 
+          class="cart-btn" 
+          routerLink="/cart"
+        >
+          <span class="cart-icon-wrapper">
 
-        <span class="desktop-only">
-          CART
-        </span>
-      </button>
+            <ion-icon 
+              name="cart"
+              class="cart-icon-orange"
+            ></ion-icon>
+
+            <span
+              class="cart-badge"
+              *ngIf="storefront.itemCount > 0"
+            >
+              {{ storefront.itemCount }}
+            </span>
+
+          </span>
+
+          <span class="desktop-only">
+            CART
+          </span>
+        </button>
 
       <button
         type="button"
