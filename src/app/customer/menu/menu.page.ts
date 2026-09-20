@@ -22,6 +22,8 @@ import {
 } from 'ionicons/icons';
 
 import { CatalogService } from '../../services/firebase/catalog.service';
+import { StorefrontService } from '../../services/storefront.service';
+
 import { CatalogProduct } from '../../models/storefront.models';
 
 interface MenuCategory {
@@ -45,9 +47,6 @@ interface MenuCategory {
 })
 export class MenuPage implements OnInit {
 
-  /*
-   * Categories based on the original Flutter MenuPage.
-   */
   readonly menuCategories: MenuCategory[] = [
     {
       label: 'All',
@@ -75,16 +74,10 @@ export class MenuPage implements OnInit {
     }
   ];
 
-  /*
-   * Products loaded from Firestore.
-   */
   products: CatalogProduct[] = [];
 
   filteredProducts: CatalogProduct[] = [];
 
-  /*
-   * Filter state.
-   */
   selectedCategory = 'All';
 
   searchQuery = '';
@@ -95,15 +88,13 @@ export class MenuPage implements OnInit {
 
   maxPrice = 500;
 
-  /*
-   * Page state.
-   */
   isLoading = true;
 
   errorMessage = '';
 
   constructor(
-    private catalogService: CatalogService
+    private catalogService: CatalogService,
+    private storefront: StorefrontService
   ) {
     addIcons({
       gridOutline,
@@ -120,9 +111,6 @@ export class MenuPage implements OnInit {
     await this.loadCatalog();
   }
 
-  /*
-   * Load the actual catalog from Firestore.
-   */
   async loadCatalog(): Promise<void> {
 
     this.isLoading = true;
@@ -133,22 +121,22 @@ export class MenuPage implements OnInit {
       this.products =
         await this.catalogService.getProducts();
 
-        console.log(
+      console.log(
         'Firebase menu products:',
         this.products.length
-        );
+      );
 
-        console.log(
+      console.log(
         'First Firebase product:',
         this.products[0]
-        );
+      );
 
-        this.applyFilters();
+      this.applyFilters();
 
-        console.log(
+      console.log(
         'Filtered menu products:',
         this.filteredProducts.length
-        );
+      );
 
     } catch (error) {
 
@@ -167,10 +155,30 @@ export class MenuPage implements OnInit {
     }
   }
 
-  /*
-   * Same category normalization logic
-   * from the Flutter version.
+  /**
+   * Add a product directly to the shared cart.
+   *
+   * For now this adds the base product with
+   * quantity 1. Product customization can be
+   * connected later.
    */
+  addToCart(product: CatalogProduct): void {
+
+    this.storefront.add(product, {
+      quantity: 1
+    });
+
+    console.log(
+      'Added to cart:',
+      product.name
+    );
+
+    console.log(
+      'Cart:',
+      this.storefront.cart
+    );
+  }
+
   normalizeCategory(category: string): string {
 
     const value =
@@ -197,9 +205,6 @@ export class MenuPage implements OnInit {
     return 'Pizza';
   }
 
-  /*
-   * Category selection.
-   */
   selectCategory(category: string): void {
 
     this.selectedCategory = category;
@@ -207,9 +212,6 @@ export class MenuPage implements OnInit {
     this.applyFilters();
   }
 
-  /*
-   * Search input.
-   */
   onSearch(event: Event): void {
 
     const input =
@@ -220,9 +222,6 @@ export class MenuPage implements OnInit {
     this.applyFilters();
   }
 
-  /*
-   * Clear search.
-   */
   clearSearch(): void {
 
     this.searchQuery = '';
@@ -230,9 +229,6 @@ export class MenuPage implements OnInit {
     this.applyFilters();
   }
 
-  /*
-   * Price range.
-   */
   onPriceChange(event: CustomEvent): void {
 
     const value = event.detail.value;
@@ -254,9 +250,6 @@ export class MenuPage implements OnInit {
     }
   }
 
-  /*
-   * Sorting.
-   */
   setSort(option: string): void {
 
     this.sortOption = option;
@@ -264,9 +257,6 @@ export class MenuPage implements OnInit {
     this.applyFilters();
   }
 
-  /*
-   * Reset every filter.
-   */
   clearFilters(): void {
 
     this.selectedCategory = 'All';
@@ -282,10 +272,6 @@ export class MenuPage implements OnInit {
     this.applyFilters();
   }
 
-  /*
-   * Apply category, search, price,
-   * and sorting filters.
-   */
   applyFilters(): void {
 
     const query =

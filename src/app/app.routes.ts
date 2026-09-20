@@ -1,6 +1,25 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  // LOGIN
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./authentication/login/login.page').then(
+        (m) => m.LoginPage
+      )
+  },
+
+  //SIGNUP 
+  {
+    path: 'signup',
+    loadComponent: () =>
+      import('./authentication/signup/signup.page').then(
+        (m) => m.SignupPage
+      )
+  },
+
+  // CUSTOMER LAYOUT
   {
     path: '',
     loadComponent: () =>
@@ -26,10 +45,24 @@ export const routes: Routes = [
       },
 
       {
+        path: 'cart',
+        loadComponent: () =>
+          import('./customer/cart/cart.page').then(
+            (m) => m.CartPage
+          )
+      },
+
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'
       }
     ]
+  },
+
+  // FALLBACK
+  {
+    path: '**',
+    redirectTo: 'login'
   }
 ];

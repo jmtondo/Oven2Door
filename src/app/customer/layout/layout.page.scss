@@ -1,7 +1,11 @@
 :host {
   display: block;
   width: 100%;
-  height: 100%;
+}
+
+ion-router-outlet {
+  display: block;
+  width: 100%;
 }
 
 /* =========================
@@ -143,6 +147,7 @@
   cursor: pointer;
 }
 
+
 .icon-btn {
   display: flex;
   align-items: center;
@@ -173,7 +178,7 @@
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.2s ease;
+  transition:background 0.2s ease;
 }
 
 .btn-order-now:hover {
