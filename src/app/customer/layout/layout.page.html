@@ -1,0 +1,197 @@
+<ion-header>
+  <div class="announcement-bar">
+    <span>🔥 20% OVEN 2 DOOR</span>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <nav class="main-header">
+
+    <div class="logo-section">
+      <button
+        type="button"
+        class="mobile-menu-btn"
+        (click)="toggleMobileMenu()"
+        aria-label="Toggle menu"
+      >
+        <ion-icon
+          [name]="isMobileMenuOpen ? 'close-outline' : 'menu-outline'"
+        ></ion-icon>
+      </button>
+
+      <div class="logo-container">
+        <img
+          src="assets/images/pizzapics/oven2doorlogo.png"
+          alt="Oven2Door Logo"
+          class="brand-logo-img"
+        />
+      </div>
+    </div>
+
+    <div class="nav-links desktop-only">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item"
+      >
+        Home
+      </a>
+
+      <a
+        routerLink="/menu"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        Menu
+      </a>
+
+      <a
+        routerLink="/order-tracking"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        Order Tracking
+      </a>
+
+      <a
+        routerLink="/about-us"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        About Us
+      </a>
+
+      <a
+        routerLink="/faqs"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        FAQS
+      </a>
+    </div>
+
+    <div class="header-actions">
+
+      <div class="search-pill">
+        <ion-icon
+          name="search-outline"
+          class="search-icon"
+        ></ion-icon>
+
+        <input
+          type="text"
+          placeholder="Search pizza..."
+        />
+      </div>
+
+      <button
+        type="button"
+        class="icon-btn desktop-only"
+        aria-label="User profile"
+        routerLink="/account"
+      >
+        <ion-icon name="person-outline"></ion-icon>
+      </button>
+
+      <button
+        type="button"
+        class="cart-btn"
+        routerLink="/cart"
+      >
+        <ion-icon
+          name="cart"
+          class="cart-icon-orange"
+        ></ion-icon>
+
+        <span class="desktop-only">
+          CART
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="btn-order-now desktop-only"
+        routerLink="/menu"
+      >
+        ORDER NOW
+      </button>
+
+    </div>
+
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div
+    class="mobile-dropdown"
+    [class.open]="isMobileMenuOpen"
+  >
+
+    <a
+      class="mobile-nav-item"
+      routerLink="/home"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+    >
+      HOME
+    </a>
+
+    <a
+      class="mobile-nav-item"
+      routerLink="/menu"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+    >
+      MENU
+    </a>
+
+    <a
+      class="mobile-nav-item"
+      routerLink="/order-tracking"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+    >
+      ORDER TRACKING
+    </a>
+
+    <a
+      class="mobile-nav-item"
+      routerLink="/about-us"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+    >
+      ABOUT US
+    </a>
+
+    <a
+      class="mobile-nav-item"
+      routerLink="/faqs"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+    >
+      FAQS
+    </a>
+
+    <a
+      class="mobile-nav-item"
+      routerLink="/account"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+    >
+      MY ACCOUNT
+    </a>
+
+    <div class="mobile-action-wrapper">
+      <button
+        type="button"
+        class="btn-order-now mobile-order-btn"
+        routerLink="/menu"
+        (click)="closeMobileMenu()"
+      >
+        ORDER NOW
+      </button>
+    </div>
+
+  </div>
+</ion-header>
+
+<ion-router-outlet></ion-router-outlet>

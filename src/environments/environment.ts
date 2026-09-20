@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  // Physical phone on the same Wi-Fi as this PC (matches the Flutter LAN setup).
+  // Android emulator: http://10.0.2.2:3000/api
+  // Browser (`ionic serve`): http://localhost:3000/api
+  apiBaseUrl: 'http://192.168.1.8:3000/api'
 };
 
 /*

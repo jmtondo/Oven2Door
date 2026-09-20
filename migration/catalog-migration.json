@@ -1,0 +1,1232 @@
+{
+  "generatedAt": "2026-09-19T17:48:01.452Z",
+  "source": {
+    "database": "oven2door_db",
+    "tables": [
+      "categories",
+      "products",
+      "sizes",
+      "crusts",
+      "toppings",
+      "product_sizes",
+      "product_crusts",
+      "product_toppings"
+    ]
+  },
+  "categories": [
+    {
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Freshly baked pizzas",
+      "status": "active"
+    },
+    {
+      "categoryId": 2,
+      "categoryName": "Pasta",
+      "description": "Pasta dishes",
+      "status": "active"
+    },
+    {
+      "categoryId": 3,
+      "categoryName": "Chicken",
+      "description": "Chicken meals and sides",
+      "status": "active"
+    },
+    {
+      "categoryId": 4,
+      "categoryName": "Sides",
+      "description": "Pizza side dishes",
+      "status": "active"
+    },
+    {
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "Cold and refreshing beverages",
+      "status": "active"
+    },
+    {
+      "categoryId": 6,
+      "categoryName": "Desserts",
+      "description": "Sweet treats",
+      "status": "active"
+    }
+  ],
+  "products": [
+    {
+      "productId": 1,
+      "productName": "Pepperoni Thin Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Classic pizza topped with pepperoni and cheese",
+      "imagePath": "assets/images/pizzapics/Pepperonithincrust.png",
+      "status": "available",
+      "price": 249,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 249
+        },
+        {
+          "id": 2,
+          "name": "Medium",
+          "price": 299
+        },
+        {
+          "id": 3,
+          "name": "Large",
+          "price": 349
+        },
+        {
+          "id": 4,
+          "name": "Extra Large",
+          "price": 399
+        }
+      ],
+      "crusts": [
+        {
+          "id": 1,
+          "name": "Classic",
+          "price": 0
+        },
+        {
+          "id": 2,
+          "name": "Thin Crust",
+          "price": 20
+        },
+        {
+          "id": 3,
+          "name": "Cheese Burst",
+          "price": 50
+        },
+        {
+          "id": 4,
+          "name": "Stuffed Crust",
+          "price": 40
+        }
+      ],
+      "toppings": [
+        {
+          "id": 1,
+          "name": "Extra Cheese",
+          "price": 50
+        },
+        {
+          "id": 2,
+          "name": "Pepperoni",
+          "price": 60
+        },
+        {
+          "id": 3,
+          "name": "Mushroom",
+          "price": 40
+        },
+        {
+          "id": 4,
+          "name": "Bacon",
+          "price": 60
+        },
+        {
+          "id": 5,
+          "name": "Onion",
+          "price": 30
+        },
+        {
+          "id": 6,
+          "name": "Pineapple",
+          "price": 30
+        }
+      ]
+    },
+    {
+      "productId": 2,
+      "productName": "Hawaiian Thin Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Pizza topped with ham and pineapple",
+      "imagePath": "assets/images/pizzapics/Hawaiianthincrust.png",
+      "status": "available",
+      "price": 239,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 239
+        },
+        {
+          "id": 2,
+          "name": "Medium",
+          "price": 289
+        },
+        {
+          "id": 3,
+          "name": "Large",
+          "price": 339
+        },
+        {
+          "id": 4,
+          "name": "Extra Large",
+          "price": 389
+        }
+      ],
+      "crusts": [
+        {
+          "id": 1,
+          "name": "Classic",
+          "price": 0
+        },
+        {
+          "id": 2,
+          "name": "Thin Crust",
+          "price": 20
+        },
+        {
+          "id": 3,
+          "name": "Cheese Burst",
+          "price": 50
+        },
+        {
+          "id": 4,
+          "name": "Stuffed Crust",
+          "price": 40
+        }
+      ],
+      "toppings": [
+        {
+          "id": 1,
+          "name": "Extra Cheese",
+          "price": 50
+        },
+        {
+          "id": 2,
+          "name": "Pepperoni",
+          "price": 60
+        },
+        {
+          "id": 3,
+          "name": "Mushroom",
+          "price": 40
+        },
+        {
+          "id": 4,
+          "name": "Bacon",
+          "price": 60
+        },
+        {
+          "id": 5,
+          "name": "Onion",
+          "price": 30
+        },
+        {
+          "id": 6,
+          "name": "Pineapple",
+          "price": 30
+        }
+      ]
+    },
+    {
+      "productId": 3,
+      "productName": "Cheese Stuffed Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Classic pizza with rich melted cheese",
+      "imagePath": "assets/images/pizzapics/Cheesestuffedcrust.png",
+      "status": "available",
+      "price": 199,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 199
+        },
+        {
+          "id": 2,
+          "name": "Medium",
+          "price": 249
+        },
+        {
+          "id": 3,
+          "name": "Large",
+          "price": 299
+        },
+        {
+          "id": 4,
+          "name": "Extra Large",
+          "price": 349
+        }
+      ],
+      "crusts": [
+        {
+          "id": 1,
+          "name": "Classic",
+          "price": 0
+        },
+        {
+          "id": 2,
+          "name": "Thin Crust",
+          "price": 20
+        },
+        {
+          "id": 3,
+          "name": "Cheese Burst",
+          "price": 50
+        },
+        {
+          "id": 4,
+          "name": "Stuffed Crust",
+          "price": 40
+        }
+      ],
+      "toppings": [
+        {
+          "id": 1,
+          "name": "Extra Cheese",
+          "price": 50
+        },
+        {
+          "id": 2,
+          "name": "Pepperoni",
+          "price": 60
+        },
+        {
+          "id": 3,
+          "name": "Mushroom",
+          "price": 40
+        },
+        {
+          "id": 4,
+          "name": "Bacon",
+          "price": 60
+        },
+        {
+          "id": 5,
+          "name": "Onion",
+          "price": 30
+        },
+        {
+          "id": 6,
+          "name": "Pineapple",
+          "price": 30
+        }
+      ]
+    },
+    {
+      "productId": 4,
+      "productName": "BBQ Chicken Thin Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Pizza topped with bacon and mushrooms",
+      "imagePath": "assets/images/pizzapics/Bbqchickenthincrust.png",
+      "status": "available",
+      "price": 269,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 269
+        },
+        {
+          "id": 2,
+          "name": "Medium",
+          "price": 319
+        },
+        {
+          "id": 3,
+          "name": "Large",
+          "price": 369
+        },
+        {
+          "id": 4,
+          "name": "Extra Large",
+          "price": 419
+        }
+      ],
+      "crusts": [
+        {
+          "id": 1,
+          "name": "Classic",
+          "price": 0
+        },
+        {
+          "id": 2,
+          "name": "Thin Crust",
+          "price": 20
+        },
+        {
+          "id": 3,
+          "name": "Cheese Burst",
+          "price": 50
+        },
+        {
+          "id": 4,
+          "name": "Stuffed Crust",
+          "price": 40
+        }
+      ],
+      "toppings": [
+        {
+          "id": 1,
+          "name": "Extra Cheese",
+          "price": 50
+        },
+        {
+          "id": 2,
+          "name": "Pepperoni",
+          "price": 60
+        },
+        {
+          "id": 3,
+          "name": "Mushroom",
+          "price": 40
+        },
+        {
+          "id": 4,
+          "name": "Bacon",
+          "price": 60
+        },
+        {
+          "id": 5,
+          "name": "Onion",
+          "price": 30
+        },
+        {
+          "id": 6,
+          "name": "Pineapple",
+          "price": 30
+        }
+      ]
+    },
+    {
+      "productId": 5,
+      "productName": "Spinach Thin Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Fresh spinach, creamy cheese, and tomato sauce",
+      "imagePath": "assets/images/pizzapics/Spinachthincrust.png",
+      "status": "available",
+      "price": 299,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 299
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 6,
+      "productName": "BBQ Chicken Thin Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Tender chicken with smoky BBQ sauce and cheese",
+      "imagePath": "assets/images/pizzapics/Bbqchickenthincrust.png",
+      "status": "available",
+      "price": 329,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 329
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 7,
+      "productName": "Veggie Thin Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Fresh vegetables, savory sauce, and cheese",
+      "imagePath": "assets/images/pizzapics/Veggiethincrust.png",
+      "status": "available",
+      "price": 299,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 299
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 8,
+      "productName": "Carbonara",
+      "categoryId": 2,
+      "categoryName": "Pasta",
+      "description": "Creamy and savory pasta",
+      "imagePath": "assets/images/pizzapics/Carbonara.png",
+      "status": "available",
+      "price": 229,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 229
+        },
+        {
+          "id": 2,
+          "name": "Medium",
+          "price": 299
+        },
+        {
+          "id": 3,
+          "name": "Large",
+          "price": 349
+        },
+        {
+          "id": 4,
+          "name": "Extra Large",
+          "price": 399
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 9,
+      "productName": "Chicken Nuggets",
+      "categoryId": 3,
+      "categoryName": "Chicken",
+      "description": "Crispy golden chicken nuggets",
+      "imagePath": "assets/images/pizzapics/ChickenNuggets.png",
+      "status": "available",
+      "price": 139,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 139
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 10,
+      "productName": "Classic Fries",
+      "categoryId": 4,
+      "categoryName": "Sides",
+      "description": "Crispy golden fries",
+      "imagePath": "assets/images/pizzapics/Fries.png",
+      "status": "available",
+      "price": 99,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 99
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 11,
+      "productName": "Coca Cola",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "Refreshing fizzy cola",
+      "imagePath": "assets/images/pizzapics/CocaCola.png",
+      "status": "available",
+      "price": 60,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 60
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 12,
+      "productName": "All Meat Thick Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "A thick golden crust loaded with rich and savory meats.",
+      "imagePath": "assets/images/pizzapics/Allmeatthickcrust.png",
+      "status": "available",
+      "price": 349,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 349
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 13,
+      "productName": "Ham & Cheese Thick Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Fluffy thick crust topped with savory ham and melted cheese.",
+      "imagePath": "assets/images/pizzapics/Hamncheesethickcrust.png",
+      "status": "available",
+      "price": 329,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 329
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 14,
+      "productName": "Supreme Thick Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Thick crust loaded with bacon, pepperoni, sausage, vegetables, and cheese.",
+      "imagePath": "assets/images/pizzapics/Thicksupremepizza.png",
+      "status": "available",
+      "price": 379,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 379
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 15,
+      "productName": "All In Overload",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "A thick crust piled high with premium meats, vegetables, and mozzarella cheese.",
+      "imagePath": "assets/images/pizzapics/Allinoverload.png",
+      "status": "available",
+      "price": 399,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 399
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 16,
+      "productName": "Hawaiian Thick Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Fluffy thick crust topped with ham, pineapple, and mozzarella.",
+      "imagePath": "assets/images/pizzapics/Hawaiianthickcrust.png",
+      "status": "available",
+      "price": 349,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 349
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 17,
+      "productName": "Pepperoni Stuffed Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Cheese-stuffed crust loaded with pepperoni and mozzarella cheese.",
+      "imagePath": "assets/images/pizzapics/Pepperonistuffedcrust.png",
+      "status": "available",
+      "price": 389,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 389
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 18,
+      "productName": "Meat Lovers Stuffed Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Stuffed crust loaded with pepperoni, ham, bacon, sausage, and cheese.",
+      "imagePath": "assets/images/pizzapics/Meatloversstuffedcrust.png",
+      "status": "available",
+      "price": 399,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 399
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 19,
+      "productName": "Hawaiian Stuffed Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Cheese-stuffed crust topped with savory ham and sweet pineapple.",
+      "imagePath": "assets/images/pizzapics/Hawaiianstuffedcrust.png",
+      "status": "available",
+      "price": 389,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 389
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 20,
+      "productName": "Supreme Stuffed Crust",
+      "categoryId": 1,
+      "categoryName": "Pizza",
+      "description": "Stuffed crust loaded with premium meats, vegetables, and mozzarella.",
+      "imagePath": "assets/images/pizzapics/Supremestuffedcrust.png",
+      "status": "available",
+      "price": 409,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 409
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 21,
+      "productName": "Sprite",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A crisp and refreshing lemon-lime soda.",
+      "imagePath": "assets/images/pizzapics/Sprite.png",
+      "status": "available",
+      "price": 60,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 60
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 22,
+      "productName": "Royal",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A sweet and fruity orange-flavored soda.",
+      "imagePath": "assets/images/pizzapics/Royal.png",
+      "status": "available",
+      "price": 60,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 60
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 23,
+      "productName": "Root Beer",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A sweet, creamy, and aromatic root beer beverage.",
+      "imagePath": "assets/images/pizzapics/Rootbeer.png",
+      "status": "available",
+      "price": 65,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 65
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 24,
+      "productName": "Mountain Dew",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A bold citrus-flavored refreshing soft drink.",
+      "imagePath": "assets/images/pizzapics/Mountaindew.png",
+      "status": "available",
+      "price": 65,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 65
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 25,
+      "productName": "Orange Juice",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A naturally sweet and tangy orange drink.",
+      "imagePath": "assets/images/pizzapics/Orangejuice.png",
+      "status": "available",
+      "price": 90,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 90
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 26,
+      "productName": "Apple Juice",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A smooth drink with a naturally sweet apple flavor.",
+      "imagePath": "assets/images/pizzapics/Applejuice.png",
+      "status": "available",
+      "price": 90,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 90
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 27,
+      "productName": "Lemon Juice",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A bright and refreshing drink with a tangy lemon flavor.",
+      "imagePath": "assets/images/pizzapics/Lemonjuice.png",
+      "status": "available",
+      "price": 85,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 85
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 28,
+      "productName": "Pineapple Juice",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A tropical drink with a sweet and tangy pineapple flavor.",
+      "imagePath": "assets/images/pizzapics/Pineapplejuice.png",
+      "status": "available",
+      "price": 90,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 90
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 29,
+      "productName": "Mango Juice",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A smooth and fruity drink with a sweet tropical mango flavor.",
+      "imagePath": "assets/images/pizzapics/Mangojuice.png",
+      "status": "available",
+      "price": 95,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 95
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 30,
+      "productName": "Iced Tea",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A chilled and refreshing beverage for warm days.",
+      "imagePath": "assets/images/pizzapics/Icedtea.png",
+      "status": "available",
+      "price": 85,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 85
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 31,
+      "productName": "Iced Coffee",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "Smooth and creamy coffee served chilled over ice.",
+      "imagePath": "assets/images/pizzapics/Icedcoffee.png",
+      "status": "available",
+      "price": 110,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 110
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 32,
+      "productName": "Blue Lemonade",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "Sweet and tangy lemonade with a refreshing citrus flavor.",
+      "imagePath": "assets/images/pizzapics/Bluelemonade.png",
+      "status": "available",
+      "price": 95,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 95
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 33,
+      "productName": "Beer",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "A chilled beverage with a smooth and slightly bitter taste.",
+      "imagePath": "assets/images/pizzapics/Beer.png",
+      "status": "available",
+      "price": 120,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 120
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 34,
+      "productName": "Sparkling Water",
+      "categoryId": 5,
+      "categoryName": "Drinks",
+      "description": "Light and refreshing water with a crisp bubbly finish.",
+      "imagePath": "assets/images/pizzapics/sparklingwater.png",
+      "status": "available",
+      "price": 70,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 70
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 35,
+      "productName": "Waffle Fries",
+      "categoryId": 4,
+      "categoryName": "Sides",
+      "description": "Crispy golden waffle-cut fries with a satisfying crunch.",
+      "imagePath": "assets/images/pizzapics/WaffleFries.png",
+      "status": "available",
+      "price": 119,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 119
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 36,
+      "productName": "Crinkle Cut Fries",
+      "categoryId": 4,
+      "categoryName": "Sides",
+      "description": "Thick crispy fries with a fun crinkle-cut texture.",
+      "imagePath": "assets/images/pizzapics/CrinkleCutFries.png",
+      "status": "available",
+      "price": 109,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 109
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 37,
+      "productName": "Bacon Cheese Fries",
+      "categoryId": 4,
+      "categoryName": "Sides",
+      "description": "Golden fries loaded with crispy bacon and melted cheese.",
+      "imagePath": "assets/images/pizzapics/BaconCheeseFries.png",
+      "status": "available",
+      "price": 149,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 149
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 38,
+      "productName": "Sweet Potato Fries",
+      "categoryId": 4,
+      "categoryName": "Sides",
+      "description": "Crispy sweet potato fries with a sweet and savory flavor.",
+      "imagePath": "assets/images/pizzapics/SweetPotatoFries.png",
+      "status": "available",
+      "price": 129,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 129
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 39,
+      "productName": "Wings",
+      "categoryId": 3,
+      "categoryName": "Chicken",
+      "description": "Juicy chicken wings with Garlic Parmesan, Buffalo, or BBQ sauce.",
+      "imagePath": "assets/images/pizzapics/Wings.png",
+      "status": "available",
+      "price": 159,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 159
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 40,
+      "productName": "Boneless Chicken Bites",
+      "categoryId": 3,
+      "categoryName": "Chicken",
+      "description": "Tender bite-sized chicken pieces crispy on the outside and juicy inside.",
+      "imagePath": "assets/images/pizzapics/BonelessChickenBites.png",
+      "status": "available",
+      "price": 149,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 149
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 41,
+      "productName": "Chicken Tenders",
+      "categoryId": 3,
+      "categoryName": "Chicken",
+      "description": "Crispy golden strips of tender chicken perfect for dipping.",
+      "imagePath": "assets/images/pizzapics/ChickenTenders.png",
+      "status": "available",
+      "price": 149,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 149
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 42,
+      "productName": "Chicken Poppers",
+      "categoryId": 3,
+      "categoryName": "Chicken",
+      "description": "Crispy flavorful bite-sized chicken pieces.",
+      "imagePath": "assets/images/pizzapics/ChickenPoppers.png",
+      "status": "available",
+      "price": 139,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 139
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 43,
+      "productName": "Carbonara / Chicken Alfredo",
+      "categoryId": 2,
+      "categoryName": "Pasta",
+      "description": "Creamy and savory pasta tossed in a rich sauce.",
+      "imagePath": "assets/images/pizzapics/Carbonara.png",
+      "status": "available",
+      "price": 199,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 199
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 44,
+      "productName": "Spaghetti",
+      "categoryId": 2,
+      "categoryName": "Pasta",
+      "description": "Classic spaghetti tossed in rich tomato sauce.",
+      "imagePath": "assets/images/pizzapics/Spaghetti.png",
+      "status": "available",
+      "price": 179,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 179
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 45,
+      "productName": "Lasagna",
+      "categoryId": 2,
+      "categoryName": "Pasta",
+      "description": "Layers of pasta, meat sauce, and creamy cheese baked together.",
+      "imagePath": "assets/images/pizzapics/Lasagna.png",
+      "status": "available",
+      "price": 229,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 229
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 46,
+      "productName": "Mac n Cheese",
+      "categoryId": 2,
+      "categoryName": "Pasta",
+      "description": "Creamy macaroni covered in smooth melted cheese.",
+      "imagePath": "assets/images/pizzapics/MacnCheese.png",
+      "status": "available",
+      "price": 189,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 189
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    },
+    {
+      "productId": 47,
+      "productName": "Pesto Pasta",
+      "categoryId": 2,
+      "categoryName": "Pasta",
+      "description": "Pasta tossed in a flavorful basil pesto sauce.",
+      "imagePath": "assets/images/pizzapics/PestoPasta.png",
+      "status": "available",
+      "price": 199,
+      "sizes": [
+        {
+          "id": 1,
+          "name": "Small",
+          "price": 199
+        }
+      ],
+      "crusts": [],
+      "toppings": []
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+<ion-content class="login-content">
+
+  <div class="login-wrapper">
+
+    <div class="login-card">
+
+      <!-- Logo -->
+      <div class="logo-container">
+        <img
+          src="assets/oven2doorlogo.png"
+          alt="Oven2Door Logo"
+        >
+      </div>
+
+      <!-- Login Form -->
+      <form
+        (ngSubmit)="submit()"
+        #loginForm="ngForm"
+        novalidate
+      >
+
+        <!-- Email -->
+        <div class="input-group">
+
+          <label for="email">
+            Email
+          </label>
+
+          <div
+            class="input-wrapper"
+            [class.input-error]="emailInput.invalid && emailInput.touched"
+          >
+
+            <ion-icon
+              name="mail-outline"
+              class="input-icon"
+            ></ion-icon>
+
+            <ion-input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              [(ngModel)]="email"
+              required
+              email
+              #emailInput="ngModel"
+            ></ion-input>
+
+          </div>
+
+          <!-- Email Error -->
+          <div
+            class="error-message"
+            *ngIf="emailInput.invalid && emailInput.touched"
+          >
+
+            <span *ngIf="emailInput.errors?.['required']">
+              Please enter your email.
+            </span>
+
+            <span *ngIf="emailInput.errors?.['email']">
+              Please enter a valid email address.
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- Password -->
+        <div class="input-group">
+
+          <label for="password">
+            Password
+          </label>
+
+          <div
+            class="input-wrapper"
+            [class.input-error]="passwordInput.invalid && passwordInput.touched"
+          >
+
+            <ion-icon
+              name="lock-closed-outline"
+              class="input-icon"
+            ></ion-icon>
+
+            <ion-input
+              id="password"
+              name="password"
+              [type]="obscurePassword ? 'password' : 'text'"
+              placeholder="Enter your password"
+              [(ngModel)]="password"
+              required
+              minlength="6"
+              #passwordInput="ngModel"
+            ></ion-input>
+
+            <button
+              type="button"
+              class="visibility-button"
+              (click)="togglePassword()"
+              aria-label="Toggle password visibility"
+            >
+
+              <ion-icon
+                [name]="
+                  obscurePassword
+                    ? 'eye-outline'
+                    : 'eye-off-outline'
+                "
+              ></ion-icon>
+
+            </button>
+
+          </div>
+
+          <!-- Password Error -->
+          <div
+            class="error-message"
+            *ngIf="passwordInput.invalid && passwordInput.touched"
+          >
+
+            <span *ngIf="passwordInput.errors?.['required']">
+              Please enter your password.
+            </span>
+
+            <span *ngIf="passwordInput.errors?.['minlength']">
+              Password must be at least 6 characters.
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- Remember / Forgot -->
+        <div class="options-row">
+
+          <label class="remember-container">
+
+            <input
+              type="checkbox"
+              name="remember"
+              [(ngModel)]="remember"
+            >
+
+            <span class="custom-checkbox"></span>
+
+            <span class="remember-text">
+              Remember me
+            </span>
+
+          </label>
+
+          <button
+            type="button"
+            class="forgot-button"
+            (click)="forgotPassword()"
+          >
+            Forgot password?
+          </button>
+
+        </div>
+
+
+        <!-- Login Button -->
+        <ion-button
+          expand="block"
+          type="submit"
+          class="login-button"
+          [disabled]="loading"
+        >
+
+          <ion-spinner
+            *ngIf="loading"
+            name="crescent"
+          ></ion-spinner>
+
+          <span *ngIf="!loading">
+            LOGIN
+          </span>
+
+        </ion-button>
+
+
+        <!-- Divider -->
+        <div class="divider">
+
+          <span></span>
+
+          <p>or</p>
+
+          <span></span>
+
+        </div>
+
+
+        <!-- Google Login -->
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="google-button"
+          type="button"
+          (click)="continueWithGoogle()"
+        >
+
+          <ion-icon
+            slot="start"
+            name="logo-google"
+          ></ion-icon>
+
+          <span>
+            Continue with Google
+          </span>
+
+        </ion-button>
+
+
+        <!-- Sign Up -->
+        <div class="signup-row">
+
+          <span>
+            Don't have an account?
+          </span>
+
+          <button
+            type="button"
+            class="signup-button"
+            (click)="goToSignup()"
+          >
+            Sign up
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</ion-content>

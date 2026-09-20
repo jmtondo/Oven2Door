@@ -1,0 +1,279 @@
+.signup-content {
+  --background: #000000;
+}
+
+.signup-wrapper {
+  min-height: 100%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 480px;
+
+  background: #212121;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+/* Logo */
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 8px 0 12px;
+}
+
+.logo-container img {
+  width: 120px;
+  max-width: 70%;
+  height: auto;
+}
+
+/* Title */
+
+.signup-card h1 {
+  color: #ffffff;
+
+  text-align: center;
+
+  font-size: 20px;
+  font-weight: 400;
+
+  margin: 0 0 18px;
+}
+
+/* Inputs */
+
+.input-group {
+  margin-bottom: 12px;
+}
+
+.input-group label {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  margin-bottom: 7px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  background: #2b2b2b;
+
+  border: 1px solid #555555;
+
+  border-radius: 8px;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+}
+
+.input-wrapper ion-icon {
+  color: #ffffff;
+
+  font-size: 20px;
+
+  margin-right: 10px;
+}
+
+.input-wrapper ion-input {
+  --color: #ffffff;
+  --placeholder-color: #aaaaaa;
+
+  --padding-start: 0;
+  --padding-end: 0;
+
+  flex: 1;
+}
+
+/* Password visibility */
+
+.visibility-button {
+  background: transparent;
+
+  border: none;
+
+  padding: 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.visibility-button ion-icon {
+  color: #ffffff;
+
+  font-size: 20px;
+
+  margin: 0;
+}
+
+/* Validation */
+
+.error-message {
+  color: #ff5252;
+
+  font-size: 12px;
+
+  margin-top: 5px;
+}
+
+/* Terms */
+
+.terms-row {
+  margin-top: 4px;
+
+  margin-bottom: 12px;
+}
+
+.terms-container {
+  display: flex;
+  align-items: flex-start;
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  line-height: 20px;
+}
+
+.terms-container input {
+  display: none;
+}
+
+.custom-checkbox {
+  flex-shrink: 0;
+
+  width: 18px;
+  height: 18px;
+
+  border: 2px solid #777777;
+
+  border-radius: 3px;
+
+  margin-right: 8px;
+
+  margin-top: 1px;
+
+  position: relative;
+
+  box-sizing: border-box;
+}
+
+.terms-container input:checked + .custom-checkbox {
+  background: #ff5252;
+
+  border-color: #ff5252;
+}
+
+.terms-container input:checked + .custom-checkbox::after {
+  content: '';
+
+  position: absolute;
+
+  left: 5px;
+  top: 1px;
+
+  width: 4px;
+  height: 9px;
+
+  border: solid #000000;
+
+  border-width: 0 2px 2px 0;
+
+  transform: rotate(45deg);
+}
+
+/* Create Account */
+
+.create-button {
+  --background: #ff5252;
+  --background-activated: #e53935;
+
+  --border-radius: 8px;
+
+  height: 48px;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  margin: 0;
+}
+
+.create-button ion-spinner {
+  width: 20px;
+  height: 20px;
+}
+
+/* Login */
+
+.login-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 4px;
+
+  margin-top: 12px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+}
+
+.login-link {
+  background: transparent;
+
+  border: none;
+
+  color: #ff5252;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .signup-wrapper {
+    padding: 16px;
+  }
+
+  .signup-card {
+    padding: 18px;
+  }
+}
+

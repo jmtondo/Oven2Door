@@ -1,0 +1,413 @@
+<ion-content
+  [scrollY]="true"
+  class="menu-page"
+  style="--overflow: auto;"
+>
+  <!-- MENU BANNER -->
+
+  <section class="menu-banner">
+
+    <div class="banner-content">
+
+      <div class="banner-text">
+
+        <span class="banner-kicker">
+          DISCOVER OUR
+        </span>
+
+        <h1>
+          MENU
+        </h1>
+
+      </div>
+
+      <div class="banner-image">
+
+        <img
+          src="assets/images/pizzapics/Pepperonithincrust.png"
+          alt="Pepperoni pizza"
+        />
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CATEGORIES -->
+
+  <section class="categories-section">
+
+    <div class="categories-container">
+
+      <button
+        *ngFor="let category of menuCategories"
+        class="category-card"
+        [class.active]="selectedCategory === category.label"
+        (click)="selectCategory(category.label)"
+      >
+
+        <ion-icon
+          [name]="category.icon"
+        ></ion-icon>
+
+        <span>
+          {{ category.label }}
+        </span>
+
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- FILTERS -->
+
+  <section class="filters-section">
+
+    <div class="filters-card">
+
+      <div class="filters-header">
+
+        <h2>
+          FILTER PRODUCTS
+        </h2>
+
+        <button
+          class="clear-button"
+          (click)="clearFilters()"
+        >
+          Clear filters
+        </button>
+
+      </div>
+
+
+      <div class="search-box">
+
+        <ion-icon
+          name="search-outline"
+        ></ion-icon>
+
+        <input
+          type="text"
+          placeholder="Search pizza, drinks, or sides"
+          [value]="searchQuery"
+          (input)="onSearch($event)"
+        />
+
+        <button
+          *ngIf="searchQuery"
+          class="search-clear"
+          (click)="clearSearch()"
+        >
+
+          <ion-icon
+            name="close-outline"
+          ></ion-icon>
+
+        </button>
+
+      </div>
+
+
+      <div class="filter-controls">
+
+        <div class="price-filter">
+
+          <div class="price-label">
+
+            <span>
+              Price
+            </span>
+
+            <strong>
+              ₱{{ minPrice | number:'1.0-0' }}
+              –
+              ₱{{ maxPrice | number:'1.0-0' }}
+            </strong>
+
+          </div>
+
+          <ion-range
+            [min]="0"
+            [max]="500"
+            [step]="10"
+            [dualKnobs]="true"
+            [value]="{
+              lower: minPrice,
+              upper: maxPrice
+            }"
+            (ionChange)="onPriceChange($event)"
+          ></ion-range>
+
+        </div>
+
+
+        <div class="sort-filter">
+
+          <label>
+            SORT BY
+          </label>
+
+          <select
+            [value]="sortOption"
+            (change)="setSort($any($event.target).value)"
+          >
+
+            <option value="Recommended">
+              Recommended
+            </option>
+
+            <option value="Price: low to high">
+              Price: low to high
+            </option>
+
+            <option value="Price: high to low">
+              Price: high to low
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- LOADING -->
+
+  <section
+    class="state-section"
+    *ngIf="isLoading"
+  >
+
+    <div class="loading-spinner">
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading menu...
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ERROR -->
+
+  <section
+    class="state-section"
+    *ngIf="!isLoading && errorMessage"
+  >
+
+    <div class="error-state">
+
+      <h2>
+        Something went wrong
+      </h2>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <ion-button
+        class="retry-button"
+        (click)="loadCatalog()"
+      >
+        TRY AGAIN
+      </ion-button>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRODUCTS -->
+
+  <section
+    class="products-section"
+    *ngIf="!isLoading && !errorMessage"
+  >
+
+    <div class="products-header">
+
+      <div>
+
+        <span>
+          OVEN2DOOR
+        </span>
+
+        <h2>
+          {{ selectedCategory === 'All'
+            ? 'ALL PRODUCTS'
+            : selectedCategory.toUpperCase()
+          }}
+        </h2>
+
+      </div>
+
+      <p>
+        {{ filteredProducts.length }} items
+      </p>
+
+    </div>
+
+
+    <!-- THIS SHOULD DISPLAY THE FIRESTORE PRODUCTS -->
+
+    <div
+      class="product-grid"
+      *ngIf="filteredProducts.length > 0"
+    >
+
+      <article
+        class="product-card"
+        *ngFor="
+          let product of filteredProducts;
+          trackBy: trackByProductId
+        "
+      >
+
+        <div class="product-image">
+
+          <img
+            [src]="product.imagePath"
+            [alt]="product.name"
+          />
+
+        </div>
+
+
+        <div class="product-info">
+
+          <span class="product-category">
+            {{ normalizeCategory(product.category) }}
+          </span>
+
+          <h3>
+            {{ product.name }}
+          </h3>
+
+          <p class="product-description">
+            {{ product.description }}
+          </p>
+
+          <div class="product-footer">
+
+            <div class="product-price">
+
+              <small>
+                FROM
+              </small>
+
+              <strong>
+                ₱{{ product.price | number:'1.0-0' }}
+              </strong>
+
+            </div>
+
+            <button
+              class="add-button"
+            >
+
+              <ion-icon
+                name="cart-outline"
+              ></ion-icon>
+
+              ADD
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </div>
+
+
+    <!-- EMPTY -->
+
+    <div
+      class="empty-state"
+      *ngIf="filteredProducts.length === 0"
+    >
+
+      <h2>
+        No menu items match your filters.
+      </h2>
+
+      <p>
+        Firebase returned
+        {{ products.length }}
+        products.
+      </p>
+
+      <button
+        class="reset-button"
+        (click)="clearFilters()"
+      >
+        CLEAR FILTERS
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+
+  <footer class="menu-footer">
+
+    <div class="footer-content">
+
+      <div class="footer-brand">
+
+        <img
+          src="assets/images/pizzapics/oven2doorlogo.png"
+          alt="Oven2Door"
+        />
+
+        <p>
+          Fresh pizza. Big flavors.
+          Delivered right to your door.
+        </p>
+
+      </div>
+
+
+      <div class="footer-links">
+
+        <h3>
+          QUICK LINKS
+        </h3>
+
+        <a routerLink="/home">
+          Home
+        </a>
+
+        <a routerLink="/menu">
+          Menu
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      © 2026 Oven2Door. All Rights Reserved.
+
+    </div>
+
+    </footer>
+</ion-content>

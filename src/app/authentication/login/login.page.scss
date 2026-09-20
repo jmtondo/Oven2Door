@@ -1,0 +1,689 @@
+/* =========================================
+   LOGIN PAGE
+========================================= */
+
+.login-content {
+  --background: #0d0d0d;
+}
+
+
+/* =========================================
+   LOGIN WRAPPER
+========================================= */
+
+.login-wrapper {
+  min-height: 100%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   LOGIN CARD
+========================================= */
+
+.login-card {
+  width: 100%;
+  max-width: 500px;
+
+  background: #202020;
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  border-radius: 18px;
+
+  padding: 34px 36px 30px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.logo-container {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 2px 0 30px;
+}
+
+.logo-container img {
+  width: 165px;
+
+  max-width: 70%;
+
+  height: auto;
+
+  display: block;
+
+  object-fit: contain;
+}
+
+
+/* =========================================
+   INPUT GROUP
+========================================= */
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+
+  color: #f5f5f5;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  margin-bottom: 9px;
+}
+
+
+/* =========================================
+   INPUT WRAPPER
+========================================= */
+
+.input-wrapper {
+  width: 100%;
+
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+
+  background: #292929;
+
+  border: 1px solid #505050;
+
+  border-radius: 10px;
+
+  padding: 0 14px;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+/* Input focus */
+
+.input-wrapper:focus-within {
+  border-color: #ff5252;
+
+  background: #2c2c2c;
+
+  box-shadow:
+    0 0 0 3px rgba(255, 82, 82, 0.10);
+}
+
+
+/* Input error */
+
+.input-wrapper.input-error {
+  border-color: #ff5252;
+}
+
+
+/* =========================================
+   INPUT ICON
+========================================= */
+
+.input-icon {
+  flex-shrink: 0;
+
+  color: #e8e8e8;
+
+  font-size: 22px;
+
+  margin-right: 12px;
+}
+
+
+/* =========================================
+   ION INPUT
+========================================= */
+
+.input-wrapper ion-input {
+  flex: 1;
+
+  --color: #ffffff;
+
+  --placeholder-color: #999999;
+
+  --placeholder-opacity: 1;
+
+  --padding-start: 0;
+
+  --padding-end: 0;
+
+  --padding-top: 0;
+
+  --padding-bottom: 0;
+
+  font-size: 16px;
+}
+
+
+/* =========================================
+   PASSWORD VISIBILITY BUTTON
+========================================= */
+
+.visibility-button {
+  width: 40px;
+
+  height: 40px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-shrink: 0;
+
+  background: transparent;
+
+  border: none;
+
+  border-radius: 8px;
+
+  padding: 0;
+
+  color: #d0d0d0;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.visibility-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #ffffff;
+}
+
+.visibility-button:active {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.visibility-button ion-icon {
+  font-size: 21px;
+
+  margin: 0;
+}
+
+
+/* =========================================
+   VALIDATION / ERROR MESSAGE
+========================================= */
+
+.error-message {
+  color: #ff6b6b;
+
+  font-size: 12px;
+
+  margin-top: 6px;
+
+  padding-left: 2px;
+}
+
+
+/* =========================================
+   REMEMBER / FORGOT PASSWORD
+========================================= */
+
+.options-row {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  margin-top: 2px;
+
+  margin-bottom: 20px;
+}
+
+
+/* Remember me */
+
+.remember-container {
+  display: flex;
+
+  align-items: center;
+
+  color: #eeeeee;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  user-select: none;
+}
+
+
+/* Hide native checkbox */
+
+.remember-container input {
+  display: none;
+}
+
+
+/* Custom checkbox */
+
+.custom-checkbox {
+  width: 19px;
+
+  height: 19px;
+
+  display: inline-block;
+
+  position: relative;
+
+  border: 1.5px solid #777777;
+
+  border-radius: 4px;
+
+  margin-right: 9px;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+/* Checked checkbox */
+
+.remember-container input:checked + .custom-checkbox {
+  background: #ff5252;
+
+  border-color: #ff5252;
+}
+
+
+/* Checkbox check mark */
+
+.remember-container input:checked + .custom-checkbox::after {
+  content: '';
+
+  position: absolute;
+
+  left: 5px;
+
+  top: 2px;
+
+  width: 5px;
+
+  height: 9px;
+
+  border: solid #ffffff;
+
+  border-width: 0 2px 2px 0;
+
+  transform: rotate(45deg);
+}
+
+
+/* Forgot password */
+
+.forgot-button {
+  margin-left: auto;
+
+  background: transparent;
+
+  border: none;
+
+  padding: 4px 0;
+
+  color: #ff5252;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.forgot-button:hover {
+  color: #ff7777;
+}
+
+.forgot-button:active {
+  opacity: 0.75;
+}
+
+
+/* =========================================
+   LOGIN BUTTON
+========================================= */
+
+.login-button {
+  width: 100%;
+
+  --background: #ff5252;
+
+  --background-hover: #ff5e5e;
+
+  --background-activated: #e94444;
+
+  --border-radius: 10px;
+
+  --box-shadow:
+    0 6px 15px rgba(255, 82, 82, 0.20);
+
+  height: 50px;
+
+  margin: 0;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  letter-spacing: 1px;
+}
+
+
+/* Login loading spinner */
+
+.login-button ion-spinner {
+  width: 21px;
+
+  height: 21px;
+}
+
+
+/* =========================================
+   DIVIDER
+========================================= */
+
+.divider {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 21px 0;
+}
+
+.divider span {
+  flex: 1;
+
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.divider p {
+  margin: 0;
+
+  color: #bdbdbd;
+
+  font-size: 13px;
+
+  text-transform: lowercase;
+}
+
+
+/* =========================================
+   GOOGLE BUTTON
+========================================= */
+
+.google-button {
+  width: 100%;
+
+  --border-color: #666666;
+
+  --border-width: 1px;
+
+  --color: #eeeeee;
+
+  --border-radius: 10px;
+
+  height: 48px;
+
+  margin: 0;
+
+  font-size: 14px;
+
+  font-weight: 500;
+}
+
+.google-button:hover {
+  --border-color: #888888;
+}
+
+.google-button:active {
+  --border-color: #aaaaaa;
+}
+
+.google-button ion-icon {
+  font-size: 20px;
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   SIGN UP ROW
+========================================= */
+
+.signup-row {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  margin-top: 21px;
+
+  color: #bdbdbd;
+
+  font-size: 14px;
+}
+
+.signup-button {
+  background: transparent;
+
+  border: none;
+
+  padding: 2px;
+
+  color: #ff5252;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.signup-button:hover {
+  color: #ff7777;
+}
+
+.signup-button:active {
+  opacity: 0.75;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (min-width: 601px) {
+
+  .login-wrapper {
+    padding: 32px;
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .login-wrapper {
+    min-height: 100%;
+
+    padding: 12px 10px;
+  }
+
+  .login-card {
+    max-width: 100%;
+
+    border-radius: 17px;
+
+    padding: 28px 24px 26px;
+  }
+
+  .logo-container {
+    margin-bottom: 26px;
+  }
+
+  .logo-container img {
+    width: 150px;
+  }
+
+  .input-wrapper {
+    min-height: 55px;
+
+    padding: 0 13px;
+  }
+
+  .input-icon {
+    font-size: 21px;
+
+    margin-right: 11px;
+  }
+
+  .login-button {
+    height: 50px;
+  }
+
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 380px) {
+
+  .login-wrapper {
+    padding: 8px;
+  }
+
+  .login-card {
+    padding: 24px 18px 22px;
+
+    border-radius: 15px;
+  }
+
+  .logo-container {
+    margin-bottom: 22px;
+  }
+
+  .logo-container img {
+    width: 135px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+  }
+
+  .input-group label {
+    font-size: 14px;
+
+    margin-bottom: 7px;
+  }
+
+  .input-wrapper {
+    min-height: 52px;
+  }
+
+  .input-wrapper ion-input {
+    font-size: 15px;
+  }
+
+  .options-row {
+    margin-bottom: 17px;
+  }
+
+  .remember-container,
+  .forgot-button {
+    font-size: 12px;
+  }
+
+  .custom-checkbox {
+    width: 18px;
+    height: 18px;
+  }
+
+  .login-button {
+    height: 48px;
+
+    font-size: 14px;
+  }
+
+  .divider {
+    margin: 18px 0;
+  }
+
+  .google-button {
+    height: 46px;
+
+    font-size: 13px;
+  }
+
+  .signup-row {
+    margin-top: 18px;
+
+    font-size: 13px;
+  }
+
+  .signup-button {
+    font-size: 13px;
+  }
+
+}

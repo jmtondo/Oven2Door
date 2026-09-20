@@ -1,0 +1,236 @@
+<ion-content
+  [scrollY]="true"
+  class="hero-page"
+  style="--overflow: auto;"
+>
+    <div class="announcement-bar">
+    <span>🔥 20% OVEN 2 DOOR</span>
+  </div>
+
+  <!-- Hero Section -->
+  <ion-grid class="hero-grid">
+    <ion-row class="ion-align-items-center">
+      <ion-col size="12" size-lg="6" class="hero-left">
+        <div class="tagline">
+          <span class="dash">—</span> FRESH FROM OUR OVEN
+        </div>
+        <h1 class="hero-title">
+          PIZZA MADE<br />
+          <span class="highlight-red">FOR YOU!</span>
+        </h1>
+        <p class="hero-desc">
+          Hot, fresh, and loaded with flavor. Your favorite pizza is just a few clicks away.
+        </p>
+        <div class="cta-buttons">
+          <ion-button class="btn-primary" routerLink="/menu">
+            ORDER NOW →
+          </ion-button>
+          <ion-button fill="outline" class="btn-secondary" routerLink="/menu">
+            EXPLORE MENU
+          </ion-button>
+        </div>
+      </ion-col>
+      <ion-col size="12" size-lg="6" class="hero-right ion-text-center">
+        <div class="pizza-circle-wrapper">
+          <img
+            src="assets/images/pizzapics/pizza-hero.avif"
+            alt="Freshly baked pizza"
+            class="pizza-photo"
+          />
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <!-- HOT DEALS SECTION -->
+  <section class="deals-section" id="deals">
+    <div class="deals-container">
+      <div class="deals-header">
+        <div class="header-left">
+          <span class="sub-title">DON'T MISS OUT</span>
+          <h2>HOT <span>DEALS</span></h2>
+        </div>
+        <p class="header-right">More pizza. More savings. More reasons to order.</p>
+      </div>
+      <div class="deals-grid">
+        <div class="deal-card">
+          <div class="deal-content">
+            <span class="deal-tag">WEEKEND SPECIAL</span>
+            <h3>20% OFF</h3>
+            <p>Enjoy your favorite pizza all weekend long.</p>
+            <button type="button" class="deal-btn" routerLink="/menu">ORDER NOW</button>
+          </div>
+          <div class="deal-image">
+            <img src="assets/images/pizzapics/pizza(4).avif" alt="Weekend Pizza Special" />
+          </div>
+        </div>
+        <div class="deal-card">
+          <div class="deal-content">
+            <span class="deal-tag">MEAL FOR TWO</span>
+            <h3>2 PIZZAS<br />+ 2 DRINKS</h3>
+            <p>The perfect meal to share.</p>
+            <button type="button" class="deal-btn" routerLink="/menu">ORDER NOW</button>
+          </div>
+          <div class="deal-image">
+            <img src="assets/images/pizzapics/pizza(2).avif" alt="Meal for Two" />
+          </div>
+        </div>
+        <div class="deal-card">
+          <div class="deal-content">
+            <span class="deal-tag">PARTY PACK</span>
+            <h3>FEED<br />THE CREW</h3>
+            <p>Pizza, sides, and drinks for everyone.</p>
+            <button type="button" class="deal-btn" routerLink="/menu">ORDER NOW</button>
+          </div>
+          <div class="deal-image">
+            <img src="assets/images/pizzapics/pizza(3).avif" alt="Party Pack" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- POPULAR PIZZAS SECTION -->
+    <section class="popular-section">
+      <div class="popular-container">
+
+        <div class="popular-header">
+          <h2>FEATURED PIZZAS</h2>
+
+          <a routerLink="/menu" class="view-all">
+            VIEW ALL PIZZAS
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </a>
+        </div>
+
+        <!-- Loading -->
+        <div
+          class="pizza-loading"
+          *ngIf="isLoading"
+        >
+          <p>Loading pizzas...</p>
+        </div>
+
+        <!-- Error -->
+        <div
+          class="pizza-error"
+          *ngIf="!isLoading && errorMessage"
+        >
+          <p>{{ errorMessage }}</p>
+        </div>
+
+        <!-- Real Firestore Products -->
+        <div
+          class="pizza-grid"
+          *ngIf="!isLoading && !errorMessage"
+        >
+
+          <div
+            class="pizza-card"
+            *ngFor="let product of featuredProducts"
+          >
+
+            <div class="pizza-img-wrap">
+              <img
+                [src]="product.imagePath"
+                [alt]="product.name"
+              />
+            </div>
+
+            <div class="pizza-info">
+
+              <h3>
+                {{ product.name }}
+              </h3>
+
+              <p>
+                {{ product.description }}
+              </p>
+
+              <div class="pizza-price">
+                ₱{{ product.price | number:'1.0-0' }}
+              </div>
+
+              <button
+                type="button"
+                class="add-to-cart-btn"
+              >
+                <ion-icon name="cart-outline"></ion-icon>
+                ADD TO CART
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- No products -->
+        <div
+          class="pizza-error"
+          *ngIf="
+            !isLoading &&
+            !errorMessage &&
+            featuredProducts.length === 0
+          "
+        >
+          <p>No pizzas available.</p>
+        </div>
+
+      </div>
+    </section>
+
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="assets/images/pizzapics/oven2doorlogo.png" alt="Oven2Door Logo" />
+        </div>
+        <p>Fresh pizza. Big flavors. Delivered right to your door.</p>
+        <div class="social-links">
+          <a href="https://www.facebook.com/trixieanne.sarmiento.1" target="_blank" aria-label="Facebook">
+            <ion-icon name="logo-facebook"></ion-icon>
+          </a>
+          <a href="https://www.instagram.com/_tondor/?hl=en" target="_blank" aria-label="Instagram">
+            <ion-icon name="logo-instagram"></ion-icon>
+          </a>
+          <a href="https://www.tiktok.com/@matchafreyp_?lang=en" target="_blank" aria-label="TikTok">
+            <ion-icon name="logo-tiktok"></ion-icon>
+          </a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>QUICK LINKS</h3>
+        <a routerLink="/home">Home</a>
+        <a routerLink="/menu">Menu</a>
+        <a routerLink="/about-us">About Us</a>
+      </div>
+      <div class="footer-column">
+        <h3>OUR MENU</h3>
+        <a routerLink="/menu">Pizza</a>
+        <a routerLink="/menu">Sides</a>
+        <a routerLink="/menu">Drinks</a>
+      </div>
+      <div class="footer-column">
+        <h3>CUSTOMER SERVICE</h3>
+        <a routerLink="/faqs">FAQs</a>
+        <a routerLink="/terms">Terms & Conditions</a>
+        <a routerLink="/privacy">Privacy Policy</a>
+      </div>
+      <div class="footer-column contact-column">
+        <h3>CONTACT US</h3>
+        <p><ion-icon name="location-outline"></ion-icon> Metro Manila, Philippines</p>
+        <p><ion-icon name="call-outline"></ion-icon> +63 912 345 6789</p>
+        <p><ion-icon name="mail-outline"></ion-icon> oven2door@gmail.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Oven2Door. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+</ion-content>
