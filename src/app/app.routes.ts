@@ -45,10 +45,30 @@ export const routes: Routes = [
       },
 
       {
+        path: 'about-us',
+        loadComponent: () =>
+          import('./customer/aboutus/aboutus.page').then(m => m.AboutUsPage)
+      },
+
+      {
+        path: 'faqs',
+        loadComponent: () =>
+          import('./customer/faqs/faqs.page').then(m => m.FaqsPage)
+      },
+
+      {
         path: 'cart',
         loadComponent: () =>
           import('./customer/cart/cart.page').then(
             (m) => m.CartPage
+          )
+      },
+
+      {
+        path: 'checkout',
+        loadComponent: () =>
+          import('./customer/checkout/checkout.page').then(
+            (m) => m.CheckoutPage
           )
       },
 

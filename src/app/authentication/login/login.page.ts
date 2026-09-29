@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -22,9 +22,6 @@ import {
 
 import { Router } from '@angular/router';
 
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebase.config';
-
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -36,7 +33,6 @@ import { AuthService } from '../services/auth.service';
   imports: [
     CommonModule,
     FormsModule,
-
     IonContent,
     IonInput,
     IonButton,
@@ -44,7 +40,7 @@ import { AuthService } from '../services/auth.service';
     IonSpinner
   ]
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
 
   email = '';
   password = '';
@@ -68,30 +64,12 @@ export class LoginPage implements OnInit {
 
   }
 
-  ngOnInit(): void {
-
-    onAuthStateChanged(auth, (user) => {
-
-      // Firebase already has an authenticated user
-      if (user) {
-
-        this.router.navigateByUrl('/home', {
-          replaceUrl: true
-        });
-
-      }
-
-    });
-
-  }
-
   togglePassword(): void {
     this.obscurePassword = !this.obscurePassword;
   }
 
   async submit(): Promise<void> {
 
-    // Prevent submitting empty fields
     if (!this.email.trim()) {
       alert('Please enter your email.');
       return;
@@ -102,7 +80,6 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    // Firebase minimum password length
     if (this.password.length < 6) {
       alert('Password must be at least 6 characters.');
       return;
@@ -122,7 +99,6 @@ export class LoginPage implements OnInit {
         return;
       }
 
-      // Login successful
       await this.router.navigateByUrl('/home', {
         replaceUrl: true
       });

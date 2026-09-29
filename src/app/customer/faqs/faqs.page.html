@@ -1,0 +1,333 @@
+<ion-content [fullscreen]="true" class="faq-page">
+<div class="announcement-bar">
+    <span>🔥 20% OVEN 2 DOOR</span>
+  </div>
+
+
+  <!-- NAVIGATION BAR -->
+  <nav class="main-header">
+    <div class="logo-section">
+
+
+      <button
+        type="button"
+        class="mobile-menu-btn"
+        (click)="toggleMobileMenu()"
+        aria-label="Toggle menu">
+        <ion-icon
+          [name]="isMobileMenuOpen ? 'close-outline' : 'menu-outline'">
+        </ion-icon>
+      </button>
+
+
+      <!-- LOGO -->
+      <div class="logo-container">
+        <a routerLink="/home">
+          <img
+            src="assets/pizzapics/oven2doorlogo.png"
+            alt="Oven2Door Logo"
+            class="brand-logo-img">
+        </a>
+      </div>
+    </div>
+
+
+    <!--DESKTOP NAVIGATION-->
+    <div class="nav-links desktop-only">
+      <a routerLink="/home" class="nav-item">
+        Home
+      </a>
+      <a routerLink="/menu" class="nav-item">
+        Menu
+      </a>
+      <a routerLink="/order-tracking" class="nav-item">
+        Order Tracking
+      </a>
+      <a routerLink="/about-us" class="nav-item">
+        About Us
+      </a>
+      <a routerLink="/faqs" class="nav-item active">
+        FAQS
+      </a>
+    </div>
+
+
+    <!--HEADER ACTIONS-->
+    <div class="header-actions">
+      <!-- SEARCH -->
+      <div class="search-pill desktop-only">
+        <ion-icon
+          name="search-outline"
+          class="search-icon">
+        </ion-icon>
+        <input
+          type="text"
+          placeholder="Search pizza...">
+      </div>
+
+
+      <!-- USER -->
+      <button
+        type="button"
+        class="icon-btn"
+        aria-label="User profile"
+        routerLink="/login">
+        <ion-icon name="person-outline"></ion-icon>
+      </button>
+
+
+      <!-- MOBILE SEARCH TOGGLE -->
+      <button
+        type="button"
+        class="icon-btn mobile-search-toggle-btn"
+        (click)="toggleSearch()"
+        aria-label="Toggle search">
+        <ion-icon name="search-outline"></ion-icon>
+      </button>
+
+
+      <!-- CART -->
+      <button
+        type="button"
+        class="cart-btn"
+        routerLink="/cart">
+        <ion-icon
+          name="cart"
+          class="cart-icon-orange">
+        </ion-icon>
+      </button>
+
+
+      <!-- ORDER NOW -->
+      <button
+        type="button"
+        class="btn-order-now"
+        routerLink="/menu">
+        ORDER NOW
+      </button>
+    </div>
+  </nav>
+
+
+  <!-- MOBILE SEARCH ROW -->
+  <div class="mobile-search-row" *ngIf="isSearchOpen">
+    <div class="search-pill">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input type="text" placeholder="Search for delicious pizza..." autofocus>
+    </div>
+  </div>
+
+
+  <!-- MOBILE DROPDOWN-->
+  <div
+    class="mobile-dropdown"
+    [class.open]="isMobileMenuOpen">
+    <a
+      class="mobile-nav-item"
+      routerLink="/home"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()">
+      HOME
+    </a>
+    <a
+      class="mobile-nav-item"
+      routerLink="/menu"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()">
+      MENU
+    </a>
+    <a
+      class="mobile-nav-item"
+      routerLink="/order-tracking"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()">
+      ORDER TRACKING
+    </a>
+    <a
+      class="mobile-nav-item"
+      routerLink="/about-us"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()">
+      ABOUT US
+    </a>
+    <a
+      class="mobile-nav-item"
+      routerLink="/faqs"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()">
+      FAQS
+    </a>
+    <a
+      class="mobile-nav-item"
+      routerLink="/account"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()">
+      MY ACCOUNT
+    </a>
+    <div class="mobile-action-wrapper">
+      <button
+        type="button"
+        class="btn-order-now mobile-order-btn"
+        routerLink="/menu"
+        (click)="toggleMobileMenu()">
+        ORDER NOW
+      </button>
+    </div>
+  </div>
+
+
+  <!--FAQ HERO-->
+  <section class="page-banner">
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-col
+          size="12"
+          size-md="10"
+          size-lg="8">
+          <div class="banner-container">
+            <span class="sub-title">
+              NEED HELP?
+            </span>
+            <h1>
+              FREQUENTLY ASKED
+              <span>QUESTIONS</span>
+            </h1>
+            <p>
+              Everything you need to know about ordering,
+              delivery, menu options, and payment.
+            </p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </section>
+
+
+  <!--FAQ CONTENT-->
+  <section class="faqs-section">
+    <div class="faqs-container">
+      <div class="faqs-header">
+        <span class="section-label">
+          HELP CENTER
+        </span>
+        <h2>
+          COMMON <span>QUESTIONS</span>
+        </h2>
+        <p>
+          Find quick answers to the most common questions
+          about Oven2Door.
+        </p>
+      </div>
+      <div class="faq-groups">
+        <div
+          class="faq-group"
+          *ngFor="let group of faqGroups">
+          <div class="faq-group-title">
+            <div class="faq-title-icon">
+              <ion-icon
+                [name]="group.icon">
+              </ion-icon>
+            </div>
+            <h3>
+              {{ group.title }}
+            </h3>
+          </div>
+          <div class="faq-list">
+            <details
+              class="faq-item"
+              *ngFor="let item of group.items"
+              [attr.open]="item.open ? '' : null">
+              <summary class="faq-question">
+                <span>
+                  {{ item.question }}
+                </span>
+                <ion-icon
+                  name="chevron-down-outline"
+                  class="faq-icon">
+                </ion-icon>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  {{ item.answer }}
+                </p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!--FOOTER-->
+  <footer id="contact">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="logo">
+          <img
+            src="assets/pizzapics/oven2doorlogo.png"
+            alt="Oven2Door Logo">
+        </div>
+        <p>
+          Fresh pizza. Big flavors.
+          Delivered right to your door.
+        </p>
+        <div class="social-links">
+          <a
+            href="https://www.facebook.com/trixieanne.sarmiento.1"
+            target="_blank"
+            aria-label="Facebook">
+            <ion-icon name="logo-facebook"></ion-icon>
+          </a>
+          <a
+            href="https://www.instagram.com/_tondor/?hl=en"
+            target="_blank"
+            aria-label="Instagram">
+            <ion-icon name="logo-instagram"></ion-icon>
+          </a>
+          <a
+            href="https://www.tiktok.com/@matchafreyp_?lang=en"
+            target="_blank"
+            aria-label="TikTok">
+            <ion-icon name="logo-tiktok"></ion-icon>
+          </a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>QUICK LINKS</h3>
+        <a routerLink="/home">Home</a>
+        <a routerLink="/menu">Menu</a>
+        <a routerLink="/about-us">About Us</a>
+      </div>
+      <div class="footer-column">
+        <h3>OUR MENU</h3>
+        <a routerLink="/menu">Pizza</a>
+        <a routerLink="/menu">Sides</a>
+        <a routerLink="/menu">Drinks</a>
+      </div>
+      <div class="footer-column">
+        <h3>CUSTOMER SERVICE</h3>
+        <a routerLink="/faqs">FAQs</a>
+        <a routerLink="/terms">Terms & Conditions</a>
+        <a routerLink="/privacy">Privacy Policy</a>
+      </div>
+      <div class="footer-column contact-column">
+        <h3>CONTACT US</h3>
+        <p>
+          <ion-icon name="location-outline"></ion-icon> Metro Manila, Philippines
+        </p>
+        <p>
+          <ion-icon name="call-outline"></ion-icon> +63 912 345 6789
+        </p>
+        <p>
+          <ion-icon name="mail-outline"></ion-icon> oven2door@gmail.com
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        © 2026 Oven2Door. All Rights Reserved.
+      </p>
+    </div>
+  </footer>
+</ion-content>
