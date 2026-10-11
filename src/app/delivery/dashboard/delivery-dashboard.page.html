@@ -1,0 +1,227 @@
+<ion-content class="dashboard-page">
+
+  <main class="dashboard-shell">
+
+    <!-- HEADER -->
+    <header>
+      <p>OVEN2DOOR DELIVERY</p>
+
+      <h1>
+        {{ isStaff ? 'Order management' : 'My deliveries' }}
+      </h1>
+
+      <span *ngIf="role">
+        Signed in as {{ role }}
+      </span>
+    </header>
+
+
+    <!-- LOADING -->
+    <div
+      *ngIf="loading"
+      class="state"
+    >
+      Loading deliveries...
+    </div>
+
+
+    <!-- ERROR -->
+    <div
+      *ngIf="error"
+      class="state error"
+    >
+      {{ error }}
+    </div>
+
+
+    <!-- NOTICE -->
+    <div
+      *ngIf="notice"
+      class="state notice"
+    >
+      {{ notice }}
+    </div>
+
+
+    <!-- EMPTY STATE -->
+    <div
+      *ngIf="!loading && !error && orders.length === 0"
+      class="state"
+    >
+      No deliveries are waiting for you.
+    </div>
+
+
+    <!-- ORDERS -->
+    <section
+      class="orders"
+      *ngIf="!loading && orders.length > 0"
+    >
+
+      <article
+        class="delivery-card"
+        *ngFor="let order of orders"
+      >
+
+        <!-- ORDER HEADER -->
+        <div class="card-top">
+
+          <div>
+            <p>
+              {{ order.orderNumber }}
+            </p>
+
+            <h2>
+              {{ order.customer.firstName }}
+              {{ order.customer.lastName }}
+            </h2>
+          </div>
+
+          <span>
+            {{ order.orderStatus.replaceAll('_', ' ') }}
+          </span>
+
+        </div>
+
+
+        <!-- DELIVERY ADDRESS -->
+        <div class="address">
+
+          <ion-icon
+            name="location-outline"
+          ></ion-icon>
+
+          <div>
+            <strong>
+              Delivery address
+            </strong>
+
+            <p>
+              {{ order.deliveryAddress.address }},
+              {{ order.deliveryAddress.barangay }},
+              {{ order.deliveryAddress.city }}
+            </p>
+          </div>
+
+        </div>
+
+
+        <!-- CUSTOMER PHONE -->
+        <div class="customer">
+
+          <ion-icon
+            name="person-outline"
+          ></ion-icon>
+
+          <span>
+            {{ order.customer.phone }}
+          </span>
+
+        </div>
+
+
+        <!-- LAST UPDATED -->
+        <p class="updated">
+          Last updated
+          {{ asDate(order.updatedAt) | date:'short' }}
+        </p>
+
+
+        <!-- RIDER ACTIONS -->
+        <div
+          class="rider-actions"
+          *ngIf="role === 'rider'"
+        >
+
+          <!-- STATUS BUTTON -->
+          <button
+            *ngIf="nextRiderAction(order.orderStatus) as next"
+            type="button"
+            [disabled]="isSaving(order.id)"
+            (click)="performRiderAction(order)"
+          >
+            {{
+              isSaving(order.id)
+                ? 'Updating...'
+                : next.replaceAll('_', ' ')
+            }}
+          </button>
+
+          <!-- GPS BUTTON -->
+          <button
+            *ngIf="
+              sharing(order.id) ||
+              ['rider_assigned', 'picked_up', 'on_the_way'].includes(order.orderStatus)
+            "
+            type="button"
+            class="secondary"
+            (click)="toggleLocation(order)"
+          >
+            <ion-icon name="location-outline"></ion-icon>
+
+            {{
+              sharing(order.id)
+                ? 'Stop GPS'
+                : 'Share live GPS'
+            }}
+          </button>
+
+        </div>
+
+
+        <!-- STAFF / ADMIN ACTIONS -->
+        <div
+          class="staff-actions"
+          *ngIf="isStaff"
+        >
+
+          <!-- STATUS -->
+          <ion-select
+            aria-label="Order status"
+            [ngModel]="order.orderStatus"
+            #selectedStatus
+          >
+
+            <ion-select-option
+              *ngFor="let status of statuses"
+              [value]="status"
+            >
+              {{ status.replaceAll('_', ' ') }}
+            </ion-select-option>
+
+          </ion-select>
+
+
+          <!-- RIDER UID -->
+          <ion-input
+            type="text"
+            placeholder="Rider UID (optional)"
+            [(ngModel)]="riderIds[order.id]"
+          ></ion-input>
+
+
+          <!-- RIDER NAME -->
+          <ion-input
+            type="text"
+            placeholder="Rider display name"
+            [(ngModel)]="riderNames[order.id]"
+          ></ion-input>
+
+
+          <!-- SAVE -->
+          <button
+            type="button"
+            (click)="saveStaffOrder(order, selectedStatus.value)"
+          >
+            Save order
+          </button>
+
+        </div>
+
+      </article>
+
+    </section>
+
+  </main>
+
+</ion-content>

@@ -99,9 +99,38 @@ export class LoginPage {
         return;
       }
 
-      await this.router.navigateByUrl('/home', {
-        replaceUrl: true
-      });
+      // Get the role of the logged-in user
+      const role = await this.authService.getCurrentUserRole();
+
+      console.log('Logged-in user role:', role);
+
+      // Redirect based on role
+      switch (role) {
+
+        case 'rider':
+          await this.router.navigateByUrl(
+            '/delivery-dashboard',
+            {
+              replaceUrl: true
+            }
+          );
+          break;
+
+        case 'staff':
+        case 'admin':
+          window.location.replace('/admin/index.html');
+          return;
+
+        case 'customer':
+        default:
+          await this.router.navigateByUrl(
+            '/home',
+            {
+              replaceUrl: true
+            }
+          );
+          break;
+      }
 
     } catch (error: any) {
 

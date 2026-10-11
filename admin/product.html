@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management - Oven2Door Admin</title>
+  
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Page-Specific Stylesheet -->
+  <link rel="stylesheet" href="product.css">
+</head>
+<body>
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-box">
+        <img src="pizzapics/oven2doorlogo.png" alt="Oven2Door Logo">
+      </div>
+      <div>
+        <h1>Oven2Door</h1>
+        <span>Admin Panel</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="index.html">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="order.html">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Orders</span>
+      </a>
+
+      <a href="product.html" class="active">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <a href="inventory.html">
+        <i class="fa-solid fa-boxes-stacked"></i>
+        <span>Inventory</span>
+      </a>
+
+      <a href="customers.html">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+
+      <a href="sales.html">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>Sales Reports</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      
+
+      <a href="login.html">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Log Out</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <span class="page-label">CATALOG MANAGEMENT</span>
+        <h1>Products</h1>
+        <p>Manage your food items, prices, and catalog status</p>
+      </div>
+      <button class="view-products-btn" id="openAddModalBtn">
+        <i class="fa-solid fa-plus"></i> Add New Product
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="productSearchInput" placeholder="Search product name...">
+      </div>
+      <button class="toolbar-btn" id="filterToggleBtn">
+        <i class="fa-solid fa-filter"></i> Filter
+      </button>
+    </div>
+
+    <!-- Optional Filter Panel -->
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-group">
+        <label>Stock Status</label>
+        <select id="statusFilterSelect">
+          <option value="all">All Statuses</option>
+          <option value="In Stock">In Stock</option>
+          <option value="Low Stock">Low Stock</option>
+          <option value="Out of Stock">Out of Stock</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="productsTable">
+        <thead>
+          <tr>
+            <th class="product-heading">Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <tr>
+            <td>
+              <div class="product-info">
+                <img src="pizzapics/Hawaiianstuffedcrust.png" alt="Hawaiian Pizza" class="product-image">
+                <div>
+                  <div class="product-name">Hawaiian Pizza</div>
+                  <div class="product-price">#P-101</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="category-name">Pizza</div>
+              <div class="subcategory-name">Thin Crust</div>
+            </td>
+            <td>
+              <div class="stock-number">₱350.00</div>
+            </td>
+            <td>
+              <span class="status in-stock">In Stock</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="add-stock-btn edit-product-btn">+ Add Stock</button>
+                <button class="remove-stock-btn delete-product-btn">—</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" id="emptyState">
+        <i class="fa-solid fa-box-open"></i>
+        <h3>No products found</h3>
+        <p>Try adjusting your search query or category filters.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= MODALS ================= -->
+  <div class="modal-overlay" id="modalOverlay"></div>
+
+  <!-- 1. Add New Product Modal -->
+  <div class="stock-modal" id="productModal">
+    <div class="modal-header">
+      <div>
+        <span class="modal-label">PRODUCT DETAILS</span>
+        <h2 id="modalTitle">Add New Product</h2>
+      </div>
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="productForm">
+        <div class="quantity-section" style="margin-top:0;">
+          <label>Product Name</label>
+          <div class="quantity-control" style="padding: 0 15px;">
+            <input type="text" id="modalProdName" placeholder="e.g. Pepperoni Pizza" style="width:100%; border:none; outline:none; font-family:inherit; font-size:15px; background:transparent;" required>
+          </div>
+        </div>
+        <div class="quantity-section">
+          <label>Category</label>
+          <div class="quantity-control" style="padding: 0 15px;">
+            <select id="modalProdCategory" style="width:100%; border:none; outline:none; font-family:inherit; font-size:15px; background:transparent;">
+              <option value="Pizza">Pizza</option>
+              <option value="Side Dish">Side Dish</option>
+              <option value="Drinks">Drinks</option>
+            </select>
+          </div>
+        </div>
+        <div class="quantity-section">
+          <label>Price (₱)</label>
+          <div class="quantity-control" style="padding: 0 15px;">
+            <input type="number" id="modalProdPrice" placeholder="0.00" step="0.01" style="width:100%; border:none; outline:none; font-family:inherit; font-size:15px; background:transparent;" required>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-btn" id="modalCancelBtn">Cancel</button>
+      <button class="save-btn" id="modalSaveBtn">Save Product</button>
+    </div>
+  </div>
+
+  <!-- 2. Stock Adjustment Modal (Matches your image design) -->
+  <div class="stock-modal" id="stockModal">
+    <div class="modal-header">
+      <div>
+        <span class="modal-label">INVENTORY ADJUSTMENT</span>
+        <h2>Add Stocks</h2>
+      </div>
+      <button class="modal-close" id="stockModalCloseBtn">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- PRODUCT PREVIEW -->
+      <div class="modal-product">
+        <img id="stockModalImg" src="" alt="Product">
+        <div class="modal-product-info">
+          <h3 id="stockModalName">Product Name</h3>
+          <p id="stockModalCategory">Category • Subcategory</p>
+          <div class="modal-current-stock">
+            Current stocks: <strong id="stockModalCurrentCount">35</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUANTITY COUNTER -->
+      <div class="quantity-section">
+        <label>Quantity</label>
+        <div class="quantity-control quantity-stepper">
+          <button type="button" id="stockMinusBtn"><i class="fa-solid fa-minus"></i></button>
+          <span id="stockQuantityDisplay">0</span>
+          <button type="button" id="stockPlusBtn"><i class="fa-solid fa-plus"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-btn" id="stockCancelBtn">Cancel</button>
+      <button class="save-btn" id="stockSaveBtn">Save</button>
+    </div>
+  </div>
+
+  <script src="product.js"></script>
+</body>
+</html>

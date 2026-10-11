@@ -27,12 +27,16 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-                "src/_redirects",
+              "src/_redirects",
               {
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
-                 
+              },
+              {
+                "glob": "**/*",
+                "input": "admin",
+                "output": "admin"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],

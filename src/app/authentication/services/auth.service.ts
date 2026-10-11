@@ -11,6 +11,7 @@ import {
 import {
   doc,
   setDoc,
+  getDoc,
   serverTimestamp
 } from 'firebase/firestore';
 
@@ -177,6 +178,29 @@ export class AuthService {
         message: error?.message || 'Login failed'
       };
     }
+  }
+
+  async getCurrentUserRole(): Promise<string | null> {
+
+    const user = auth.currentUser;
+
+    if (!user) {
+      return null;
+    }
+
+    const userDoc = await getDoc(
+      doc(db, 'users', user.uid)
+    );
+
+    if (!userDoc.exists()) {
+      return null;
+    }
+
+    const data = userDoc.data();
+
+    return typeof data['role'] === 'string'
+      ? data['role']
+      : null;
   }
 
   async logout(): Promise<void> {

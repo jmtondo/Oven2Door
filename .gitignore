@@ -71,3 +71,16 @@ Thumbs.db
 
 backend/firebase-service-account.json
 backend/firebase-service-account.json
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Firebase Functions
+/functions/node_modules/
+/functions/lib/
+/functions/.env.local
+
+# Backend credentials
+/backend/firebase-service-account.json
