@@ -3,59 +3,6 @@
     <span>🔥 20% OVEN 2 DOOR</span>
   </div>
 
-
-  <!-- NAVIGATION BAR -->
-  <nav class="main-header">
-    <div class="logo-section">
-      <button type="button" class="mobile-menu-btn" (click)="toggleMobileMenu()" aria-label="Toggle menu">
-        <ion-icon [name]="isMobileMenuOpen ? 'close-outline' : 'menu-outline'"></ion-icon>
-      </button>
-      <div class="logo-container">
-        <a routerLink="/home" aria-label="Go to homepage">
-          <img src="assets/images/pizzapics/oven2doorlogo.png" alt="Oven2Door Logo" class="brand-logo-img" />
-        </a>
-      </div>
-    </div>
-
-
-    <div class="nav-links desktop-only">
-      <a routerLink="/home" class="nav-item">Home</a>
-      <a routerLink="/menu" class="nav-item">Menu</a>
-      <a routerLink="/order-tracking" class="nav-item">Order Tracking</a>
-      <a routerLink="/about-us" class="nav-item active">About Us</a>
-      <a routerLink="/faqs" class="nav-item">FAQs</a>
-    </div>
-
-
-    <div class="header-actions">
-      <div class="search-pill desktop-only">
-        <ion-icon name="search-outline" class="search-icon"></ion-icon>
-        <input type="text" placeholder="Search pizza..." aria-label="Search" />
-      </div>
-
-
-      <!-- Mobile SearchButton -->
-      <button type="button" class="icon-btn mobile-search-toggle-btn" (click)="toggleSearch()" aria-label="Toggle search">
-        <ion-icon name="search-outline"></ion-icon>
-      </button>
-
-
-      <a routerLink="/login" class="icon-btn desktop-only" aria-label="Login" title="Login">
-        <ion-icon name="person-outline"></ion-icon>
-      </a>
-
-
-      <a routerLink="/cart" class="cart-btn">
-        <ion-icon name="cart-outline" class="cart-icon-orange"></ion-icon>
-        <span class="desktop-only">Cart</span>
-      </a>
-
-
-      <a routerLink="/menu" class="btn-order-now desktop-only">ORDER NOW</a>
-    </div>
-  </nav>
-
-
   <!-- MOBILE SEARCH ROW -->
   <div class="mobile-search-row" *ngIf="isSearchOpen">
     <div class="search-pill">
