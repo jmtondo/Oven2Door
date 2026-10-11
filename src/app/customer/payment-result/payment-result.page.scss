@@ -1,0 +1,46 @@
+.result-container {
+  max-width: 480px;
+  margin: 12vh auto 0;
+  padding: 24px;
+  text-align: center;
+}
+
+.result-icon {
+  font-size: 76px;
+  margin-bottom: 16px;
+}
+
+.success {
+  color: #2e9d62;
+}
+
+.failed {
+  color: #d64545;
+}
+
+.cancelled {
+  color: #d69a26;
+}
+
+h1 {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 20px 0 12px;
+}
+
+p {
+  line-height: 1.6;
+  color: var(--ion-color-medium);
+}
+
+.order-number {
+  margin-top: 24px;
+  overflow-wrap: anywhere;
+}
+
+.notice {
+  font-size: 13px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--ion-color-light);
+}

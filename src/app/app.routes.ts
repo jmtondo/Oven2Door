@@ -71,6 +71,19 @@ export const routes: Routes = [
             (m) => m.CheckoutPage
           )
       },
+      
+      {
+        path: 'payment-result',
+        loadComponent: () =>
+          import('./customer/payment-result/payment-result.page').then(
+            (m) => m.PaymentResultPage
+          )
+      },
+
+      {
+        path: 'order-tracking',
+        loadComponent: () => import('./customer/order-tracking/order-tracking.page').then((m) => m.OrderTrackingPage)
+      },
 
       {
         path: '',
@@ -79,10 +92,18 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'delivery-dashboard',
+    loadComponent: () => import('./delivery/dashboard/delivery-dashboard.page').then((m) => m.DeliveryDashboardPage)
+  },
 
   // FALLBACK
   {
     path: '**',
     redirectTo: 'login'
+  },
+  {
+    path: 'payment-result',
+    loadComponent: () => import('./customer/payment-result/payment-result.page').then( m => m.PaymentResultPage)
   }
 ];
