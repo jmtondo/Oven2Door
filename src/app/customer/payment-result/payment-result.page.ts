@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 
@@ -13,7 +9,7 @@ import {
   IonToolbar,
   IonIcon,
   IonButton,
-  IonSpinner
+  IonSpinner,
 } from '@ionic/angular';
 
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +21,7 @@ import {
   closeCircleOutline,
   timeOutline,
   homeOutline,
-  bicycleOutline
+  bicycleOutline,
 } from 'ionicons/icons';
 
 import { auth } from '../../firebase.config';
@@ -34,6 +30,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 type PaymentResultStatus =
   | 'verifying'
   | 'success'
+  | 'pending'
   | 'failed'
   | 'cancelled';
 
@@ -50,11 +47,10 @@ type PaymentResultStatus =
     IonToolbar,
     IonIcon,
     IonButton,
-    IonSpinner
-  ]
+    IonSpinner,
+  ],
 })
 export class PaymentResultPage implements OnInit {
-
   status: PaymentResultStatus = 'verifying';
 
   message = 'Checking your payment with Maya...';
@@ -67,39 +63,28 @@ export class PaymentResultPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     addIcons({
       checkmarkCircleOutline,
       closeCircleOutline,
       timeOutline,
       homeOutline,
-      bicycleOutline
+      bicycleOutline,
     });
   }
 
   async ngOnInit(): Promise<void> {
     const params = this.route.snapshot.queryParamMap;
-    const result = params.get('result');
 
-    this.orderNumber =
-      sessionStorage.getItem('pendingMayaOrderNumber') || '';
+    this.orderNumber = sessionStorage.getItem('pendingMayaOrderNumber') || '';
 
-    if (result === 'cancel') {
-      this.status = 'cancelled';
-      this.message =
-        'Checkout was cancelled. Please check your order status before trying again.';
-      this.cdr.detectChanges();
-      return;
-    }
+    // Always verify the actual payment status with
+    // the backend, regardless of the redirect result.
+    this.status = 'verifying';
+    this.message = 'Checking your payment status with Maya...';
 
-    if (result === 'failure') {
-      this.status = 'failed';
-      this.message =
-        'Maya reported a checkout failure. Check your order status before trying again.';
-      this.cdr.detectChanges();
-      return;
-    }
+    this.cdr.detectChanges();
 
     await this.verifyPayment();
   }
@@ -114,18 +99,14 @@ export class PaymentResultPage implements OnInit {
         },
         (error) => {
           unsubscribe();
-          console.error(
-            'Firebase authentication check failed:',
-            error
-          );
+          console.error('Firebase authentication check failed:', error);
           resolve(null);
-        }
+        },
       );
     });
   }
 
   async verifyPayment(): Promise<void> {
-
     this.status = 'verifying';
     this.message = 'Checking your payment with Maya...';
 
@@ -163,11 +144,11 @@ export class PaymentResultPage implements OnInit {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${idToken}`
+            Authorization: `Bearer ${idToken}`,
           },
           body: JSON.stringify({ orderId }),
-          signal: AbortSignal.timeout(15000)
-        }
+          signal: AbortSignal.timeout(15000),
+        },
       );
 
       const data = await response.json().catch(() => null);
@@ -175,13 +156,12 @@ export class PaymentResultPage implements OnInit {
       if (!response.ok) {
         throw new Error(
           data?.message ||
-          data?.error ||
-          `Payment verification failed (HTTP ${response.status}).`
+            data?.error ||
+            `Payment verification failed (HTTP ${response.status}).`,
         );
       }
 
       if (data?.status === 'paid') {
-
         // Preserve the order ID for the tracking button.
         this.verifiedOrderId = orderId;
 
@@ -198,7 +178,7 @@ export class PaymentResultPage implements OnInit {
         console.log('Maya payment verified:', {
           status: this.status,
           orderId: this.verifiedOrderId,
-          orderNumber: this.orderNumber
+          orderNumber: this.orderNumber,
         });
 
         // Clear checkout data only after server confirmation.
@@ -210,17 +190,16 @@ export class PaymentResultPage implements OnInit {
         return;
       }
 
-      this.status = 'failed';
+      this.status = 'pending';
 
       this.message =
         data?.message ||
-        'Maya has not confirmed your payment yet. Please check your order history before trying again.';
-
+        'Your payment has not been confirmed yet. ' +
+          'Please check your order history before attempting another payment.';
     } catch (error) {
-
       console.error('Maya payment verification failed:', error);
 
-      this.status = 'failed';
+      this.status = 'pending';
 
       this.message =
         error instanceof Error && error.name === 'TimeoutError'
@@ -228,7 +207,6 @@ export class PaymentResultPage implements OnInit {
           : error instanceof Error
             ? error.message
             : 'Payment verification is temporarily unavailable.';
-
     } finally {
       this.cdr.detectChanges();
     }
@@ -242,8 +220,8 @@ export class PaymentResultPage implements OnInit {
 
     this.router.navigate(['/order-tracking'], {
       queryParams: {
-        orderId: this.verifiedOrderId
-      }
+        orderId: this.verifiedOrderId,
+      },
     });
   }
 

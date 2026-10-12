@@ -537,6 +537,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // STEP 5.9.14.3 - UPDATE EXISTING PRODUCT
   // ==========================================
 
+  // ==========================================
+  // STEP 5.9.16.1 - PRESERVE PRODUCT INVENTORY
+  // ==========================================
+
   async function updateProductInFirestore(documentId, productData) {
     if (!documentId) {
       throw new Error("Missing product document ID.");
@@ -544,17 +548,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const productRef = doc(db, "products", documentId);
 
-    await updateDoc(productRef, {
-      productName: productData.productName,
-      categoryId: productData.categoryId,
-      categoryName: productData.categoryName,
-      price: productData.price,
-      description: productData.description,
-      imagePath: productData.imagePath,
-      sizes: productData.sizes,
-      crusts: productData.crusts,
-      toppings: productData.toppings,
-      updatedAt: serverTimestamp(),
+    await runTransaction(db, async (transaction) => {
+      // Read the latest product data inside the transaction
+      const productSnapshot = await transaction.get(productRef);
+
+      if (!productSnapshot.exists()) {
+        throw new Error("Product no longer exists.");
+      }
+
+      const existingProduct = productSnapshot.data();
+
+      const existingSizes = Array.isArray(existingProduct.sizes)
+        ? existingProduct.sizes
+        : [];
+
+      // Preserve stock for existing sizes.
+      // New sizes start with zero stock.
+      const updatedSizes = productData.sizes.map((size) => {
+        const existingSize = existingSizes.find(
+          (item) => Number(item.id) === Number(size.id),
+        );
+
+        const existingStock = existingSize?.stockQuantity;
+
+        const stockQuantity =
+          Number.isSafeInteger(existingStock) && existingStock >= 0
+            ? existingStock
+            : 0;
+
+        return {
+          ...size,
+          stockQuantity,
+        };
+      });
+
+      // Update product information while preserving inventory
+      transaction.update(productRef, {
+        productName: productData.productName,
+        categoryId: productData.categoryId,
+        categoryName: productData.categoryName,
+        price: productData.price,
+        description: productData.description,
+        imagePath: productData.imagePath,
+        sizes: updatedSizes,
+        crusts: productData.crusts,
+        toppings: productData.toppings,
+        updatedAt: serverTimestamp(),
+      });
     });
   }
 

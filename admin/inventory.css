@@ -1,1401 +1,1151 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
-
 
 :root {
+  --dark-red: #8c0000;
+  --harvest-gold: #cd8417;
+  --sun-glow: #ffc917;
+  --lemon-chiffon: #faf3cd;
+  --black: #050505;
 
-    --dark-red: #8C0000;
-    --harvest-gold: #CD8417;
-    --sun-glow: #FFC917;
-    --lemon-chiffon: #FAF3CD;
-    --black: #050505;
+  --white: #ffffff;
+  --background: #f6f6f4;
+  --border: #e3e3df;
 
-    --white: #ffffff;
-    --background: #f6f6f4;
-    --border: #e3e3df;
+  --gray: #707070;
+  --light-gray: #f7f7f5;
 
-    --gray: #707070;
-    --light-gray: #f7f7f5;
+  --green: #07805f;
+  --light-green: #e7f5f0;
 
-    --green: #07805f;
-    --light-green: #e7f5f0;
+  --orange: #b86f00;
+  --light-orange: #fff1d8;
 
-    --orange: #b86f00;
-    --light-orange: #fff1d8;
-
-    --red: #b21f18;
-    --light-red: #fae7e5;
+  --red: #b21f18;
+  --light-red: #fae7e5;
 }
-
 
 body {
+  margin: 0;
 
-    margin: 0;
+  font-family: "DM Sans", sans-serif;
 
-    font-family: "DM Sans", sans-serif;
+  background: var(--background);
 
-    background: var(--background);
-
-    color: var(--black);
-
+  color: var(--black);
 }
-
-
 
 /* =====================================================
    SIDEBAR
 ===================================================== */
 
 .sidebar {
+  position: fixed;
 
-    position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
 
-    top: 0;
-    left: 0;
-    bottom: 0;
+  width: 235px;
 
-    width: 235px;
+  background: var(--dark-red);
 
-    background: var(--dark-red);
+  color: white;
 
-    color: white;
+  padding: 25px 17px;
 
-    padding: 25px 17px;
+  display: flex;
 
-    display: flex;
+  flex-direction: column;
 
-    flex-direction: column;
-
-    z-index: 50;
-
+  z-index: 50;
 }
-
 
 .logo {
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 11px;
 
-    gap: 11px;
-
-    padding: 5px 9px 35px;
+  padding: 5px 9px 35px;
 }
-
 
 .logo-box {
+  width: 42px;
+  height: 42px;
 
-    width: 42px;
-    height: 42px;
+  background: var(--sun-glow);
 
-    background: var(--sun-glow);
+  border-radius: 10px;
 
-    border-radius: 10px;
+  display: flex;
 
-    display: flex;
+  align-items: center;
+  justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+  overflow: hidden;
 
-    overflow: hidden;
-
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 .logo-box img {
+  width: 34px;
+  height: 34px;
 
-    width: 34px;
-    height: 34px;
-
-    object-fit: contain;
+  object-fit: contain;
 }
-
 
 .logo h1 {
+  margin: 0;
 
-    margin: 0;
+  font-family: Oswald, sans-serif;
 
-    font-family: Oswald, sans-serif;
-
-    font-size: 23px;
+  font-size: 23px;
 }
-
 
 .logo span {
+  font-size: 11px;
 
-    font-size: 11px;
-
-    opacity: .7;
+  opacity: 0.7;
 }
-
 
 .sidebar-nav {
+  display: flex;
 
-    display: flex;
+  flex-direction: column;
 
-    flex-direction: column;
-
-    gap: 5px;
-
+  gap: 5px;
 }
-
 
 .sidebar a {
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 13px;
 
-    gap: 13px;
+  text-decoration: none;
 
-    text-decoration: none;
+  color: rgba(255, 255, 255, 0.82);
 
-    color: rgba(255,255,255,.82);
+  padding: 12px 14px;
 
-    padding: 12px 14px;
+  border-radius: 8px;
 
-    border-radius: 8px;
+  font-size: 14px;
 
-    font-size: 14px;
-
-    transition: .2s;
-
+  transition: 0.2s;
 }
-
 
 .sidebar a i {
+  width: 20px;
 
-    width: 20px;
-
-    text-align: center;
-
+  text-align: center;
 }
-
 
 .sidebar a:hover {
+  background: rgba(255, 255, 255, 0.1);
 
-    background: rgba(255,255,255,.1);
-
-    color: white;
-
+  color: white;
 }
-
 
 .sidebar a.active {
+  background: var(--sun-glow);
 
-    background: var(--sun-glow);
+  color: var(--dark-red);
 
-    color: var(--dark-red);
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .sidebar-bottom {
+  margin-top: auto;
 
-    margin-top: auto;
+  padding-top: 15px;
 
-    padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 
-    border-top: 1px solid rgba(255,255,255,.15);
+  display: flex;
 
-    display: flex;
+  flex-direction: column;
 
-    flex-direction: column;
-
-    gap: 5px;
-
+  gap: 5px;
 }
-
-
 
 /* =====================================================
    MAIN
 ===================================================== */
 
 .main-content {
+  margin-left: 235px;
 
-    margin-left: 235px;
+  padding: 32px;
 
-    padding: 32px;
-
-    min-height: 100vh;
-
+  min-height: 100vh;
 }
-
 
 .page-header {
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  justify-content: space-between;
 
-    justify-content: space-between;
-
-    margin-bottom: 25px;
-
+  margin-bottom: 25px;
 }
-
 
 .page-label {
+  font-size: 10px;
 
-    font-size: 10px;
+  font-weight: 700;
 
-    font-weight: 700;
+  letter-spacing: 1.6px;
 
-    letter-spacing: 1.6px;
-
-    color: var(--harvest-gold);
-
+  color: var(--harvest-gold);
 }
-
 
 .page-header h1 {
+  margin: 5px 0 4px;
 
-    margin: 5px 0 4px;
-
-    font-size: 30px;
-
+  font-size: 30px;
 }
-
 
 .page-header p {
+  margin: 0;
 
-    margin: 0;
+  color: var(--gray);
 
-    color: var(--gray);
-
-    font-size: 14px;
-
+  font-size: 14px;
 }
-
 
 .view-products-btn {
+  border: none;
 
-    border: none;
+  background: var(--green);
 
-    background: var(--green);
+  color: white;
 
-    color: white;
+  padding: 13px 19px;
 
-    padding: 13px 19px;
+  border-radius: 7px;
 
-    border-radius: 7px;
+  font-weight: 700;
 
-    font-weight: 700;
-
-    cursor: pointer;
-
+  cursor: pointer;
 }
-
 
 .view-products-btn:hover {
-
-    background: #066c51;
-
+  background: #066c51;
 }
-
-
 
 /* =====================================================
    INVENTORY CARD
 ===================================================== */
 
 .inventory-card {
+  background: white;
 
-    background: white;
+  border: 1px solid var(--border);
 
-    border: 1px solid var(--border);
+  border-radius: 12px;
 
-    border-radius: 12px;
+  overflow: hidden;
 
-    overflow: hidden;
-
-    box-shadow: 0 3px 12px rgba(0,0,0,.035);
-
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.035);
 }
-
-
 
 /* =====================================================
    TOP
 ===================================================== */
 
 .inventory-top {
+  height: 74px;
 
-    height: 74px;
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  justify-content: space-between;
 
-    justify-content: space-between;
-
-    border-bottom: 1px solid var(--border);
-
+  border-bottom: 1px solid var(--border);
 }
-
 
 .category-tabs {
+  height: 100%;
 
-    height: 100%;
+  display: flex;
 
-    display: flex;
+  align-items: stretch;
 
-    align-items: stretch;
-
-    padding-left: 15px;
-
+  padding-left: 15px;
 }
-
 
 .category-tab {
+  position: relative;
 
-    position: relative;
+  min-width: 90px;
 
-    min-width: 90px;
+  padding: 0 18px;
 
-    padding: 0 18px;
+  border: none;
 
-    border: none;
+  background: transparent;
 
-    background: transparent;
+  color: #666;
 
-    color: #666;
+  font-family: inherit;
 
-    font-family: inherit;
+  font-size: 14px;
 
-    font-size: 14px;
-
-    cursor: pointer;
-
+  cursor: pointer;
 }
-
 
 .category-tab.active {
+  color: var(--black);
 
-    color: var(--black);
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .category-tab.active::after {
+  content: "";
 
-    content: "";
+  position: absolute;
 
-    position: absolute;
+  bottom: 0;
 
-    bottom: 0;
+  left: 13px;
+  right: 13px;
 
-    left: 13px;
-    right: 13px;
+  height: 4px;
 
-    height: 4px;
+  background: var(--harvest-gold);
 
-    background: var(--harvest-gold);
-
-    border-radius: 5px 5px 0 0;
-
+  border-radius: 5px 5px 0 0;
 }
-
 
 .store-name {
+  height: 100%;
 
-    height: 100%;
+  min-width: 250px;
 
-    min-width: 250px;
+  border-left: 1px solid var(--border);
 
-    border-left: 1px solid var(--border);
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 10px;
 
-    gap: 10px;
+  padding: 0 24px;
 
-    padding: 0 24px;
+  font-size: 14px;
 
-    font-size: 14px;
-
-    font-weight: 600;
-
+  font-weight: 600;
 }
-
 
 .store-name i {
-
-    color: #666;
-
+  color: #666;
 }
-
-
 
 /* =====================================================
    TOOLBAR
 ===================================================== */
 
 .toolbar {
+  display: flex;
 
-    display: flex;
+  gap: 10px;
 
-    gap: 10px;
-
-    padding: 21px;
-
+  padding: 21px;
 }
-
 
 .search-box {
+  height: 50px;
 
-    height: 50px;
+  flex: 1;
 
-    flex: 1;
+  border: 1px solid #c9c9c5;
 
-    border: 1px solid #c9c9c5;
+  border-radius: 7px;
 
-    border-radius: 7px;
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 11px;
 
-    gap: 11px;
-
-    padding: 0 15px;
-
+  padding: 0 15px;
 }
-
 
 .search-box i {
-
-    color: #777;
-
+  color: #777;
 }
-
 
 .search-box input {
+  width: 100%;
 
-    width: 100%;
+  border: none;
 
-    border: none;
+  outline: none;
 
-    outline: none;
+  font-family: inherit;
 
-    font-family: inherit;
-
-    font-size: 15px;
-
+  font-size: 15px;
 }
-
 
 .toolbar-btn {
+  height: 50px;
 
-    height: 50px;
+  min-width: 105px;
 
-    min-width: 105px;
+  border: 1px solid #c9c9c5;
 
-    border: 1px solid #c9c9c5;
+  background: white;
 
-    background: white;
+  border-radius: 7px;
 
-    border-radius: 7px;
+  font-family: inherit;
 
-    font-family: inherit;
+  font-size: 14px;
 
-    font-size: 14px;
+  font-weight: 600;
 
-    font-weight: 600;
-
-    cursor: pointer;
-
+  cursor: pointer;
 }
-
 
 .toolbar-btn:hover {
-
-    background: var(--light-gray);
-
+  background: var(--light-gray);
 }
-
-
 
 /* =====================================================
    FILTER
 ===================================================== */
 
 .filter-panel {
+  display: none;
 
-    display: none;
+  gap: 20px;
 
-    gap: 20px;
-
-    padding: 0 21px 20px;
-
+  padding: 0 21px 20px;
 }
-
 
 .filter-panel.show {
-
-    display: flex;
-
+  display: flex;
 }
-
 
 .filter-group label {
+  display: block;
 
-    display: block;
+  margin-bottom: 6px;
 
-    margin-bottom: 6px;
+  font-size: 12px;
 
-    font-size: 12px;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .filter-group select {
+  min-width: 180px;
 
-    min-width: 180px;
+  padding: 9px 11px;
 
-    padding: 9px 11px;
+  border: 1px solid #ccc;
 
-    border: 1px solid #ccc;
+  border-radius: 6px;
 
-    border-radius: 6px;
+  background: white;
 
-    background: white;
-
-    font-family: inherit;
-
+  font-family: inherit;
 }
-
-
 
 /* =====================================================
    TABLE
 ===================================================== */
 
 .table-wrapper {
+  width: 100%;
 
-    width: 100%;
-
-    overflow-x: auto;
-
+  overflow-x: auto;
 }
-
 
 table {
+  width: 100%;
 
-    width: 100%;
-
-    border-collapse: collapse;
-
+  border-collapse: collapse;
 }
-
 
 thead {
-
-    background: #fafafa;
-
+  background: #fafafa;
 }
-
 
 th {
+  padding: 15px 20px;
 
-    padding: 15px 20px;
+  text-align: left;
 
-    text-align: left;
+  border-top: 1px solid var(--border);
 
-    border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 
-    border-bottom: 1px solid var(--border);
+  color: #6b6b6b;
 
-    color: #6b6b6b;
+  font-size: 11px;
 
-    font-size: 11px;
+  letter-spacing: 0.7px;
 
-    letter-spacing: .7px;
-
-    white-space: nowrap;
-
+  white-space: nowrap;
 }
-
 
 .product-heading {
-
-    width: 35%;
-
+  width: 35%;
 }
-
 
 td {
+  padding: 15px 20px;
 
-    padding: 15px 20px;
+  border-bottom: 1px solid var(--border);
 
-    border-bottom: 1px solid var(--border);
-
-    vertical-align: middle;
-
+  vertical-align: middle;
 }
-
-
 
 /* =====================================================
    PRODUCT
 ===================================================== */
 
 .product-info {
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
-
-    gap: 15px;
-
+  gap: 15px;
 }
-
 
 .product-image {
+  width: 65px;
+  height: 65px;
 
-    width: 65px;
-    height: 65px;
+  object-fit: contain;
 
-    object-fit: contain;
+  background: var(--lemon-chiffon);
 
-    background: var(--lemon-chiffon);
+  border-radius: 8px;
 
-    border-radius: 8px;
-
-    padding: 4px;
-
+  padding: 4px;
 }
-
 
 .product-name {
+  font-size: 15px;
 
-    font-size: 15px;
+  font-weight: 700;
 
-    font-weight: 700;
-
-    margin-bottom: 4px;
-
+  margin-bottom: 4px;
 }
-
 
 .product-price {
+  font-size: 12px;
 
-    font-size: 12px;
-
-    color: #888;
-
+  color: #888;
 }
-
-
 
 /* =====================================================
    CATEGORY
 ===================================================== */
 
 .category-name {
+  font-size: 14px;
 
-    font-size: 14px;
-
-    font-weight: 600;
-
+  font-weight: 600;
 }
-
 
 .subcategory-name {
+  margin-top: 3px;
 
-    margin-top: 3px;
+  color: #888;
 
-    color: #888;
-
-    font-size: 12px;
-
+  font-size: 12px;
 }
-
-
 
 /* =====================================================
    STOCK
 ===================================================== */
 
 .stock-number {
+  font-size: 18px;
 
-    font-size: 18px;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
-
 
 /* =====================================================
    STATUS
 ===================================================== */
 
 .status {
+  display: inline-block;
 
-    display: inline-block;
+  padding: 6px 10px;
 
-    padding: 6px 10px;
+  border-radius: 20px;
 
-    border-radius: 20px;
+  font-size: 11px;
 
-    font-size: 11px;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .status.in-stock {
+  color: var(--green);
 
-    color: var(--green);
-
-    background: var(--light-green);
-
+  background: var(--light-green);
 }
-
 
 .status.low-stock {
+  color: var(--orange);
 
-    color: var(--orange);
-
-    background: var(--light-orange);
-
+  background: var(--light-orange);
 }
-
 
 .status.out-stock {
+  color: var(--red);
 
-    color: var(--red);
-
-    background: var(--light-red);
-
+  background: var(--light-red);
 }
-
-
 
 /* =====================================================
    ACTIONS
 ===================================================== */
 
 .action-buttons {
+  display: flex;
 
-    display: flex;
-
-    gap: 7px;
-
+  gap: 7px;
 }
-
 
 .add-stock-btn,
 .remove-stock-btn {
+  border: none;
 
-    border: none;
+  border-radius: 6px;
 
-    border-radius: 6px;
+  padding: 9px 12px;
 
-    padding: 9px 12px;
+  font-family: inherit;
 
-    font-family: inherit;
+  font-size: 12px;
 
-    font-size: 12px;
+  font-weight: 700;
 
-    font-weight: 700;
+  cursor: pointer;
 
-    cursor: pointer;
-
-    white-space: nowrap;
-
+  white-space: nowrap;
 }
-
 
 .add-stock-btn {
+  background: var(--green);
 
-    background: var(--green);
-
-    color: white;
-
+  color: white;
 }
-
 
 .add-stock-btn:hover {
-
-    background: #066c51;
-
+  background: #066c51;
 }
-
 
 .remove-stock-btn {
+  background: var(--light-red);
 
-    background: var(--light-red);
-
-    color: var(--dark-red);
-
+  color: var(--dark-red);
 }
-
 
 .remove-stock-btn:hover {
-
-    background: #f5d5d2;
-
+  background: #f5d5d2;
 }
-
-
 
 /* =====================================================
    EMPTY STATE
 ===================================================== */
 
 .empty-state {
+  display: none;
 
-    display: none;
+  text-align: center;
 
-    text-align: center;
-
-    padding: 65px 20px;
-
+  padding: 65px 20px;
 }
-
 
 .empty-state i {
+  font-size: 38px;
 
-    font-size: 38px;
-
-    color: #aaa;
-
+  color: #aaa;
 }
-
 
 .empty-state h3 {
-
-    margin: 12px 0 5px;
-
+  margin: 12px 0 5px;
 }
-
 
 .empty-state p {
+  margin: 0;
 
-    margin: 0;
-
-    color: var(--gray);
-
+  color: var(--gray);
 }
-
-
 
 /* =====================================================
    MODAL OVERLAY
 ===================================================== */
 
 .modal-overlay {
+  display: none;
 
-    display: none;
+  position: fixed;
 
-    position: fixed;
+  inset: 0;
 
-    inset: 0;
+  background: rgba(0, 0, 0, 0.45);
 
-    background: rgba(0,0,0,.45);
-
-    z-index: 100;
-
+  z-index: 100;
 }
-
 
 .modal-overlay.show {
-
-    display: block;
-
+  display: block;
 }
-
-
 
 /* =====================================================
    STOCK MODAL
 ===================================================== */
 
 .stock-modal {
+  display: none;
 
-    display: none;
+  position: fixed;
 
-    position: fixed;
+  width: 440px;
 
-    width: 440px;
+  max-width: calc(100% - 30px);
 
-    max-width: calc(100% - 30px);
+  left: 50%;
+  top: 50%;
 
-    left: 50%;
-    top: 50%;
+  transform: translate(-50%, -50%);
 
-    transform: translate(-50%, -50%);
+  background: white;
 
-    background: white;
+  border-radius: 12px;
 
-    border-radius: 12px;
+  overflow: hidden;
 
-    overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
-    box-shadow: 0 20px 60px rgba(0,0,0,.25);
-
-    z-index: 101;
-
+  z-index: 101;
 }
-
 
 .stock-modal.show {
-
-    display: block;
-
+  display: block;
 }
-
-
 
 /* =====================================================
    MODAL HEADER
 ===================================================== */
 
 .modal-header {
+  display: flex;
 
-    display: flex;
+  justify-content: space-between;
 
-    justify-content: space-between;
+  align-items: flex-start;
 
-    align-items: flex-start;
+  padding: 22px 24px;
 
-    padding: 22px 24px;
-
-    border-bottom: 1px solid var(--border);
-
+  border-bottom: 1px solid var(--border);
 }
-
 
 .modal-label {
+  display: block;
 
-    display: block;
+  margin-bottom: 4px;
 
-    margin-bottom: 4px;
+  color: var(--harvest-gold);
 
-    color: var(--harvest-gold);
+  font-size: 9px;
 
-    font-size: 9px;
+  font-weight: 700;
 
-    font-weight: 700;
-
-    letter-spacing: 1.4px;
-
+  letter-spacing: 1.4px;
 }
-
 
 .modal-header h2 {
+  margin: 0;
 
-    margin: 0;
-
-    font-size: 21px;
-
+  font-size: 21px;
 }
-
 
 .modal-close {
+  border: none;
 
-    border: none;
+  background: transparent;
 
-    background: transparent;
+  color: #666;
 
-    color: #666;
+  font-size: 21px;
 
-    font-size: 21px;
-
-    cursor: pointer;
-
+  cursor: pointer;
 }
-
-
 
 /* =====================================================
    MODAL BODY
 ===================================================== */
 
 .modal-body {
-
-    padding: 24px;
-
+  padding: 24px;
 }
-
 
 .modal-product {
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 17px;
 
-    gap: 17px;
+  padding-bottom: 23px;
 
-    padding-bottom: 23px;
-
-    border-bottom: 1px solid var(--border);
-
+  border-bottom: 1px solid var(--border);
 }
-
 
 .modal-product img {
+  width: 90px;
+  height: 90px;
 
-    width: 90px;
-    height: 90px;
+  object-fit: contain;
 
-    object-fit: contain;
+  padding: 5px;
 
-    padding: 5px;
+  border-radius: 9px;
 
-    border-radius: 9px;
-
-    background: var(--lemon-chiffon);
-
+  background: var(--lemon-chiffon);
 }
-
 
 .modal-product-info h3 {
+  margin: 0 0 5px;
 
-    margin: 0 0 5px;
-
-    font-size: 18px;
-
+  font-size: 18px;
 }
-
 
 .modal-product-info p {
+  margin: 0 0 10px;
 
-    margin: 0 0 10px;
+  color: #777;
 
-    color: #777;
-
-    font-size: 12px;
-
+  font-size: 12px;
 }
-
 
 .modal-current-stock {
+  font-size: 12px;
 
-    font-size: 12px;
-
-    color: #555;
-
+  color: #555;
 }
-
 
 .modal-current-stock strong {
-
-    color: var(--black);
-
+  color: var(--black);
 }
-
-
 
 /* =====================================================
    QUANTITY
 ===================================================== */
 
 .quantity-section {
-
-    margin-top: 24px;
-
+  margin-top: 24px;
 }
-
 
 .quantity-section label {
+  display: block;
 
-    display: block;
+  margin-bottom: 8px;
 
-    margin-bottom: 8px;
+  font-size: 13px;
 
-    font-size: 13px;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
 
 .quantity-control {
+  height: 52px;
 
-    height: 52px;
+  width: 100%;
 
-    width: 100%;
+  display: flex;
 
-    display: flex;
+  align-items: center;
 
-    align-items: center;
+  justify-content: space-between;
 
-    justify-content: space-between;
+  border: 1px solid #ccc;
 
-    border: 1px solid #ccc;
+  border-radius: 7px;
 
-    border-radius: 7px;
-
-    overflow: hidden;
-
+  overflow: hidden;
 }
-
 
 .quantity-control button {
+  width: 58px;
 
-    width: 58px;
+  height: 100%;
 
-    height: 100%;
+  border: none;
 
-    border: none;
+  background: #f3f3f1;
 
-    background: #f3f3f1;
-
-    cursor: pointer;
-
+  cursor: pointer;
 }
-
 
 .quantity-control button:hover {
-
-    background: var(--lemon-chiffon);
-
+  background: var(--lemon-chiffon);
 }
-
 
 .quantity-control span {
+  font-size: 18px;
 
-    font-size: 18px;
-
-    font-weight: 700;
-
+  font-weight: 700;
 }
-
-
 
 /* =====================================================
    MODAL FOOTER
 ===================================================== */
 
 .modal-footer {
+  display: flex;
 
-    display: flex;
+  justify-content: flex-end;
 
-    justify-content: flex-end;
+  gap: 9px;
 
-    gap: 9px;
+  padding: 16px 24px;
 
-    padding: 16px 24px;
+  background: #fafafa;
 
-    background: #fafafa;
-
-    border-top: 1px solid var(--border);
-
+  border-top: 1px solid var(--border);
 }
-
 
 .cancel-btn,
 .save-btn {
+  min-width: 90px;
 
-    min-width: 90px;
+  padding: 10px 17px;
 
-    padding: 10px 17px;
+  border-radius: 6px;
 
-    border-radius: 6px;
+  font-family: inherit;
 
-    font-family: inherit;
+  font-weight: 700;
 
-    font-weight: 700;
-
-    cursor: pointer;
-
+  cursor: pointer;
 }
-
 
 .cancel-btn {
+  background: white;
 
-    background: white;
-
-    border: 1px solid #ccc;
-
+  border: 1px solid #ccc;
 }
-
 
 .cancel-btn:hover {
-
-    background: #f5f5f3;
-
+  background: #f5f5f3;
 }
-
 
 .save-btn {
+  background: var(--green);
 
-    background: var(--green);
+  color: white;
 
-    color: white;
-
-    border: none;
-
+  border: none;
 }
-
 
 .save-btn:hover {
-
-    background: #066c51;
-
+  background: #066c51;
 }
-
-
 
 /* =====================================================
    RESPONSIVE
 ===================================================== */
 
 @media (max-width: 1200px) {
-
-    .stats-grid {
-
-        grid-template-columns: repeat(2, 1fr);
-
-    }
-
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-
 
 @media (max-width: 1000px) {
-
-    .two-column-grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
+  .two-column-grid {
+    grid-template-columns: 1fr;
+  }
 }
-
 
 @media (max-width: 950px) {
+  .sidebar {
+    width: 75px;
 
-    .sidebar {
+    padding: 20px 10px;
+  }
 
-        width: 75px;
+  .logo {
+    justify-content: center;
 
-        padding: 20px 10px;
+    padding-left: 0;
 
-    }
+    padding-right: 0;
+  }
 
+  .logo > div:last-child {
+    display: none;
+  }
 
-    .logo {
+  .sidebar a {
+    justify-content: center;
+  }
 
-        justify-content: center;
+  .sidebar a span {
+    display: none;
+  }
 
-        padding-left: 0;
-
-        padding-right: 0;
-
-    }
-
-
-    .logo > div:last-child {
-
-        display: none;
-
-    }
-
-
-    .sidebar a {
-
-        justify-content: center;
-
-    }
-
-
-    .sidebar a span {
-
-        display: none;
-
-    }
-
-
-    .main-content {
-
-        margin-left: 75px;
-
-    }
-
+  .main-content {
+    margin-left: 75px;
+  }
 }
 
-
 @media (max-width: 700px) {
+  .main-content {
+    padding: 18px 12px;
+  }
 
-    .main-content {
+  .page-header {
+    align-items: flex-start;
 
-        padding: 18px 12px;
+    flex-direction: column;
 
-    }
+    gap: 15px;
+  }
 
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .page-header {
+  .section-header {
+    align-items: flex-start;
 
-        align-items: flex-start;
+    flex-direction: column;
 
-        flex-direction: column;
+    gap: 15px;
+  }
 
-        gap: 15px;
+  .period-buttons {
+    width: 100%;
+  }
 
-    }
+  .period-btn {
+    flex: 1;
+  }
 
+  .search-box {
+    width: 100%;
+  }
 
-    .stats-grid {
+  .report-footer {
+    flex-direction: column;
 
-        grid-template-columns: 1fr;
+    align-items: flex-start;
 
-    }
+    gap: 8px;
+  }
+}
 
+/* ==========================================
+   INVENTORY ACTION BUTTONS
+========================================== */
 
-    .section-header {
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
-        align-items: flex-start;
+.add-stock-btn,
+.remove-stock-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
-        flex-direction: column;
+  min-height: 38px;
+  padding: 10px 14px;
 
-        gap: 15px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 
-    }
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
+/* ADD STOCKS */
 
-    .period-buttons {
+.add-stock-btn {
+  background: #07835d;
+  color: #ffffff;
+  border: 1px solid #07835d;
+}
 
-        width: 100%;
+.add-stock-btn:hover {
+  background: #056b4c;
+}
 
-    }
+/* REMOVE STOCKS */
 
+.remove-stock-btn {
+  background: #fde8e8;
+  color: #b42318;
+  border: 1px solid #f5b7b1;
+}
 
-    .period-btn {
+.remove-stock-btn:hover {
+  background: #fbd5d5;
+  border-color: #e57373;
+}
 
-        flex: 1;
+.remove-stock-btn i,
+.add-stock-btn i {
+  font-size: 12px;
+  color: inherit;
+}
 
-    }
+/* Editable stock quantity */
 
+.quantity-input {
+  width: 85px;
+  min-width: 0;
+  height: 42px;
+  padding: 6px 8px;
 
-    .search-box {
+  text-align: center;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 700;
 
-        width: 100%;
+  color: #171717;
+  background: #ffffff;
 
-    }
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  outline: none;
+}
 
+.quantity-input:focus {
+  border-color: #07835d;
+  box-shadow: 0 0 0 3px rgba(7, 131, 93, 0.12);
+}
 
-    .report-footer {
+/* Hide native number arrows */
+.quantity-input::-webkit-inner-spin-button,
+.quantity-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        gap: 8px;
-
-    }
-
+.quantity-input {
+  appearance: textfield;
+  -moz-appearance: textfield;
 }

@@ -1,32 +1,403 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() { return request.auth != null; }
-    function role() { return signedIn() ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role : null; }
-    function staff() { return role() == 'staff' || role() == 'admin'; }
-    function rider() { return role() == 'rider'; }
-    function allowedStatus(status) { return status in ['placed', 'preparing', 'ready_for_pickup', 'rider_assigned', 'picked_up', 'on_the_way', 'delivered', 'cancelled']; }
+
+    // ==========================================
+    // AUTHENTICATION HELPERS
+    // ==========================================
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function hasProfile() {
+      return signedIn()
+        && exists(
+          /databases/$(database)/documents/users/$(request.auth.uid)
+        );
+    }
+
+    function profile() {
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data;
+    }
+
+    function hasRole(role) {
+      return hasProfile()
+        && profile().role == role
+        && profile().status == 'active';
+    }
+
+    function isCustomer() {
+      return hasRole('customer');
+    }
+
+    function isRider() {
+      return hasRole('rider');
+    }
+
+    function isStaff() {
+      return hasRole('staff');
+    }
+
+    function isAdmin() {
+      return hasRole('admin');
+    }
+
+    function isManagement() {
+      return isStaff() || isAdmin();
+    }
+
+    // ==========================================
+    // USERS
+    // ==========================================
 
     match /users/{userId} {
-      allow create: if signedIn() && request.auth.uid == userId && request.resource.data.role == 'customer';
-      allow read: if signedIn() && (request.auth.uid == userId || staff());
-      allow update: if signedIn() && request.auth.uid == userId && request.resource.data.role == resource.data.role && request.resource.data.status == resource.data.status;
-      allow update, delete: if staff();
+
+      allow get: if isOwner(userId) || isAdmin();
+
+      allow list: if isAdmin();
+
+      allow create: if isOwner(userId)
+        && request.resource.data.role == 'customer'
+        && request.resource.data.status == 'active'
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.keys().hasOnly([
+          'firstName',
+          'lastName',
+          'email',
+          'phone',
+          'role',
+          'status',
+          'createdAt',
+          'updatedAt'
+        ]);
+
+      allow update: if isOwner(userId)
+        && request.resource.data.diff(resource.data)
+          .affectedKeys()
+          .hasOnly([
+            'firstName',
+            'lastName',
+            'phone',
+            'updatedAt'
+          ]);
+
+      allow delete: if false;
     }
+
+    // ==========================================
+    // CATEGORIES
+    // ==========================================
+
+    match /categories/{categoryId} {
+
+      allow read: if true;
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ==========================================
+    // PRODUCTS
+    // ==========================================
+
+    match /products/{productId} {
+
+      allow read: if true;
+
+      allow create, delete: if isAdmin();
+
+      allow update: if isAdmin()
+        || (
+          isStaff()
+          && request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasOnly([
+              'stock',
+              'stockQuantity',
+              'quantity',
+              'available',
+              'updatedAt'
+            ])
+        );
+    }
+
+        // ==========================================
+        // PRODUCT ID COUNTER
+        // ==========================================
+
+        match /metadata/productCounter {
+
+        // Only active administrators can read the counter.
+        allow get: if isAdmin();
+
+        // Counter is created manually in Firebase Console.
+        allow create, delete: if false;
+
+        // Only active administrators can increment by exactly 1.
+        allow update: if isAdmin()
+          && request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasOnly(['lastProductId'])
+          && resource.data.lastProductId is int
+          && request.resource.data.lastProductId is int
+          && request.resource.data.lastProductId
+            == resource.data.lastProductId + 1;
+         }
+
+    // ==========================================
+    // ORDERS
+    // ==========================================
 
     match /orders/{orderId} {
-      allow create: if signedIn() && request.resource.data.userId == request.auth.uid && request.resource.data.orderStatus == 'placed' && request.resource.data.paymentStatus == 'pending'
-        && !request.resource.data.keys().hasAny(['assignedRiderId', 'assignedRiderName', 'riderLocation']);
-      allow read: if signedIn() && (resource.data.userId == request.auth.uid || resource.data.assignedRiderId == request.auth.uid || staff());
-      allow update: if staff() && allowedStatus(request.resource.data.orderStatus);
-      allow update: if rider() && resource.data.assignedRiderId == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['orderStatus', 'statusHistory', 'updatedAt', 'riderLocation'])
-        && ((resource.data.orderStatus == 'rider_assigned' && request.resource.data.orderStatus == 'picked_up')
-          || (resource.data.orderStatus == 'picked_up' && request.resource.data.orderStatus in ['picked_up', 'on_the_way'])
-          || (resource.data.orderStatus == 'on_the_way' && request.resource.data.orderStatus in ['on_the_way', 'delivered']));
+
+      function isOrderOwner() {
+        return signedIn()
+          && resource.data.userId == request.auth.uid;
+      }
+
+      function isAssignedRider() {
+        return isRider()
+          && resource.data.get('assignedRiderId', '') == request.auth.uid;
+      }
+
+      function changedFields() {
+        return request.resource.data.diff(resource.data)
+          .affectedKeys();
+      }
+
+      function validStatus(status) {
+        return status in [
+          'placed',
+          'preparing',
+          'ready_for_pickup',
+          'rider_assigned',
+          'picked_up',
+          'on_the_way',
+          'delivered',
+          'cancelled'
+        ];
+      }
+
+      function validStatusHistory() {
+        return request.resource.data.statusHistory is list
+          && resource.data.statusHistory is list
+          && request.resource.data.statusHistory.size()
+            == resource.data.statusHistory.size() + 1
+          && request.resource.data.statusHistory[
+            request.resource.data.statusHistory.size() - 1
+          ].status == request.resource.data.orderStatus
+          && request.resource.data.statusHistory[
+            request.resource.data.statusHistory.size() - 1
+          ].at is timestamp;
+      }
+
+      function validOrderCreate() {
+        return isCustomer()
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.orderStatus == 'placed'
+          && request.resource.data.paymentStatus == 'pending'
+          && request.resource.data.customer is map
+          && request.resource.data.deliveryAddress is map
+          && request.resource.data.deliveryLocation is map
+          && request.resource.data.items is list
+          && request.resource.data.statusHistory is list
+          && request.resource.data.statusHistory.size() == 1
+          && request.resource.data.statusHistory[0].status == 'placed'
+          && request.resource.data.subtotal is number
+          && request.resource.data.deliveryFee is number
+          && request.resource.data.discount is number
+          && request.resource.data.total is number
+          && request.resource.data.subtotal >= 0
+          && request.resource.data.deliveryFee >= 0
+          && request.resource.data.discount >= 0
+          && request.resource.data.total >= 0
+          && request.resource.data.keys().hasAll([
+            'userId',
+            'orderNumber',
+            'customer',
+            'deliveryAddress',
+            'deliveryLocation',
+            'paymentMethod',
+            'paymentStatus',
+            'orderStatus',
+            'statusHistory',
+            'items',
+            'subtotal',
+            'deliveryFee',
+            'discount',
+            'total',
+            'createdAt',
+            'updatedAt'
+          ])
+          && request.resource.data.keys().hasOnly([
+            'userId',
+            'orderNumber',
+            'customer',
+            'deliveryAddress',
+            'deliveryLocation',
+            'paymentMethod',
+            'paymentStatus',
+            'orderStatus',
+            'statusHistory',
+            'items',
+            'subtotal',
+            'deliveryFee',
+            'discount',
+            'total',
+            'createdAt',
+            'updatedAt'
+          ]);
+      }
+
+      // Orders must be created through the secure Vercel backend.
+      // Firebase Admin SDK bypasses client security rules.
+      allow create: if false;
+
+      // Customers read their own orders.
+      // Riders read assigned orders.
+      // Staff/Admin read all orders.
+      allow get, list: if isManagement()
+        || isOrderOwner()
+        || isAssignedRider();
+
+      // Staff/Admin: order preparation and rider assignment.
+      function managementUpdate() {
+        return isManagement()
+          && changedFields().hasOnly([
+            'orderStatus',
+            'statusHistory',
+            'updatedAt',
+            'assignedRiderId',
+            'assignedRiderName'
+          ])
+          && changedFields().hasAll([
+            'orderStatus',
+            'statusHistory',
+            'updatedAt'
+          ])
+          && validStatus(request.resource.data.orderStatus)
+          && request.resource.data.orderStatus != 'cancelled'
+          && resource.data.orderStatus != 'cancelled'
+          && validStatusHistory()
+          && (
+            !changedFields().hasAny([
+              'assignedRiderId',
+              'assignedRiderName'
+            ])
+            || (
+              request.resource.data.assignedRiderId is string
+              && request.resource.data.assignedRiderId.size() > 0
+              && request.resource.data.assignedRiderName is string
+              && request.resource.data.orderStatus == 'rider_assigned'
+            )
+          );
+      }
+
+       // Admin only: archive or restore orders.
+function adminArchiveUpdate() {
+  return isAdmin()
+    && request.resource.data.diff(resource.data)
+      .affectedKeys()
+      .hasOnly([
+        'archived',
+        'archivedAt',
+        'archivedBy'
+      ])
+    && request.resource.data.archived is bool
+    && (
+      (
+        request.resource.data.archived == true
+        && request.resource.data.archivedAt is timestamp
+        && request.resource.data.archivedBy == request.auth.uid
+      )
+      || (
+        request.resource.data.archived == false
+        && !request.resource.data.keys().hasAny([
+          'archivedAt',
+          'archivedBy'
+        ])
+      )
+    );
+}
+      // Rider: update delivery progress.
+      function riderStatusUpdate() {
+        return isAssignedRider()
+          && changedFields().hasOnly([
+            'orderStatus',
+            'statusHistory',
+            'updatedAt'
+          ])
+          && changedFields().hasAll([
+            'orderStatus',
+            'statusHistory',
+            'updatedAt'
+          ])
+          && validStatusHistory()
+          && (
+            (
+              resource.data.orderStatus == 'rider_assigned'
+              && request.resource.data.orderStatus == 'picked_up'
+            )
+            || (
+              resource.data.orderStatus == 'picked_up'
+              && request.resource.data.orderStatus == 'on_the_way'
+            )
+            || (
+              resource.data.orderStatus == 'on_the_way'
+              && request.resource.data.orderStatus == 'delivered'
+            )
+          );
+      }
+
+      // Rider: update GPS position.
+      function riderLocationUpdate() {
+  return isAssignedRider()
+    && resource.data.orderStatus in [
+      'rider_assigned',
+      'picked_up',
+      'on_the_way'
+    ]
+    && changedFields().hasOnly([
+      'riderLocation',
+      'updatedAt'
+    ])
+    && changedFields().hasAll([
+      'riderLocation'
+    ])
+    && request.resource.data.riderLocation is map
+    && request.resource.data.riderLocation.keys().hasAll([
+      'lat',
+      'lng'
+    ])
+    && request.resource.data.riderLocation.lat is number
+    && request.resource.data.riderLocation.lng is number
+    && request.resource.data.riderLocation.lat >= -90
+    && request.resource.data.riderLocation.lat <= 90
+    && request.resource.data.riderLocation.lng >= -180
+    && request.resource.data.riderLocation.lng <= 180;
+}
+      allow update: if managementUpdate()
+  || riderStatusUpdate()
+  || riderLocationUpdate()
+  || adminArchiveUpdate();
+
+      // Orders are retained for records.
+      allow delete: if false;
     }
 
-    match /products/{document=**} { allow read: if true; allow write: if staff(); }
-    match /categories/{document=**} { allow read: if true; allow write: if staff(); }
+    // ==========================================
+    // DEFAULT DENY
+    // ==========================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
 }

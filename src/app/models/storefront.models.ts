@@ -41,7 +41,7 @@ export function optionFromJson(raw: Record<string, unknown>): ProductOption {
   return {
     id: Number(raw['id'] ?? 0),
     name: String(raw['name'] ?? ''),
-    price: Number(raw['price'] ?? 0)
+    price: Number(raw['price'] ?? 0),
   };
 }
 
@@ -60,7 +60,7 @@ export function productFromJson(raw: Record<string, unknown>): CatalogProduct {
     price: Number(raw['price'] ?? 0),
     sizes: options(raw['sizes']),
     crusts: options(raw['crusts']),
-    toppings: options(raw['toppings'])
+    toppings: options(raw['toppings']),
   };
 }
 
@@ -70,7 +70,7 @@ export function addressFromJson(raw: Record<string, unknown>): Address {
     raw['street'],
     raw['barangay'],
     raw['city'],
-    raw['province']
+    raw['province'],
   ]
     .filter((part) => typeof part === 'string' && part.length > 0)
     .join(', ');
@@ -78,7 +78,7 @@ export function addressFromJson(raw: Record<string, unknown>): Address {
   return {
     id: Number(raw['address_id'] ?? 0),
     label: String(raw['address_label'] ?? 'Address'),
-    line
+    line,
   };
 }
 
@@ -87,16 +87,21 @@ export function orderFromJson(raw: Record<string, unknown>): OrderSummary {
     number: String(raw['order_number'] ?? ''),
     status: String(raw['order_status'] ?? 'pending'),
     total: Number(raw['total_amount'] ?? 0),
-    createdAt: String(raw['created_at'] ?? '')
+    createdAt: String(raw['created_at'] ?? ''),
   };
 }
 
 export function unitPrice(line: CartLine): number {
-  return (
-    line.product.price +
-    (line.crust?.price ?? 0) +
-    line.toppings.reduce((sum, item) => sum + item.price, 0)
+  const basePrice = line.size ? line.size.price : line.product.price;
+
+  const crustPrice = line.crust?.price ?? 0;
+
+  const toppingsPrice = line.toppings.reduce(
+    (sum, topping) => sum + topping.price,
+    0,
   );
+
+  return basePrice + crustPrice + toppingsPrice;
 }
 
 export function lineSubtotal(line: CartLine): number {

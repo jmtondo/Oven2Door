@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Oven2Door Product Backup</title>
+  </head>
+  <body>
+    <h2>Oven2Door — Product Backup</h2>
+
+    <p>Download a backup of your existing Firestore products.</p>
+
+    <button id="backupButton">Download Product Backup</button>
+
+    <p id="status"></p>
+
+    <script type="module">
+      import { auth } from "./firebase-config.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+      import { backupProducts } from "./backup-products.js";
+
+      const button = document.getElementById("backupButton");
+      const status = document.getElementById("status");
+
+      button.disabled = true;
+
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          status.textContent =
+            "Please sign in to your Oven2Door admin account first.";
+          button.disabled = true;
+          return;
+        }
+
+        status.textContent = "Signed in. Ready to back up products.";
+        button.disabled = false;
+      });
+
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        status.textContent = "Creating backup...";
+
+        try {
+          await backupProducts();
+          status.textContent = "Backup downloaded successfully!";
+        } catch (error) {
+          console.error(error);
+          status.textContent = `Backup failed: ${error.message}`;
+        } finally {
+          button.disabled = !auth.currentUser;
+        }
+      });
+    </script>
+  </body>
+</html>

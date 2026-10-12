@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Oven2Door Inventory Initialization</title>
+  </head>
+  <body>
+    <h2>Oven2Door — Initialize Inventory</h2>
+
+    <p>Sign in using your existing Oven2Door administrator account.</p>
+
+    <div id="loginSection">
+      <input type="email" id="email" placeholder="Admin email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button id="loginButton">Sign In</button>
+    </div>
+
+    <div id="inventorySection" hidden>
+      <p>
+        Add missing stock quantities to existing product sizes. Existing
+        quantities will not be overwritten.
+      </p>
+
+      <button id="initializeButton" disabled>Initialize Inventory</button>
+    </div>
+
+    <p id="status">Checking authentication...</p>
+
+    <script type="module">
+      import { auth, db } from "./firebase-config.js";
+
+      import {
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+      import {
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+      import { initializeInventory } from "./initialize-inventory.js";
+
+      const loginSection = document.getElementById("loginSection");
+      const inventorySection = document.getElementById("inventorySection");
+      const loginButton = document.getElementById("loginButton");
+      const initializeButton = document.getElementById("initializeButton");
+      const status = document.getElementById("status");
+
+      onAuthStateChanged(auth, async (user) => {
+        loginSection.hidden = true;
+        inventorySection.hidden = true;
+        initializeButton.disabled = true;
+
+        if (!user) {
+          loginSection.hidden = false;
+          status.textContent = "Please sign in as an administrator.";
+          return;
+        }
+
+        try {
+          const snapshot = await getDoc(doc(db, "users", user.uid));
+          const profile = snapshot.data();
+
+          if (
+            !snapshot.exists() ||
+            profile.role !== "admin" ||
+            profile.status !== "active"
+          ) {
+            status.textContent = "Administrator access required.";
+            return;
+          }
+
+          inventorySection.hidden = false;
+          initializeButton.disabled = false;
+          status.textContent = "Administrator verified. Ready.";
+        } catch (error) {
+          status.textContent = `Access check failed: ${error.message}`;
+        }
+      });
+
+      loginButton.addEventListener("click", async () => {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        loginButton.disabled = true;
+        status.textContent = "Signing in...";
+
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+          status.textContent = `Login failed: ${error.message}`;
+        } finally {
+          loginButton.disabled = false;
+        }
+      });
+
+      initializeButton.addEventListener("click", async () => {
+        initializeButton.disabled = true;
+        status.textContent = "Initializing inventory...";
+
+        try {
+          const count = await initializeInventory();
+          status.textContent = `Initialization complete. Updated ${count} products.`;
+        } catch (error) {
+          console.error(error);
+          status.textContent = `Initialization failed: ${error.message}`;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -6,71 +6,79 @@
 
 <ion-content class="ion-padding">
   <div class="result-container">
-
     <!-- Verifying payment -->
-    <ion-spinner
-      *ngIf="status === 'verifying'"
-      name="crescent">
-    </ion-spinner>
+    <ion-spinner *ngIf="status === 'verifying'" name="crescent"> </ion-spinner>
 
     <!-- Successful payment -->
     <ion-icon
       *ngIf="status === 'success'"
       name="checkmark-circle-outline"
-      class="result-icon success">
+      class="result-icon success"
+    >
+    </ion-icon>
+
+    <!-- Pending payment -->
+    <ion-icon
+      *ngIf="status === 'pending'"
+      name="time-outline"
+      class="result-icon cancelled"
+    >
     </ion-icon>
 
     <!-- Failed payment -->
     <ion-icon
       *ngIf="status === 'failed'"
       name="close-circle-outline"
-      class="result-icon failed">
+      class="result-icon failed"
+    >
     </ion-icon>
 
     <!-- Cancelled payment -->
     <ion-icon
       *ngIf="status === 'cancelled'"
       name="time-outline"
-      class="result-icon cancelled">
+      class="result-icon cancelled"
+    >
     </ion-icon>
 
     <h1>
-      {{
-        status === 'verifying' ? 'Verifying Payment' :
-        status === 'success' ? 'Payment Confirmed' :
-        status === 'failed' ? 'Payment Not Confirmed' :
-        'Checkout Cancelled'
-      }}
+      {{ status === 'verifying' ? 'Verifying Payment' : status === 'success' ?
+      'Payment Confirmed' : status === 'pending' ? 'Payment Pending' : status
+      === 'failed' ? 'Payment Not Confirmed' : 'Checkout Cancelled' }}
     </h1>
 
     <p>{{ message }}</p>
 
     <!-- Order number -->
-    <p
-      *ngIf="orderNumber"
-      class="order-number">
+    <p *ngIf="orderNumber" class="order-number">
       Order Number:
       <strong>{{ orderNumber }}</strong>
     </p>
 
     <!-- Verification notice -->
-    <p
-      *ngIf="status === 'verifying'"
-      class="notice">
-      This screen does not confirm payment.
-      Please wait until the server verifies the transaction.
+    <p *ngIf="status === 'verifying'" class="notice">
+      This screen does not confirm payment. Please wait until the server
+      verifies the transaction.
     </p>
+
+    <!-- Retry payment verification -->
+    <ion-button
+      *ngIf="status === 'pending'"
+      expand="block"
+      (click)="verifyPayment()"
+    >
+      <ion-icon name="time-outline" slot="start"> </ion-icon>
+
+      Check Payment Again
+    </ion-button>
 
     <!-- Track the verified order -->
     <ion-button
       *ngIf="status === 'success' && verifiedOrderId"
       expand="block"
-      (click)="goToTracking()">
-
-      <ion-icon
-        name="bicycle-outline"
-        slot="start">
-      </ion-icon>
+      (click)="goToTracking()"
+    >
+      <ion-icon name="bicycle-outline" slot="start"> </ion-icon>
 
       Track My Order
     </ion-button>
@@ -79,23 +87,16 @@
     <ion-button
       *ngIf="status === 'failed' || status === 'cancelled'"
       expand="block"
-      (click)="goToCheckout()">
+      (click)="goToCheckout()"
+    >
       Return to Checkout
     </ion-button>
 
     <!-- Back to home -->
-    <ion-button
-      expand="block"
-      fill="outline"
-      (click)="goHome()">
-
-      <ion-icon
-        name="home-outline"
-        slot="start">
-      </ion-icon>
+    <ion-button expand="block" fill="outline" (click)="goHome()">
+      <ion-icon name="home-outline" slot="start"> </ion-icon>
 
       Back to Home
     </ion-button>
-
   </div>
 </ion-content>

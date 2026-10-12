@@ -465,9 +465,16 @@
                     </button>
 
 
-                    <span id="quantityDisplay">
-                        0
-                    </span>
+                    <input
+                    type="number"
+                    id="quantityDisplay"
+                    class="quantity-input"
+                    value="0"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    aria-label="Stock adjustment quantity"
+                    >
 
 
                     <button
@@ -515,7 +522,8 @@
 
     <!-- JS -->
 
-    <script src="inventory.js"></script>
+    <!-- Firebase Inventory Management -->
+    <script type="module" src="inventory.js"></script>
 
 </body>
 

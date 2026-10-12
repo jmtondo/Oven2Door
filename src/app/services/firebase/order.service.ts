@@ -13,15 +13,12 @@ import {
   Timestamp,
   Unsubscribe,
   updateDoc,
-  where
+  where,
 } from 'firebase/firestore';
 
 import { auth, db } from '../../firebase.config';
 
-import {
-  CartLine,
-  lineSubtotal
-} from '../../models/storefront.models';
+import { CartLine, lineSubtotal } from '../../models/storefront.models';
 
 export interface CreateOrderData {
   userId: string;
@@ -48,8 +45,6 @@ export interface CreateOrderData {
   deliveryFee: number;
   discount: number;
   total: number;
-
-  
 }
 
 export interface MayaCheckoutResponse {
@@ -67,7 +62,7 @@ export const ORDER_STATUSES = [
   'picked_up',
   'on_the_way',
   'delivered',
-  'cancelled'
+  'cancelled',
 ] as const;
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
@@ -130,123 +125,86 @@ export interface TrackedOrder {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OrderService {
-
   // ==========================================
   // CREATE FIRESTORE ORDER
   // ==========================================
 
-  async createOrder(
-    data: CreateOrderData
-  ): Promise<{
+  async createOrder(data: CreateOrderData): Promise<{
     orderId: string;
     orderNumber: string;
   }> {
+    const user = auth.currentUser;
 
-    const orderNumber = this.generateOrderNumber();
+    if (!user) {
+      throw new Error('Please sign in before placing an order.');
+    }
 
-    const items = data.cartItems.map((item) => ({
-      productId: item.product.id,
+    if (user.uid !== data.userId) {
+      throw new Error('Customer authentication mismatch.');
+    }
 
-      productName: item.product.name,
+    const idToken = await user.getIdToken();
 
-      quantity: item.quantity,
+    // Keep this ID stable if a network request must be retried.
+    const requestId = crypto.randomUUID();
 
-      unitPrice:
-        item.product.price +
-        (item.size?.price ?? 0) +
-        (item.crust?.price ?? 0) +
-        item.toppings.reduce(
-          (sum, topping) => sum + topping.price,
-          0
-        ),
-
-      subtotal: lineSubtotal(item),
-
-      size: item.size
-        ? {
-            id: item.size.id,
-            name: item.size.name,
-            price: item.size.price
-          }
-        : null,
-
-      crust: item.crust
-        ? {
-            id: item.crust.id,
-            name: item.crust.name,
-            price: item.crust.price
-          }
-        : null,
-
-      toppings: item.toppings.map((topping) => ({
-        id: topping.id,
-        name: topping.name,
-        price: topping.price
-      }))
-    }));
-
-    const order = {
-      userId: data.userId,
-
-      orderNumber,
+    const payload = {
+      requestId,
+      paymentMethod: data.paymentMethod,
 
       customer: {
-        firstName: data.firstName.trim(),
-        lastName: data.lastName.trim(),
-        email: data.email.trim().toLowerCase(),
-        phone: data.phone.trim()
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
       },
 
       deliveryAddress: {
-        address: data.address.trim(),
-        barangay: data.barangay.trim(),
-        city: data.city.trim(),
-        province: data.province.trim(),
-        postalCode: data.postalCode.trim()
+        address: data.address,
+        barangay: data.barangay,
+        city: data.city,
+        province: data.province,
+        postalCode: data.postalCode,
       },
 
       deliveryLocation: {
         lat: data.deliveryLatitude,
-        lng: data.deliveryLongitude
+        lng: data.deliveryLongitude,
       },
 
-      paymentMethod: data.paymentMethod,
-
-      paymentStatus: 'pending',
-
-      orderStatus: 'placed',
-
-      statusHistory: [
-        {
-          status: 'placed',
-          at: Timestamp.now()
-        }
-      ],
-
-      items,
-
-      subtotal: data.subtotal,
-      deliveryFee: data.deliveryFee,
-      discount: data.discount,
-      total: data.total,
-
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+      cartItems: data.cartItems.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        sizeId: item.size?.id ?? null,
+        crustId: item.crust?.id ?? null,
+        toppingIds: item.toppings.map((topping) => topping.id),
+      })),
     };
 
-    const ordersRef = collection(db, 'orders');
-
-    const orderRef = await addDoc(
-      ordersRef,
-      order
+    const response = await fetch(
+      'https://oven2door-backend.vercel.app/api/createOrder',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(payload),
+      },
     );
 
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result?.error || 'Unable to place your order.');
+    }
+
     return {
-      orderId: orderRef.id,
-      orderNumber
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
     };
   }
 
@@ -257,9 +215,8 @@ export class OrderService {
   observeOrder(
     orderId: string,
     next: (order: TrackedOrder | undefined) => void,
-    error: (reason: Error) => void
+    error: (reason: Error) => void,
   ): Unsubscribe {
-
     if (!orderId.trim()) {
       error(new Error('Invalid order ID.'));
       return () => {};
@@ -274,22 +231,14 @@ export class OrderService {
           return;
         }
 
-        next(
-          this.toTrackedOrder(
-            snapshot.id,
-            snapshot.data()
-          )
-        );
+        next(this.toTrackedOrder(snapshot.id, snapshot.data()));
       },
 
       (firebaseError) => {
-        console.error(
-          'Failed to observe order:',
-          firebaseError
-        );
+        console.error('Failed to observe order:', firebaseError);
 
         error(firebaseError);
-      }
+      },
     );
   }
 
@@ -300,35 +249,28 @@ export class OrderService {
   observeCustomerOrders(
     userId: string,
     next: (orders: TrackedOrder[]) => void,
-    error: (reason: Error) => void
+    error: (reason: Error) => void,
   ): Unsubscribe {
-
     return onSnapshot(
       query(
         collection(db, 'orders'),
         where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
+        orderBy('createdAt', 'desc'),
       ),
 
       (snapshot) => {
         next(
           snapshot.docs.map((item) =>
-            this.toTrackedOrder(
-              item.id,
-              item.data()
-            )
-          )
+            this.toTrackedOrder(item.id, item.data()),
+          ),
         );
       },
 
       (firebaseError) => {
-        console.error(
-          'Failed to observe customer orders:',
-          firebaseError
-        );
+        console.error('Failed to observe customer orders:', firebaseError);
 
         error(firebaseError);
-      }
+      },
     );
   }
 
@@ -339,42 +281,28 @@ export class OrderService {
   observeAssignedOrders(
     riderId: string,
     next: (orders: TrackedOrder[]) => void,
-    error: (reason: Error) => void
+    error: (reason: Error) => void,
   ): Unsubscribe {
-
     return onSnapshot(
       query(
         collection(db, 'orders'),
-        where(
-          'assignedRiderId',
-          '==',
-          riderId
-        ),
-        orderBy(
-          'updatedAt',
-          'desc'
-        )
+        where('assignedRiderId', '==', riderId),
+        orderBy('updatedAt', 'desc'),
       ),
 
       (snapshot) => {
         next(
           snapshot.docs.map((item) =>
-            this.toTrackedOrder(
-              item.id,
-              item.data()
-            )
-          )
+            this.toTrackedOrder(item.id, item.data()),
+          ),
         );
       },
 
       (firebaseError) => {
-        console.error(
-          'Failed to observe rider orders:',
-          firebaseError
-        );
+        console.error('Failed to observe rider orders:', firebaseError);
 
         error(firebaseError);
-      }
+      },
     );
   }
 
@@ -384,37 +312,24 @@ export class OrderService {
 
   observeAllOrders(
     next: (orders: TrackedOrder[]) => void,
-    error: (reason: Error) => void
+    error: (reason: Error) => void,
   ): Unsubscribe {
-
     return onSnapshot(
-      query(
-        collection(db, 'orders'),
-        orderBy(
-          'updatedAt',
-          'desc'
-        )
-      ),
+      query(collection(db, 'orders'), orderBy('updatedAt', 'desc')),
 
       (snapshot) => {
         next(
           snapshot.docs.map((item) =>
-            this.toTrackedOrder(
-              item.id,
-              item.data()
-            )
-          )
+            this.toTrackedOrder(item.id, item.data()),
+          ),
         );
       },
 
       (firebaseError) => {
-        console.error(
-          'Failed to observe all orders:',
-          firebaseError
-        );
+        console.error('Failed to observe all orders:', firebaseError);
 
         error(firebaseError);
-      }
+      },
     );
   }
 
@@ -422,21 +337,12 @@ export class OrderService {
   // GET CURRENT USER ROLE
   // ==========================================
 
-  async getCurrentUserRole(
-    userId: string
-  ): Promise<UserRole> {
-
-    const profile = await getDoc(
-      doc(db, 'users', userId)
-    );
+  async getCurrentUserRole(userId: string): Promise<UserRole> {
+    const profile = await getDoc(doc(db, 'users', userId));
 
     const role = profile.data()?.['role'];
 
-    return (
-      role === 'rider' ||
-      role === 'staff' ||
-      role === 'admin'
-    )
+    return role === 'rider' || role === 'staff' || role === 'admin'
       ? role
       : 'customer';
   }
@@ -447,18 +353,9 @@ export class OrderService {
 
   async updateRiderStatus(
     orderId: string,
-    status: Extract<
-      OrderStatus,
-      'picked_up' |
-      'on_the_way' |
-      'delivered'
-    >
+    status: Extract<OrderStatus, 'picked_up' | 'on_the_way' | 'delivered'>,
   ): Promise<void> {
-
-    await this.updateOrder(
-      orderId,
-      status
-    );
+    await this.updateOrder(orderId, status);
   }
 
   // ==========================================
@@ -469,30 +366,28 @@ export class OrderService {
     orderId: string,
     status: OrderStatus,
     riderId?: string,
-    riderName?: string
+    riderName?: string,
   ): Promise<void> {
+    // Cancellation must use a secure backend transaction.
+    // Do not allow direct Firestore cancellation.
+    if (status === 'cancelled') {
+      throw new Error(
+        'Order cancellation must be processed through the secure cancellation API.',
+      );
+    }
 
     const changes: Record<string, unknown> = {};
 
     if (riderId?.trim()) {
-
-      changes['assignedRiderId'] =
-        riderId.trim();
-
-      changes['assignedRiderName'] =
-        riderName?.trim() ||
-        'Assigned rider';
+      changes['assignedRiderId'] = riderId.trim();
+      changes['assignedRiderName'] = riderName?.trim() || 'Assigned rider';
 
       if (status === 'ready_for_pickup') {
         status = 'rider_assigned';
       }
     }
 
-    await this.updateOrder(
-      orderId,
-      status,
-      changes
-    );
+    await this.updateOrder(orderId, status, changes);
   }
 
   // ==========================================
@@ -501,72 +396,53 @@ export class OrderService {
 
   startBrowserLocationTracking(
     orderId: string,
-    onError: (message: string) => void
+    onError: (message: string) => void,
   ): number | null {
-
     if (!navigator.geolocation) {
-      onError(
-        'This browser does not support location sharing.'
-      );
+      onError('This browser does not support location sharing.');
 
       return null;
     }
 
     return navigator.geolocation.watchPosition(
-
       async (position) => {
-
         try {
+          await updateDoc(doc(db, 'orders', orderId), {
+            riderLocation: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              heading: position.coords.heading,
+              speed: position.coords.speed,
+              updatedAt: Timestamp.now(),
+            },
 
-          await updateDoc(
-            doc(db, 'orders', orderId),
-            {
-              riderLocation: {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                accuracy: position.coords.accuracy,
-                heading: position.coords.heading,
-                speed: position.coords.speed,
-                updatedAt: Timestamp.now()
-              },
-
-              updatedAt: serverTimestamp()
-            }
-          );
-
+            updatedAt: serverTimestamp(),
+          });
         } catch (error) {
-
-          console.error(
-            'Unable to update rider location:',
-            error
-          );
+          console.error('Unable to update rider location:', error);
 
           onError(
             error instanceof Error
               ? error.message
-              : 'Unable to update your location.'
+              : 'Unable to update your location.',
           );
         }
       },
 
       (positionError) => {
-
-        console.error(
-          'Geolocation error:',
-          positionError
-        );
+        console.error('Geolocation error:', positionError);
 
         onError(
-          positionError.message ||
-          'Location permission was not granted.'
+          positionError.message || 'Location permission was not granted.',
         );
       },
 
       {
         enableHighAccuracy: true,
         maximumAge: 10_000,
-        timeout: 15_000
-      }
+        timeout: 15_000,
+      },
     );
   }
 
@@ -574,17 +450,9 @@ export class OrderService {
   // STOP RIDER GPS TRACKING
   // ==========================================
 
-  stopBrowserLocationTracking(
-    watchId: number | null
-  ): void {
-
-    if (
-      watchId !== null &&
-      navigator.geolocation
-    ) {
-      navigator.geolocation.clearWatch(
-        watchId
-      );
+  stopBrowserLocationTracking(watchId: number | null): void {
+    if (watchId !== null && navigator.geolocation) {
+      navigator.geolocation.clearWatch(watchId);
     }
   }
 
@@ -595,25 +463,20 @@ export class OrderService {
   private async updateOrder(
     orderId: string,
     status: OrderStatus,
-    extra: Record<string, unknown> = {}
+    extra: Record<string, unknown> = {},
   ): Promise<void> {
+    await updateDoc(doc(db, 'orders', orderId), {
+      ...extra,
 
-    await updateDoc(
-      doc(db, 'orders', orderId),
-      {
-        ...extra,
+      orderStatus: status,
 
-        orderStatus: status,
+      statusHistory: arrayUnion({
+        status,
+        at: Timestamp.now(),
+      }),
 
-        statusHistory: arrayUnion({
-          status,
-          at: Timestamp.now()
-        }),
-
-        updatedAt:
-          serverTimestamp()
-      }
-    );
+      updatedAt: serverTimestamp(),
+    });
   }
 
   // ==========================================
@@ -622,106 +485,74 @@ export class OrderService {
 
   private toTrackedOrder(
     id: string,
-    data: Record<string, unknown>
+    data: Record<string, unknown>,
   ): TrackedOrder {
+    const rawStatus = data['orderStatus'];
 
-    const rawStatus =
-      data['orderStatus'];
+    const orderStatus: OrderStatus = ORDER_STATUSES.includes(
+      rawStatus as OrderStatus,
+    )
+      ? (rawStatus as OrderStatus)
+      : 'placed';
 
-    const orderStatus: OrderStatus =
-      ORDER_STATUSES.includes(
-        rawStatus as OrderStatus
-      )
-        ? (rawStatus as OrderStatus)
-        : 'placed';
+    const customerData = data['customer'];
 
-    const customerData =
-      data['customer'];
-
-    const addressData =
-      data['deliveryAddress'];
+    const addressData = data['deliveryAddress'];
 
     const customer: TrackedOrder['customer'] = {
       firstName: String(
-        (customerData as Record<string, unknown>)
-          ?.['firstName'] ?? ''
+        (customerData as Record<string, unknown>)?.['firstName'] ?? '',
       ),
 
       lastName: String(
-        (customerData as Record<string, unknown>)
-          ?.['lastName'] ?? ''
+        (customerData as Record<string, unknown>)?.['lastName'] ?? '',
       ),
 
-      email: String(
-        (customerData as Record<string, unknown>)
-          ?.['email'] ?? ''
-      ),
+      email: String((customerData as Record<string, unknown>)?.['email'] ?? ''),
 
-      phone: String(
-        (customerData as Record<string, unknown>)
-          ?.['phone'] ?? ''
-      )
+      phone: String((customerData as Record<string, unknown>)?.['phone'] ?? ''),
     };
 
-    const deliveryAddress:
-      TrackedOrder['deliveryAddress'] = {
-
+    const deliveryAddress: TrackedOrder['deliveryAddress'] = {
       address: String(
-        (addressData as Record<string, unknown>)
-          ?.['address'] ?? ''
+        (addressData as Record<string, unknown>)?.['address'] ?? '',
       ),
 
       barangay: String(
-        (addressData as Record<string, unknown>)
-          ?.['barangay'] ?? ''
+        (addressData as Record<string, unknown>)?.['barangay'] ?? '',
       ),
 
-      city: String(
-        (addressData as Record<string, unknown>)
-          ?.['city'] ?? ''
-      ),
+      city: String((addressData as Record<string, unknown>)?.['city'] ?? ''),
 
       province: String(
-        (addressData as Record<string, unknown>)
-          ?.['province'] ?? ''
+        (addressData as Record<string, unknown>)?.['province'] ?? '',
       ),
 
       postalCode: String(
-        (addressData as Record<string, unknown>)
-          ?.['postalCode'] ?? ''
-      )
+        (addressData as Record<string, unknown>)?.['postalCode'] ?? '',
+      ),
     };
 
-    const items =
-      Array.isArray(data['items'])
-        ? data['items'].map((item) => {
+    const items = Array.isArray(data['items'])
+      ? data['items'].map((item) => {
+          const itemData = item as Record<string, unknown>;
 
-            const itemData =
-              item as Record<string, unknown>;
+          return {
+            productName: String(itemData['productName'] ?? ''),
 
-            return {
-              productName: String(
-                itemData['productName'] ?? ''
-              ),
+            quantity: Number(itemData['quantity'] ?? 0),
 
-              quantity: Number(
-                itemData['quantity'] ?? 0
-              ),
+            subtotal: Number(itemData['subtotal'] ?? 0),
+          };
+        })
+      : [];
 
-              subtotal: Number(
-                itemData['subtotal'] ?? 0
-              )
-            };
-          })
-        : [];
-    
-    const deliveryLocationData =
-      data['deliveryLocation'] as
-        | {
-            lat?: unknown;
-            lng?: unknown;
-          }
-        | undefined;
+    const deliveryLocationData = data['deliveryLocation'] as
+      | {
+          lat?: unknown;
+          lng?: unknown;
+        }
+      | undefined;
 
     const deliveryLocation =
       deliveryLocationData &&
@@ -729,92 +560,55 @@ export class OrderService {
       Number.isFinite(Number(deliveryLocationData.lng))
         ? {
             lat: Number(deliveryLocationData.lat),
-            lng: Number(deliveryLocationData.lng)
+            lng: Number(deliveryLocationData.lng),
           }
         : undefined;
 
-    const riderLocationData =
-      data['riderLocation'];
+    const riderLocationData = data['riderLocation'];
 
-    let riderLocation:
-      RiderLocation | undefined;
+    let riderLocation: RiderLocation | undefined;
 
-    if (
-      riderLocationData &&
-      typeof riderLocationData === 'object'
-    ) {
+    if (riderLocationData && typeof riderLocationData === 'object') {
+      const location = riderLocationData as Record<string, unknown>;
 
-      const location =
-        riderLocationData as Record<string, unknown>;
+      const lat = Number(location['lat']);
 
-      const lat =
-        Number(location['lat']);
+      const lng = Number(location['lng']);
 
-      const lng =
-        Number(location['lng']);
-
-      if (
-        Number.isFinite(lat) &&
-        Number.isFinite(lng)
-      ) {
-
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
         riderLocation = {
           lat,
           lng,
 
           accuracy:
-            location['accuracy'] != null
-              ? Number(location['accuracy'])
-              : null,
+            location['accuracy'] != null ? Number(location['accuracy']) : null,
 
           heading:
-            location['heading'] != null
-              ? Number(location['heading'])
-              : null,
+            location['heading'] != null ? Number(location['heading']) : null,
 
-          speed:
-            location['speed'] != null
-              ? Number(location['speed'])
-              : null,
+          speed: location['speed'] != null ? Number(location['speed']) : null,
 
-          updatedAt:
-            location['updatedAt'] as
-              | Timestamp
-              | Date
-              | null
-              | undefined
+          updatedAt: location['updatedAt'] as
+            | Timestamp
+            | Date
+            | null
+            | undefined,
         };
       }
     }
 
     return {
-
       id,
 
-      orderNumber:
-        String(
-          data['orderNumber'] ??
-          id
-        ),
+      orderNumber: String(data['orderNumber'] ?? id),
 
-      userId:
-        String(
-          data['userId'] ?? ''
-        ),
+      userId: String(data['userId'] ?? ''),
 
       orderStatus,
 
-      paymentStatus:
-        String(
-          data['paymentStatus'] ??
-          'pending'
-        ),
+      paymentStatus: String(data['paymentStatus'] ?? 'pending'),
 
-      paymentMethod:
-        String(
-          data['paymentMethod'] ??
-          ''
-        ),
+      paymentMethod: String(data['paymentMethod'] ?? ''),
 
       customer,
 
@@ -822,39 +616,24 @@ export class OrderService {
 
       items,
 
-      total:
-        Number(
-          data['total'] ?? 0
-        ),
+      total: Number(data['total'] ?? 0),
 
       assignedRiderId:
         data['assignedRiderId'] != null
-          ? String(
-              data['assignedRiderId']
-            )
+          ? String(data['assignedRiderId'])
           : undefined,
 
       assignedRiderName:
         data['assignedRiderName'] != null
-          ? String(
-              data['assignedRiderName']
-            )
+          ? String(data['assignedRiderName'])
           : undefined,
 
-          deliveryLocation,
-          riderLocation,
+      deliveryLocation,
+      riderLocation,
 
-      createdAt:
-        data['createdAt'] as
-          | Timestamp
-          | null
-          | undefined,
+      createdAt: data['createdAt'] as Timestamp | null | undefined,
 
-      updatedAt:
-        data['updatedAt'] as
-          | Timestamp
-          | null
-          | undefined
+      updatedAt: data['updatedAt'] as Timestamp | null | undefined,
     };
   }
 
@@ -862,29 +641,25 @@ export class OrderService {
   // CREATE MAYA SANDBOX CHECKOUT
   // ==========================================
 
-
-  async createMayaCheckout(
-    orderId: string
-  ): Promise<MayaCheckoutResponse> {
+  async createMayaCheckout(orderId: string): Promise<MayaCheckoutResponse> {
     const user = auth.currentUser;
 
     if (!user) {
-      throw new Error(
-        'Please sign in before starting Maya Checkout.'
-      );
+      throw new Error('Please sign in before starting Maya Checkout.');
     }
 
     const idToken = await user.getIdToken();
 
-    const apiUrl = 'https://oven2door-backend.vercel.app/api/createMayaCheckout';
+    const apiUrl =
+      'https://oven2door-backend.vercel.app/api/createMayaCheckout';
 
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${idToken}`
+        Authorization: `Bearer ${idToken}`,
       },
-      body: JSON.stringify({ orderId })
+      body: JSON.stringify({ orderId }),
     });
 
     const data = await response.json();
@@ -892,24 +667,17 @@ export class OrderService {
     if (!response.ok) {
       console.error('Maya Checkout error:', data);
 
-      throw new Error(
-        data?.error ||
-        'Maya Checkout request failed.'
-      );
+      throw new Error(data?.error || 'Maya Checkout request failed.');
     }
 
     return data as MayaCheckoutResponse;
   }
 
-
   // ==========================================
   // SEND ORDER CONFIRMATION EMAIL
   // ==========================================
 
-  
-  async sendOrderConfirmation(
-    orderId: string
-  ): Promise<{
+  async sendOrderConfirmation(orderId: string): Promise<{
     success: boolean;
     emailId?: string;
     orderNumber?: string;
@@ -917,9 +685,7 @@ export class OrderService {
     const user = auth.currentUser;
 
     if (!user) {
-      throw new Error(
-        'Please sign in before sending an order confirmation.'
-      );
+      throw new Error('Please sign in before sending an order confirmation.');
     }
 
     const idToken = await user.getIdToken();
@@ -930,67 +696,41 @@ export class OrderService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}`
+          Authorization: `Bearer ${idToken}`,
         },
-        body: JSON.stringify({ orderId })
-      }
+        body: JSON.stringify({ orderId }),
+      },
     );
 
     const result = await response.json();
 
-    console.log(
-      'Order confirmation email response:',
-      result
-    );
+    console.log('Order confirmation email response:', result);
 
     if (!response.ok) {
-      console.error(
-        'Order confirmation email error:',
-        result
-      );
+      console.error('Order confirmation email error:', result);
 
       throw new Error(
-        result?.error ||
-        'Failed to send order confirmation email.'
+        result?.error || 'Failed to send order confirmation email.',
       );
     }
 
     return result;
   }
 
-
   // ==========================================
   // GENERATE ORDER NUMBER
   // ==========================================
 
   private generateOrderNumber(): string {
-
     const now = new Date();
 
-    const year =
-      now.getFullYear();
+    const year = now.getFullYear();
 
-    const month =
-      String(
-        now.getMonth() + 1
-      ).padStart(
-        2,
-        '0'
-      );
+    const month = String(now.getMonth() + 1).padStart(2, '0');
 
-    const day =
-      String(
-        now.getDate()
-      ).padStart(
-        2,
-        '0'
-      );
+    const day = String(now.getDate()).padStart(2, '0');
 
-    const random =
-      Math.floor(
-        1000 +
-        Math.random() * 9000
-      );
+    const random = Math.floor(1000 + Math.random() * 9000);
 
     return `OD-${year}${month}${day}-${random}`;
   }
