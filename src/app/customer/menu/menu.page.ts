@@ -2,12 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import {
-  IonContent,
-  IonIcon,
-  IonRange,
-  IonButton
-} from '@ionic/angular';
+import { IonContent, IonIcon, IonRange, IonButton } from '@ionic/angular';
 
 import { addIcons } from 'ionicons';
 
@@ -18,7 +13,7 @@ import {
   restaurantOutline,
   searchOutline,
   closeOutline,
-  cartOutline
+  cartOutline,
 } from 'ionicons/icons';
 
 import { CatalogService } from '../../services/firebase/catalog.service';
@@ -36,42 +31,34 @@ interface MenuCategory {
   templateUrl: './menu.page.html',
   styleUrls: ['./menu.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    IonContent,
-    IonIcon,
-    IonRange,
-    IonButton
-  ]
+  imports: [CommonModule, RouterLink, IonContent, IonIcon, IonRange, IonButton],
 })
 export class MenuPage implements OnInit {
-
   readonly menuCategories: MenuCategory[] = [
     {
       label: 'All',
-      icon: 'grid-outline'
+      icon: 'grid-outline',
     },
     {
       label: 'Pizza',
-      icon: 'pizza-outline'
+      icon: 'pizza-outline',
     },
     {
       label: 'Drinks',
-      icon: 'restaurant-outline'
+      icon: 'restaurant-outline',
     },
     {
       label: 'Sides',
-      icon: 'fast-food-outline'
+      icon: 'fast-food-outline',
     },
     {
       label: 'Chicken',
-      icon: 'restaurant-outline'
+      icon: 'restaurant-outline',
     },
     {
       label: 'Pasta',
-      icon: 'restaurant-outline'
-    }
+      icon: 'restaurant-outline',
+    },
   ];
 
   products: CatalogProduct[] = [];
@@ -94,7 +81,7 @@ export class MenuPage implements OnInit {
 
   constructor(
     private catalogService: CatalogService,
-    private storefront: StorefrontService
+    private storefront: StorefrontService,
   ) {
     addIcons({
       gridOutline,
@@ -103,7 +90,7 @@ export class MenuPage implements OnInit {
       restaurantOutline,
       searchOutline,
       closeOutline,
-      cartOutline
+      cartOutline,
     });
   }
 
@@ -112,46 +99,26 @@ export class MenuPage implements OnInit {
   }
 
   async loadCatalog(): Promise<void> {
-
     this.isLoading = true;
     this.errorMessage = '';
 
     try {
+      this.products = await this.catalogService.getProducts();
 
-      this.products =
-        await this.catalogService.getProducts();
+      console.log('Firebase menu products:', this.products.length);
 
-      console.log(
-        'Firebase menu products:',
-        this.products.length
-      );
-
-      console.log(
-        'First Firebase product:',
-        this.products[0]
-      );
+      console.log('First Firebase product:', this.products[0]);
 
       this.applyFilters();
 
-      console.log(
-        'Filtered menu products:',
-        this.filteredProducts.length
-      );
-
+      console.log('Filtered menu products:', this.filteredProducts.length);
     } catch (error) {
-
-      console.error(
-        'Failed to load Firebase catalog:',
-        error
-      );
+      console.error('Failed to load Firebase catalog:', error);
 
       this.errorMessage =
         'Unable to load the menu right now. Please try again.';
-
     } finally {
-
       this.isLoading = false;
-
     }
   }
 
@@ -162,29 +129,33 @@ export class MenuPage implements OnInit {
    * quantity 1. Product customization can be
    * connected later.
    */
+
   addToCart(product: CatalogProduct): void {
+    const size = product.sizes?.[0];
+    const crust = product.crusts?.[0];
+
+    if (product.sizes?.length && !size) {
+      console.error('No valid pizza size available.');
+      return;
+    }
 
     this.storefront.add(product, {
-      quantity: 1
+      quantity: 1,
+      size,
+      crust,
+      toppings: [],
     });
 
-    console.log(
-      'Added to cart:',
-      product.name
-    );
-
-    console.log(
-      'Cart:',
-      this.storefront.cart
-    );
+    console.log('Added to cart:', {
+      product: product.name,
+      size: size?.name,
+      crust: crust?.name,
+      cart: this.storefront.cart,
+    });
   }
 
   normalizeCategory(category: string): string {
-
-    const value =
-      category
-        .trim()
-        .toLowerCase();
+    const value = category.trim().toLowerCase();
 
     if (value.includes('drink')) {
       return 'Drinks';
@@ -206,16 +177,13 @@ export class MenuPage implements OnInit {
   }
 
   selectCategory(category: string): void {
-
     this.selectedCategory = category;
 
     this.applyFilters();
   }
 
   onSearch(event: Event): void {
-
-    const input =
-      event.target as HTMLInputElement;
+    const input = event.target as HTMLInputElement;
 
     this.searchQuery = input.value;
 
@@ -223,14 +191,12 @@ export class MenuPage implements OnInit {
   }
 
   clearSearch(): void {
-
     this.searchQuery = '';
 
     this.applyFilters();
   }
 
   onPriceChange(event: CustomEvent): void {
-
     const value = event.detail.value;
 
     if (
@@ -239,26 +205,21 @@ export class MenuPage implements OnInit {
       'lower' in value &&
       'upper' in value
     ) {
+      this.minPrice = Number(value.lower);
 
-      this.minPrice =
-        Number(value.lower);
-
-      this.maxPrice =
-        Number(value.upper);
+      this.maxPrice = Number(value.upper);
 
       this.applyFilters();
     }
   }
 
   setSort(option: string): void {
-
     this.sortOption = option;
 
     this.applyFilters();
   }
 
   clearFilters(): void {
-
     this.selectedCategory = 'All';
 
     this.searchQuery = '';
@@ -273,72 +234,36 @@ export class MenuPage implements OnInit {
   }
 
   applyFilters(): void {
+    const query = this.searchQuery.trim().toLowerCase();
 
-    const query =
-      this.searchQuery
-        .trim()
-        .toLowerCase();
+    let list = this.products.filter((product) => {
+      const productCategory = this.normalizeCategory(product.category);
 
-    let list =
-      this.products.filter(product => {
+      const matchesCategory =
+        this.selectedCategory === 'All' ||
+        productCategory === this.selectedCategory;
 
-        const productCategory =
-          this.normalizeCategory(
-            product.category
-          );
+      const searchableText =
+        `${product.name} ${product.description}`.toLowerCase();
 
-        const matchesCategory =
-          this.selectedCategory === 'All' ||
-          productCategory === this.selectedCategory;
+      const matchesSearch = query === '' || searchableText.includes(query);
 
-        const searchableText =
-          `${product.name} ${product.description}`
-            .toLowerCase();
+      const matchesPrice =
+        product.price >= this.minPrice && product.price <= this.maxPrice;
 
-        const matchesSearch =
-          query === '' ||
-          searchableText.includes(query);
+      return matchesCategory && matchesSearch && matchesPrice;
+    });
 
-        const matchesPrice =
-          product.price >= this.minPrice &&
-          product.price <= this.maxPrice;
-
-        return (
-          matchesCategory &&
-          matchesSearch &&
-          matchesPrice
-        );
-      });
-
-    if (
-      this.sortOption ===
-      'Price: low to high'
-    ) {
-
-      list.sort(
-        (a, b) =>
-          a.price - b.price
-      );
-
-    } else if (
-      this.sortOption ===
-      'Price: high to low'
-    ) {
-
-      list.sort(
-        (a, b) =>
-          b.price - a.price
-      );
+    if (this.sortOption === 'Price: low to high') {
+      list.sort((a, b) => a.price - b.price);
+    } else if (this.sortOption === 'Price: high to low') {
+      list.sort((a, b) => b.price - a.price);
     }
 
     this.filteredProducts = list;
   }
 
-  trackByProductId(
-    index: number,
-    product: CatalogProduct
-  ): number {
-
+  trackByProductId(index: number, product: CatalogProduct): number {
     return product.id;
   }
 }
