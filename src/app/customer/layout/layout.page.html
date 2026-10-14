@@ -74,6 +74,29 @@
         </span>
       </button>
 
+      <!-- WISHLIST -->
+
+      <!-- WISHLIST WITH COUNTER -->
+      <button
+        type="button"
+        class="wishlist-btn"
+        [routerLink]="isLoggedIn() ? '/wishlist' : '/login'"
+        [attr.aria-label]="
+    'My Wishlist, ' + wishlistCount() + ' saved products'
+  "
+        title="My Wishlist"
+      >
+        <span class="wishlist-icon-wrapper">
+          <ion-icon name="heart-outline"></ion-icon>
+
+          <span class="wishlist-badge" *ngIf="wishlistCount() > 0">
+            {{ wishlistCount() > 99 ? '99+' : wishlistCount() }}
+          </span>
+        </span>
+
+        <span class="desktop-only">WISHLIST</span>
+      </button>
+
       <!-- CART -->
       <button type="button" class="cart-btn" routerLink="/cart">
         <span class="cart-icon-wrapper">

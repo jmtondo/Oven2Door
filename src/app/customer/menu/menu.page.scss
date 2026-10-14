@@ -76,7 +76,6 @@ ion-content.menu-page {
   object-fit: cover;
 }
 
-
 /* =====================================
    CATEGORIES
 ===================================== */
@@ -160,7 +159,6 @@ ion-content.menu-page {
   color: #d9251d;
 }
 
-
 /* =====================================
    FILTERS
 ===================================== */
@@ -180,8 +178,7 @@ ion-content.menu-page {
 
   border-radius: 12px;
 
-  box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .filters-header {
@@ -217,7 +214,6 @@ ion-content.menu-page {
 
   cursor: pointer;
 }
-
 
 /* =====================================
    SEARCH
@@ -274,7 +270,6 @@ ion-content.menu-page {
 
   cursor: pointer;
 }
-
 
 /* =====================================
    FILTER CONTROLS
@@ -346,7 +341,6 @@ ion-content.menu-page {
   outline: none;
 }
 
-
 /* =====================================
    PRODUCTS
 ===================================== */
@@ -397,7 +391,6 @@ ion-content.menu-page {
   font-size: 13px;
 }
 
-
 /* =====================================
    PRODUCT GRID
 ===================================== */
@@ -405,8 +398,7 @@ ion-content.menu-page {
 .product-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 14px;
 }
@@ -420,8 +412,7 @@ ion-content.menu-page {
 
   border-radius: 12px;
 
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .product-image {
@@ -538,7 +529,6 @@ ion-content.menu-page {
   cursor: pointer;
 }
 
-
 /* =====================================
    LOADING
 ===================================== */
@@ -579,7 +569,6 @@ ion-content.menu-page {
   }
 }
 
-
 /* =====================================
    EMPTY
 ===================================== */
@@ -618,7 +607,6 @@ ion-content.menu-page {
   font-weight: 800;
 }
 
-
 /* =====================================
    ERROR
 ===================================== */
@@ -643,7 +631,6 @@ ion-content.menu-page {
   --background: #d9251d;
   --color: #ffffff;
 }
-
 
 /* =====================================
    FOOTER
@@ -717,13 +704,11 @@ ion-content.menu-page {
   text-align: center;
 }
 
-
 /* =====================================
    RESPONSIVE
 ===================================== */
 
 @media screen and (max-width: 700px) {
-
   .banner-content {
     height: 130px;
   }
@@ -773,9 +758,7 @@ ion-content.menu-page {
   }
 }
 
-
 @media screen and (max-width: 430px) {
-
   .menu-banner {
     padding: 15px;
   }
@@ -798,5 +781,100 @@ ion-content.menu-page {
 
   .product-image {
     height: 220px;
+  }
+}
+
+/* =====================================
+   WISHLIST HEART BUTTON
+   ===================================== */
+
+.product-image {
+  position: relative;
+}
+
+.product-wishlist-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+  border: 1px solid #eeeeee;
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #666666;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.product-wishlist-btn ion-icon {
+  font-size: 23px;
+}
+
+.product-wishlist-btn:hover {
+  color: #d9251d;
+  transform: scale(1.08);
+}
+
+.product-wishlist-btn.is-saved {
+  background: #fff1f1;
+  color: #d9251d;
+}
+
+.product-wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.product-wishlist-btn:focus-visible {
+  outline: 2px solid #d9251d;
+  outline-offset: 3px;
+}
+
+.wishlist-inline-error {
+  max-width: 1200px;
+  margin: 12px auto;
+  padding: 12px 18px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #fff1f1;
+  color: #b91f19;
+
+  border: 1px solid #ffc7c7;
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media screen and (max-width: 700px) {
+  .product-wishlist-btn {
+    top: 10px;
+    right: 10px;
+
+    width: 38px;
+    height: 38px;
+  }
+
+  .product-wishlist-btn ion-icon {
+    font-size: 21px;
   }
 }

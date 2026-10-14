@@ -84,6 +84,14 @@ export const routes: Routes = [
       },
 
       {
+        path: 'wishlist',
+        loadComponent: () =>
+          import('./customer/wishlist/wishlist.page').then(
+            (m) => m.WishlistPage,
+          ),
+      },
+
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',
@@ -102,5 +110,10 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'login',
+  },
+  {
+    path: 'wishlist',
+    loadComponent: () =>
+      import('./customer/wishlist/wishlist.page').then((m) => m.WishlistPage),
   },
 ];

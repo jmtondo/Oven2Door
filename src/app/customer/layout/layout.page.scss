@@ -126,9 +126,8 @@ ion-router-outlet {
   align-items: center;
   justify-content: center;
   flex: 1;
-  gap: 28px;
+  gap: 22px;
 }
-
 .nav-item {
   color: var(--text-white);
   text-decoration: none;
@@ -445,6 +444,102 @@ ion-router-outlet {
     right: -9px;
   }
 
+  /* ==========================================
+   WISHLIST - DESKTOP AND MOBILE
+   ========================================== */
+
+  .wishlist-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 9px 12px;
+    min-height: 38px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1;
+
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .wishlist-btn ion-icon {
+    display: block;
+    font-size: 21px;
+    color: #e83a42;
+    flex-shrink: 0;
+  }
+
+  .wishlist-label {
+    display: inline-block;
+    color: inherit;
+  }
+
+  .wishlist-btn:hover,
+  .wishlist-btn.wishlist-active {
+    background: rgba(217, 37, 29, 0.12);
+    border-color: rgba(217, 37, 29, 0.3);
+    color: #ff5555;
+  }
+
+  .wishlist-btn:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 3px;
+  }
+
+  /* Header action spacing */
+  .header-actions {
+    gap: 18px;
+  }
+
+  /* Tablet */
+  @media screen and (max-width: 1100px) {
+    .wishlist-btn {
+      padding: 8px;
+    }
+
+    .wishlist-label {
+      display: none;
+    }
+
+    .header-actions {
+      gap: 12px;
+    }
+  }
+
+  /* Mobile */
+  @media screen and (max-width: 820px) {
+    .wishlist-btn {
+      min-height: 40px;
+      padding: 7px;
+    }
+
+    .wishlist-btn ion-icon {
+      font-size: 25px;
+    }
+
+    .header-actions {
+      gap: 14px;
+    }
+  }
+
   .mobile-dropdown {
     display: none;
   }
@@ -479,4 +574,128 @@ ion-router-outlet {
   .mobile-dropdown .mobile-nav-item {
     padding: 14px 0;
   }
+}
+
+@media screen and (min-width: 821px) and (max-width: 1250px) {
+  .main-header {
+    padding: 12px 24px;
+    gap: 12px;
+  }
+
+  .nav-links {
+    gap: 14px;
+  }
+
+  .nav-item {
+    font-size: 13px;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+}
+
+/* ==========================================
+   WISHLIST HEADER ACTION
+   ========================================== */
+
+.header-actions .wishlist-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 40px;
+  padding: 8px 12px;
+
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  box-shadow: none;
+
+  color: #ffffff;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.header-actions .wishlist-btn ion-icon {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  font-size: 22px;
+  color: #e83a42;
+}
+
+.header-actions .wishlist-btn .wishlist-label {
+  display: inline-block;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.header-actions .wishlist-btn:hover {
+  background-color: rgba(217, 37, 29, 0.12);
+  border-color: rgba(217, 37, 29, 0.3);
+}
+
+@media screen and (max-width: 1100px) {
+  .header-actions .wishlist-btn .wishlist-label {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 820px) {
+  .header-actions .wishlist-btn {
+    padding: 7px;
+  }
+
+  .header-actions .wishlist-btn ion-icon {
+    width: 25px;
+    height: 25px;
+    font-size: 25px;
+  }
+}
+
+.wishlist-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlist-badge {
+  position: absolute;
+  top: -8px;
+  right: -11px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+
+  background: #d9251d;
+  color: #ffffff;
+
+  border: 2px solid #ffffff;
+  border-radius: 50px;
+
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
 }

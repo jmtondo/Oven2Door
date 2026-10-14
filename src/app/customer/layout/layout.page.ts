@@ -1,3 +1,7 @@
+import { WishlistService } from '../../services/firebase/wishlist.service';
+import { Unsubscribe as AuthUnsubscribe } from 'firebase/auth';
+import { Unsubscribe as FirestoreUnsubscribe } from 'firebase/firestore';
+
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -18,6 +22,7 @@ import {
   cart,
   menuOutline,
   closeOutline,
+  heartOutline,
 } from 'ionicons/icons';
 
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -41,6 +46,10 @@ import { auth, db } from '../../firebase.config';
   ],
 })
 export class LayoutPage implements OnInit, OnDestroy {
+  wishlistCount = signal(0);
+
+  private wishlistAuthUnsubscribe?: AuthUnsubscribe;
+  private wishlistCountUnsubscribe?: FirestoreUnsubscribe;
   isMobileMenuOpen = false;
 
   // Signals notify Angular when Firebase state changes.
@@ -54,6 +63,7 @@ export class LayoutPage implements OnInit, OnDestroy {
   constructor(
     public storefront: StorefrontService,
     private router: Router,
+    private wishlistService: WishlistService,
   ) {
     addIcons({
       searchOutline,
@@ -61,6 +71,7 @@ export class LayoutPage implements OnInit, OnDestroy {
       cart,
       menuOutline,
       closeOutline,
+      heartOutline,
     });
 
     this.cartSubscription = this.storefront.changed.subscribe(() => {
@@ -70,6 +81,35 @@ export class LayoutPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadLoggedInUser();
+    this.listenToWishlistCount();
+  }
+
+  private listenToWishlistCount(): void {
+    this.wishlistAuthUnsubscribe = onAuthStateChanged(auth, (user) => {
+      this.wishlistCountUnsubscribe?.();
+      this.wishlistCountUnsubscribe = undefined;
+
+      this.wishlistCount.set(0);
+
+      if (!user) {
+        return;
+      }
+
+      this.wishlistCountUnsubscribe = this.wishlistService.listenToWishlist(
+        user.uid,
+        (productIds) => {
+          if (auth.currentUser?.uid !== user.uid) {
+            return;
+          }
+
+          this.wishlistCount.set(productIds.length);
+        },
+        (error) => {
+          console.error('Wishlist count error:', error);
+          this.wishlistCount.set(0);
+        },
+      );
+    });
   }
 
   private loadLoggedInUser(): void {
@@ -161,8 +201,13 @@ export class LayoutPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Existing cleanup
     this.cartSubscription?.unsubscribe();
     this.profileUnsubscribe?.();
     this.authUnsubscribe?.();
+
+    // Wishlist cleanup
+    this.wishlistAuthUnsubscribe?.();
+    this.wishlistCountUnsubscribe?.();
   }
 }

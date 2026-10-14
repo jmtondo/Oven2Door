@@ -1,0 +1,259 @@
+<ion-content class="wishlist-content">
+  <div class="wishlist-container">
+    <div class="wishlist-heading">
+      <span class="eyebrow">YOUR FAVORITES</span>
+      <h1>My <span>Wishlist</span></h1>
+      <p>All your favorite Oven2Door products, saved in one place.</p>
+    </div>
+
+    <div class="wishlist-loading" *ngIf="loading">Loading your wishlist...</div>
+
+    <div class="wishlist-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div
+      class="wishlist-empty"
+      *ngIf="!loading && !errorMessage && wishlistProducts.length === 0"
+    >
+      <ion-icon name="heart-outline"></ion-icon>
+
+      <h2>Your wishlist is empty</h2>
+
+      <p>Explore our menu and save your favorite pizzas for later.</p>
+
+      <a routerLink="/menu" class="browse-btn">
+        EXPLORE MENU
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </a>
+    </div>
+
+    <!-- SAVED WISHLIST PRODUCTS -->
+    <section
+      class="wishlist-section"
+      *ngIf="!loading && wishlistProducts.length > 0"
+    >
+      <div class="wishlist-section-header">
+        <div>
+          <span class="section-kicker">SAVED FOR LATER</span>
+          <h2>YOUR FAVORITES</h2>
+        </div>
+
+        <p>{{ wishlistProducts.length }} items</p>
+      </div>
+
+      <div class="wishlist-grid">
+        <article
+          class="wishlist-card"
+          *ngFor="
+        let product of wishlistProducts;
+        trackBy: trackByProductId
+      "
+        >
+          <!-- PRODUCT IMAGE -->
+          <div class="wishlist-product-image">
+            <img [src]="product.imagePath" [alt]="product.name" />
+
+            <button
+              type="button"
+              class="remove-heart-btn"
+              [disabled]="isRemoving(product)"
+              (click)="removeProduct(product)"
+              [attr.aria-label]="'Remove ' + product.name + ' from wishlist'"
+            >
+              <ion-icon name="heart"></ion-icon>
+            </button>
+          </div>
+
+          <!-- PRODUCT INFORMATION -->
+          <div class="wishlist-product-info">
+            <span class="product-category">
+              {{ normalizeCategory(product.category) }}
+            </span>
+
+            <h3>{{ product.name }}</h3>
+
+            <p class="product-description">{{ product.description }}</p>
+
+            <div class="wishlist-product-footer">
+              <div class="product-price">
+                <small>FROM</small>
+
+                <strong> ₱{{ product.price | number:'1.0-0' }} </strong>
+              </div>
+
+              <button
+                type="button"
+                class="add-cart-btn"
+                (click)="addToCart(product)"
+              >
+                <ion-icon name="cart-outline"></ion-icon>
+                ADD TO CART
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="remove-text-btn"
+              [disabled]="isRemoving(product)"
+              (click)="removeProduct(product)"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+              REMOVE FROM WISHLIST
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</ion-content>
+
+<ion-content class="wishlist-content" [scrollY]="true">
+  <main class="wishlist-container">
+    <!-- PAGE HEADING -->
+    <header class="wishlist-heading">
+      <span class="eyebrow">OVEN2DOOR FAVORITES</span>
+
+      <h1>MY <span>WISHLIST</span></h1>
+
+      <p>Your favorite flavors, saved for whenever you're ready to order.</p>
+    </header>
+
+    <!-- LOADING -->
+    <div class="wishlist-loading" *ngIf="loading">
+      <div class="loading-spinner"></div>
+      <p>Loading your favorites...</p>
+    </div>
+
+    <!-- ERROR -->
+    <div class="wishlist-error" *ngIf="errorMessage" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- SUCCESS MESSAGE -->
+    <div class="wishlist-success" *ngIf="actionMessage" role="status">
+      {{ actionMessage }}
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div
+      class="wishlist-empty"
+      *ngIf="
+        !loading &&
+        !errorMessage &&
+        wishlistProducts.length === 0
+      "
+    >
+      <div class="empty-icon">
+        <ion-icon name="heart-outline"></ion-icon>
+      </div>
+
+      <h2>Your wishlist is empty</h2>
+
+      <p>
+        Found something delicious? Tap the heart icon on any product in our menu
+        to save it here.
+      </p>
+
+      <a routerLink="/menu" class="browse-btn">
+        EXPLORE OUR MENU
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </a>
+    </div>
+
+    <!-- SAVED PRODUCTS -->
+    <section
+      class="wishlist-section"
+      *ngIf="!loading && wishlistProducts.length > 0"
+    >
+      <div class="wishlist-section-header">
+        <div>
+          <span class="section-kicker"> SAVED FOR LATER </span>
+
+          <h2>YOUR FAVORITES</h2>
+        </div>
+
+        <p>
+          {{ wishlistProducts.length }} {{ wishlistProducts.length === 1 ?
+          'item' : 'items' }}
+        </p>
+      </div>
+
+      <div class="wishlist-grid">
+        <article
+          class="wishlist-card"
+          *ngFor="
+            let product of wishlistProducts;
+            trackBy: trackByProductId
+          "
+        >
+          <!-- PRODUCT IMAGE -->
+          <div class="wishlist-product-image">
+            <img
+              [src]="product.imagePath"
+              [alt]="product.name"
+              loading="lazy"
+            />
+
+            <button
+              type="button"
+              class="remove-heart-btn"
+              [disabled]="isRemoving(product)"
+              [attr.aria-label]="
+                'Remove ' + product.name + ' from wishlist'
+              "
+              (click)="removeProduct(product)"
+            >
+              <ion-icon name="heart"></ion-icon>
+            </button>
+          </div>
+
+          <!-- PRODUCT DETAILS -->
+          <div class="wishlist-product-info">
+            <span class="product-category">
+              {{ normalizeCategory(product.category) }}
+            </span>
+
+            <h3>{{ product.name }}</h3>
+
+            <p class="product-description">{{ product.description }}</p>
+
+            <div class="wishlist-product-footer">
+              <div class="product-price">
+                <small>FROM</small>
+
+                <strong> ₱{{ product.price | number:'1.0-0' }} </strong>
+              </div>
+
+              <button
+                type="button"
+                class="add-cart-btn"
+                (click)="addToCart(product)"
+              >
+                <ion-icon name="cart-outline"></ion-icon>
+                ADD TO CART
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="remove-text-btn"
+              [disabled]="isRemoving(product)"
+              (click)="removeProduct(product)"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+
+              {{ isRemoving(product) ? 'REMOVING...' : 'REMOVE FROM WISHLIST' }}
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <!-- CONTINUE SHOPPING -->
+      <div class="continue-shopping">
+        <a routerLink="/menu">
+          CONTINUE EXPLORING MENU
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </a>
+      </div>
+    </section>
+  </main>
+</ion-content>
