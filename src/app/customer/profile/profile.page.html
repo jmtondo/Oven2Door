@@ -1,0 +1,449 @@
+<ion-content class="profile-content">
+  <div class="profile-container">
+    <!-- PAGE HEADING -->
+    <div class="page-heading">
+      <span class="eyebrow">MY ACCOUNT</span>
+      <h1>My Profile</h1>
+      <p>Manage your personal information and delivery settings.</p>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loading" class="loading-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading your profile...</p>
+    </div>
+
+    <ng-container *ngIf="!loading">
+      <!-- PROFILE MESSAGES -->
+      <div *ngIf="errorMessage" class="message error">{{ errorMessage }}</div>
+
+      <div *ngIf="successMessage" class="message success">
+        {{ successMessage }}
+      </div>
+
+      <!-- ===================================== -->
+      <!-- PERSONAL INFORMATION -->
+      <!-- ===================================== -->
+
+      <div class="profile-card">
+        <div class="profile-banner">
+          <div class="avatar">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+
+          <div>
+            <h2>{{ firstName }} {{ lastName }}</h2>
+            <p>{{ email }}</p>
+
+            <span class="account-badge">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              Customer Account
+            </span>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div>
+            <h3>Personal Information</h3>
+            <p>Keep your contact details up to date.</p>
+          </div>
+
+          <button
+            *ngIf="!editing"
+            type="button"
+            class="edit-btn"
+            (click)="editing = true; successMessage = ''"
+          >
+            Edit Profile
+          </button>
+        </div>
+
+        <form (ngSubmit)="saveProfile()">
+          <div class="form-grid">
+            <!-- FIRST NAME -->
+            <div class="form-field">
+              <label for="firstName">First Name</label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                [(ngModel)]="firstName"
+                [readonly]="!editing"
+                required
+              />
+            </div>
+
+            <!-- LAST NAME -->
+            <div class="form-field">
+              <label for="lastName">Last Name</label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                [(ngModel)]="lastName"
+                [readonly]="!editing"
+                required
+              />
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-field">
+              <label for="email">Email Address</label>
+
+              <div class="input-icon">
+                <ion-icon name="mail-outline"></ion-icon>
+                <input id="email" type="email" [value]="email" readonly />
+              </div>
+
+              <small> Email changes are not available here yet. </small>
+            </div>
+
+            <!-- MOBILE NUMBER -->
+            <div class="form-field">
+              <label for="phone">Mobile Number</label>
+
+              <div class="input-icon">
+                <ion-icon name="call-outline"></ion-icon>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  [(ngModel)]="phone"
+                  [readonly]="!editing"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- PROFILE ACTIONS -->
+          <div class="form-actions" *ngIf="editing">
+            <button
+              type="button"
+              class="cancel-btn"
+              [disabled]="saving"
+              (click)="cancelEdit()"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="save-btn" [disabled]="saving">
+              <ion-spinner *ngIf="saving" name="crescent"></ion-spinner>
+
+              <ion-icon *ngIf="!saving" name="save-outline"></ion-icon>
+
+              {{ saving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- DELIVERY SETTINGS -->
+      <!-- ===================================== -->
+
+      <section class="upcoming-section">
+        <div class="delivery-heading">
+          <div>
+            <h3>Delivery Settings</h3>
+            <p>Manage your saved delivery locations.</p>
+          </div>
+        </div>
+
+        <div class="upcoming-grid">
+          <div class="upcoming-card">
+            <!-- ADDRESS HEADER -->
+            <div class="upcoming-card-header">
+              <div class="delivery-icon">
+                <ion-icon name="location-outline"></ion-icon>
+              </div>
+
+              <div>
+                <h4>Shipping Addresses</h4>
+                <p>
+                  Save and manage your delivery addresses for faster and more
+                  convenient checkout.
+                </p>
+              </div>
+            </div>
+
+            <!-- ADDRESS MESSAGES -->
+            <div *ngIf="addressError" class="message error">
+              {{ addressError }}
+            </div>
+
+            <div *ngIf="addressSuccess" class="message success">
+              {{ addressSuccess }}
+            </div>
+
+            <!-- LOADING ADDRESSES -->
+            <div *ngIf="addressesLoading" class="loading-state">
+              <ion-spinner name="crescent"></ion-spinner>
+              <p>Loading saved addresses...</p>
+            </div>
+
+            <!-- SAVED ADDRESSES -->
+            <div
+              class="address-list"
+              *ngIf="!addressesLoading && addresses.length > 0"
+            >
+              <div
+                class="address-item"
+                *ngFor="let address of addresses"
+                [class.default-address]="address.isDefault"
+              >
+                <div class="address-item-header">
+                  <div class="address-label">
+                    <ion-icon
+                      [name]="address.label === 'Home'
+                        ? 'home-outline'
+                        : 'location-outline'"
+                    ></ion-icon>
+
+                    <h5>{{ address.label }}</h5>
+
+                    <span *ngIf="address.isDefault" class="default-badge">
+                      Default
+                    </span>
+                  </div>
+                </div>
+
+                <div class="address-details">
+                  <p>{{ address.address }}</p>
+
+                  <p>{{ address.barangay }}, {{ address.city }}</p>
+
+                  <p>{{ address.province }}, {{ address.postalCode }}</p>
+                </div>
+
+                <!-- ADDRESS ACTIONS -->
+                <div class="address-actions">
+                  <button
+                    type="button"
+                    class="address-edit-btn"
+                    [disabled]="addressSaving"
+                    (click)="editAddress(address)"
+                  >
+                    <ion-icon name="create-outline"></ion-icon>
+                    Edit
+                  </button>
+
+                  <button
+                    *ngIf="!address.isDefault"
+                    type="button"
+                    class="address-default-btn"
+                    [disabled]="addressSaving"
+                    (click)="setDefaultAddress(address)"
+                  >
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    Set as Default
+                  </button>
+
+                  <button
+                    type="button"
+                    class="address-delete-btn"
+                    [disabled]="addressSaving"
+                    (click)="removeAddress(address)"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- EMPTY ADDRESS STATE -->
+            <div
+              *ngIf="!addressesLoading && addresses.length === 0 && !showAddressForm"
+              class="address-empty"
+            >
+              <ion-icon name="location-outline"></ion-icon>
+
+              <h5>No saved addresses yet</h5>
+
+              <p>
+                Add your first shipping address to make checkout faster and
+                easier.
+              </p>
+            </div>
+
+            <!-- ADD ADDRESS BUTTON -->
+            <div class="address-add-section" *ngIf="!showAddressForm">
+              <button
+                type="button"
+                class="add-address-btn"
+                [disabled]="addressesLoading || addressSaving"
+                (click)="addNewAddress()"
+              >
+                <ion-icon name="add-outline"></ion-icon>
+                Add New Address
+              </button>
+            </div>
+
+            <!-- ===================================== -->
+            <!-- ADDRESS FORM -->
+            <!-- ===================================== -->
+
+            <div class="address-form-container" *ngIf="showAddressForm">
+              <div class="address-form-heading">
+                <h4>
+                  {{ editingAddressId ? 'Edit Shipping Address' : 'Add Shipping
+                  Address' }}
+                </h4>
+
+                <button
+                  type="button"
+                  class="address-close-btn"
+                  [disabled]="addressSaving"
+                  (click)="cancelAddressForm()"
+                  aria-label="Close address form"
+                >
+                  <ion-icon name="close-outline"></ion-icon>
+                </button>
+              </div>
+
+              <form (ngSubmit)="saveAddress()">
+                <div class="form-grid address-form-grid">
+                  <!-- ADDRESS LABEL -->
+                  <div class="form-field">
+                    <label for="addressLabel"> Address Label </label>
+
+                    <select
+                      id="addressLabel"
+                      name="addressLabel"
+                      [(ngModel)]="addressForm.label"
+                      required
+                    >
+                      <option value="Home">Home</option>
+                      <option value="Work">Work</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <!-- STREET ADDRESS -->
+                  <div class="form-field">
+                    <label for="streetAddress">
+                      House No. / Street Address
+                    </label>
+
+                    <input
+                      id="streetAddress"
+                      name="streetAddress"
+                      type="text"
+                      [(ngModel)]="addressForm.address"
+                      placeholder="House number, street, subdivision"
+                      required
+                    />
+                  </div>
+
+                  <!-- BARANGAY -->
+                  <div class="form-field">
+                    <label for="barangay"> Barangay </label>
+
+                    <input
+                      id="barangay"
+                      name="barangay"
+                      type="text"
+                      [(ngModel)]="addressForm.barangay"
+                      placeholder="Enter barangay"
+                      required
+                    />
+                  </div>
+
+                  <!-- CITY -->
+                  <div class="form-field">
+                    <label for="city"> City / Municipality </label>
+
+                    <input
+                      id="city"
+                      name="city"
+                      type="text"
+                      [(ngModel)]="addressForm.city"
+                      placeholder="Enter city or municipality"
+                      required
+                    />
+                  </div>
+
+                  <!-- PROVINCE -->
+                  <div class="form-field">
+                    <label for="province"> Province </label>
+
+                    <input
+                      id="province"
+                      name="province"
+                      type="text"
+                      [(ngModel)]="addressForm.province"
+                      placeholder="Enter province"
+                      required
+                    />
+                  </div>
+
+                  <!-- POSTAL CODE -->
+                  <div class="form-field">
+                    <label for="postalCode"> Postal Code </label>
+
+                    <input
+                      id="postalCode"
+                      name="postalCode"
+                      type="text"
+                      inputmode="numeric"
+                      maxlength="4"
+                      pattern="[0-9]{4}"
+                      [(ngModel)]="addressForm.postalCode"
+                      placeholder="e.g. 1100"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- DEFAULT ADDRESS -->
+                <div class="default-checkbox">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="isDefault"
+                      [(ngModel)]="addressForm.isDefault"
+                    />
+
+                    <span> Set as my default shipping address </span>
+                  </label>
+                </div>
+
+                <!-- ADDRESS FORM ACTIONS -->
+                <div class="form-actions address-form-actions">
+                  <button
+                    type="button"
+                    class="cancel-btn"
+                    [disabled]="addressSaving"
+                    (click)="cancelAddressForm()"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="save-btn"
+                    [disabled]="addressSaving"
+                  >
+                    <ion-spinner
+                      *ngIf="addressSaving"
+                      name="crescent"
+                    ></ion-spinner>
+
+                    <ion-icon
+                      *ngIf="!addressSaving"
+                      name="save-outline"
+                    ></ion-icon>
+
+                    {{ addressSaving ? 'Saving...' : editingAddressId ? 'Update
+                    Address' : 'Save Address' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ng-container>
+  </div>
+</ion-content>

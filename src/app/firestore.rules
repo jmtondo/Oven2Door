@@ -61,6 +61,8 @@ service cloud.firestore {
 
     match /users/{userId} {
 
+      allow delete: if false;
+
       allow get: if isOwner(userId) || isAdmin();
 
       allow list: if isAdmin();
@@ -80,15 +82,39 @@ service cloud.firestore {
           'updatedAt'
         ]);
 
-      allow update: if isOwner(userId)
-        && request.resource.data.diff(resource.data)
-          .affectedKeys()
-          .hasOnly([
-            'firstName',
-            'lastName',
-            'phone',
-            'updatedAt'
-          ]);
+      allow update: if (
+  // Customers can edit their own basic information
+  (
+    isOwner(userId)
+    && request.resource.data.diff(resource.data)
+      .affectedKeys()
+      .hasOnly([
+        'firstName',
+        'lastName',
+        'phone',
+        'updatedAt'
+      ])
+  )
+
+  ||
+
+  // Admins can activate or deactivate customer accounts
+  (
+    isAdmin()
+    && resource.data.role == 'customer'
+    && request.resource.data.role == 'customer'
+    && request.resource.data.diff(resource.data)
+      .affectedKeys()
+      .hasOnly([
+        'status',
+        'updatedAt'
+      ])
+    && request.resource.data.status in [
+      'active',
+      'inactive'
+    ]
+  )
+);
 
       allow delete: if false;
     }
@@ -258,7 +284,7 @@ service cloud.firestore {
       }
 
       // Customer creates their own order.
-      allow create: if validOrderCreate();
+      allow create: if false;
 
       // Customers read their own orders.
       // Riders read assigned orders.

@@ -4,7 +4,7 @@
   </div>
 
   <nav class="main-header">
-
+    <!-- LOGO AND MOBILE MENU -->
     <div class="logo-section">
       <button
         type="button"
@@ -26,6 +26,7 @@
       </div>
     </div>
 
+    <!-- DESKTOP NAVIGATION -->
     <div class="nav-links desktop-only">
       <a
         routerLink="/home"
@@ -36,11 +37,7 @@
         Home
       </a>
 
-      <a
-        routerLink="/menu"
-        routerLinkActive="active"
-        class="nav-item"
-      >
+      <a routerLink="/menu" routerLinkActive="active" class="nav-item">
         Menu
       </a>
 
@@ -52,76 +49,45 @@
         Order Tracking
       </a>
 
-      <a
-        routerLink="/about-us"
-        routerLinkActive="active"
-        class="nav-item"
-      >
+      <a routerLink="/about-us" routerLinkActive="active" class="nav-item">
         About Us
       </a>
 
-      <a
-        routerLink="/faqs"
-        routerLinkActive="active"
-        class="nav-item"
-      >
+      <a routerLink="/faqs" routerLinkActive="active" class="nav-item">
         FAQS
       </a>
     </div>
 
+    <!-- HEADER ACTIONS -->
     <div class="header-actions">
-
-      <div class="search-pill">
-        <ion-icon
-          name="search-outline"
-          class="search-icon"
-        ></ion-icon>
-
-        <input
-          type="text"
-          placeholder="Search pizza..."
-        />
-      </div>
-
+      <!-- DESKTOP PROFILE -->
       <button
         type="button"
         class="profile-btn desktop-only"
         aria-label="User profile"
-        routerLink="/account"
+        [routerLink]="isLoggedIn() ? '/profile' : '/login'"
       >
         <ion-icon name="person-outline"></ion-icon>
 
-        <span *ngIf="loggedInUserName">
-          Hi! {{ loggedInUserName }}
+        <span *ngIf="isLoggedIn() && loggedInUserName()">
+          Hi! {{ loggedInUserName() }}
         </span>
       </button>
 
-      <button 
-          type="button" 
-          class="cart-btn" 
-          routerLink="/cart"
-        >
-          <span class="cart-icon-wrapper">
+      <!-- CART -->
+      <button type="button" class="cart-btn" routerLink="/cart">
+        <span class="cart-icon-wrapper">
+          <ion-icon name="cart" class="cart-icon-orange"></ion-icon>
 
-            <ion-icon 
-              name="cart"
-              class="cart-icon-orange"
-            ></ion-icon>
-
-            <span
-              class="cart-badge"
-              *ngIf="storefront.itemCount > 0"
-            >
-              {{ storefront.itemCount }}
-            </span>
-
+          <span class="cart-badge" *ngIf="storefront.itemCount > 0">
+            {{ storefront.itemCount }}
           </span>
+        </span>
 
-          <span class="desktop-only">
-            CART
-          </span>
-        </button>
+        <span class="desktop-only"> CART </span>
+      </button>
 
+      <!-- ORDER NOW -->
       <button
         type="button"
         class="btn-order-now desktop-only"
@@ -129,16 +95,12 @@
       >
         ORDER NOW
       </button>
-
     </div>
-
   </nav>
 
-  <div
-    class="mobile-dropdown"
-    [class.open]="isMobileMenuOpen"
-  >
-
+  <!-- MOBILE HAMBURGER MENU -->
+  <div class="mobile-dropdown" [class.open]="isMobileMenuOpen">
+    <!-- MAIN NAVIGATION -->
     <a
       class="mobile-nav-item"
       routerLink="/home"
@@ -184,15 +146,42 @@
       FAQS
     </a>
 
-    <a
-      class="mobile-nav-item"
-      routerLink="/account"
-      routerLinkActive="active"
-      (click)="closeMobileMenu()"
-    >
-      MY ACCOUNT
-    </a>
+    <!-- LOGGED-IN CUSTOMER OPTIONS -->
+    <ng-container *ngIf="isLoggedIn()">
+      <a
+        class="mobile-nav-item"
+        routerLink="/profile"
+        routerLinkActive="active"
+        (click)="closeMobileMenu()"
+      >
+        MY ACCOUNT
+      </a>
 
+      <button type="button" class="mobile-nav-item" (click)="logout()">
+        LOG OUT
+      </button>
+    </ng-container>
+
+    <!-- GUEST CUSTOMER OPTIONS -->
+    <ng-container *ngIf="!isLoggedIn()">
+      <a
+        class="mobile-nav-item"
+        routerLink="/login"
+        (click)="closeMobileMenu()"
+      >
+        LOG IN
+      </a>
+
+      <a
+        class="mobile-nav-item"
+        routerLink="/signup"
+        (click)="closeMobileMenu()"
+      >
+        SIGN UP
+      </a>
+    </ng-container>
+
+    <!-- MOBILE ORDER NOW -->
     <div class="mobile-action-wrapper">
       <button
         type="button"
@@ -203,7 +192,6 @@
         ORDER NOW
       </button>
     </div>
-
   </div>
 </ion-header>
 

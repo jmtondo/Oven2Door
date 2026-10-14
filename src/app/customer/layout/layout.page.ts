@@ -1,17 +1,14 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
 import { StorefrontService } from '../../services/storefront.service';
 
-import {
-  IonHeader,
-  IonIcon,
-  IonRouterOutlet
-} from '@ionic/angular';
+import { IonHeader, IonIcon, IonRouterOutlet } from '@ionic/angular';
 
 import { addIcons } from 'ionicons';
 
@@ -20,23 +17,14 @@ import {
   personOutline,
   cart,
   menuOutline,
-  closeOutline
+  closeOutline,
 } from 'ionicons/icons';
 
-import {
-  doc,
-  getDoc
-} from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 
-import {
-  onAuthStateChanged,
-  Unsubscribe
-} from 'firebase/auth';
+import { onAuthStateChanged, signOut, Unsubscribe } from 'firebase/auth';
 
-import {
-  auth,
-  db
-} from '../../firebase.config';
+import { auth, db } from '../../firebase.config';
 
 @Component({
   selector: 'app-layout',
@@ -49,162 +37,132 @@ import {
     RouterLinkActive,
     IonHeader,
     IonIcon,
-    IonRouterOutlet
-  ]
+    IonRouterOutlet,
+  ],
 })
-export class LayoutPage implements OnDestroy {
-
+export class LayoutPage implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
 
-  loggedInUserName = '';
+  // Signals notify Angular when Firebase state changes.
+  isLoggedIn = signal(false);
+  loggedInUserName = signal('');
 
   private cartSubscription?: Subscription;
-
   private authUnsubscribe?: Unsubscribe;
+  private profileUnsubscribe?: Unsubscribe;
 
   constructor(
-    public storefront: StorefrontService
+    public storefront: StorefrontService,
+    private router: Router,
   ) {
-
     addIcons({
       searchOutline,
       personOutline,
       cart,
       menuOutline,
-      closeOutline
+      closeOutline,
     });
 
-    this.cartSubscription =
-      this.storefront.changed.subscribe(() => {
-        // Keeps the layout updated whenever the cart changes.
-      });
+    this.cartSubscription = this.storefront.changed.subscribe(() => {
+      // Preserve existing cart subscription.
+    });
+  }
 
+  ngOnInit(): void {
     this.loadLoggedInUser();
   }
 
   private loadLoggedInUser(): void {
+    this.authUnsubscribe = onAuthStateChanged(
+      auth,
+      (user) => {
+        // Remove the previous Firestore listener.
+        this.profileUnsubscribe?.();
+        this.profileUnsubscribe = undefined;
 
-    this.authUnsubscribe =
-      onAuthStateChanged(auth, async (user) => {
+        this.isLoggedIn.set(!!user);
 
         if (!user) {
-
-          this.loggedInUserName = '';
-
+          this.loggedInUserName.set('');
           return;
         }
 
-        try {
+        // Fallback while the Firestore profile loads.
+        const fallbackName =
+          user.displayName?.split(' ')[0] ||
+          user.email?.split('@')[0] ||
+          'Customer';
 
-          console.log(
-            'Layout: Logged-in Firebase user:',
-            user.uid
-          );
+        this.loggedInUserName.set(fallbackName);
 
-          const userRef =
-            doc(db, 'users', user.uid);
+        // Listen to the current customer's profile.
+        const userRef = doc(db, 'users', user.uid);
 
-          const userSnapshot =
-            await getDoc(userRef);
-
-          if (userSnapshot.exists()) {
-
-            const userData =
-              userSnapshot.data();
-
-            const firstName =
-              userData['first_name'];
-
-            if (
-              typeof firstName === 'string' &&
-              firstName.trim()
-            ) {
-
-              this.loggedInUserName =
-                firstName.trim();
-
-            } else if (user.displayName) {
-
-              this.loggedInUserName =
-                user.displayName.split(' ')[0];
-
-            } else if (user.email) {
-
-              this.loggedInUserName =
-                user.email.split('@')[0];
-
-            } else {
-
-              this.loggedInUserName =
-                'Customer';
-
+        this.profileUnsubscribe = onSnapshot(
+          userRef,
+          (snapshot) => {
+            // Ignore updates from a previous login session.
+            if (auth.currentUser?.uid !== user.uid) {
+              return;
             }
 
-          } else if (user.displayName) {
+            if (!snapshot.exists()) {
+              this.loggedInUserName.set(fallbackName);
+              return;
+            }
 
-            this.loggedInUserName =
-              user.displayName.split(' ')[0];
+            const userData = snapshot.data();
+            const firstName = userData['firstName'];
 
-          } else if (user.email) {
+            if (typeof firstName === 'string' && firstName.trim()) {
+              this.loggedInUserName.set(firstName.trim());
+            } else {
+              this.loggedInUserName.set(fallbackName);
+            }
+          },
+          (error) => {
+            console.error('Layout: Profile listener error:', error);
+          },
+        );
+      },
+      (error) => {
+        console.error('Layout: Authentication listener error:', error);
 
-            this.loggedInUserName =
-              user.email.split('@')[0];
-
-          } else {
-
-            this.loggedInUserName =
-              'Customer';
-
-          }
-
-          console.log(
-            'Layout: Logged-in user name:',
-            this.loggedInUserName
-          );
-
-        } catch (error) {
-
-          console.error(
-            'Layout: Failed to load user profile:',
-            error
-          );
-
-          // Fallback if Firestore profile cannot be read.
-          if (user.displayName) {
-
-            this.loggedInUserName =
-              user.displayName.split(' ')[0];
-
-          } else if (user.email) {
-
-            this.loggedInUserName =
-              user.email.split('@')[0];
-
-          } else {
-
-            this.loggedInUserName =
-              'Customer';
-
-          }
-        }
-      });
+        this.isLoggedIn.set(false);
+        this.loggedInUserName.set('');
+      },
+    );
   }
 
-  ngOnDestroy(): void {
+  async logout(): Promise<void> {
+    try {
+      await signOut(auth);
 
-    this.cartSubscription?.unsubscribe();
+      this.isLoggedIn.set(false);
+      this.loggedInUserName.set('');
 
-    this.authUnsubscribe?.();
+      this.closeMobileMenu();
+
+      await this.router.navigateByUrl('/login', {
+        replaceUrl: true,
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      alert('Unable to log out. Please try again.');
+    }
   }
 
   toggleMobileMenu(): void {
-
-    this.isMobileMenuOpen =
-      !this.isMobileMenuOpen;
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
   closeMobileMenu(): void {
-
     this.isMobileMenuOpen = false;
+  }
+
+  ngOnDestroy(): void {
+    this.cartSubscription?.unsubscribe();
+    this.profileUnsubscribe?.();
+    this.authUnsubscribe?.();
   }
 }
