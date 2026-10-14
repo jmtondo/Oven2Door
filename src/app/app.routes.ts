@@ -15,6 +15,15 @@ export const routes: Routes = [
       import('./authentication/signup/signup.page').then((m) => m.SignupPage),
   },
 
+  //forgot password po
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./authentication/forgot-password/forgot-password.page').then(
+        (m) => m.ForgotPasswordPage,
+      ),
+  },
+
   // CUSTOMER LAYOUT
   {
     path: '',
@@ -115,5 +124,9 @@ export const routes: Routes = [
     path: 'wishlist',
     loadComponent: () =>
       import('./customer/wishlist/wishlist.page').then((m) => m.WishlistPage),
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./authentication/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
   },
 ];
