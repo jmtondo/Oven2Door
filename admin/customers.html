@@ -1,543 +1,373 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Customers - Oven2Door Admin</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-    <link rel="stylesheet" href="customers.css">
-</head>
+    <link rel="stylesheet" href="customers.css" />
+  </head>
 
-<body>
-
-<div class="app-container">
-
-    <!-- ================= SIDEBAR ================= -->
-    <aside class="sidebar">
-
+  <body>
+    <div class="app-container">
+      <!-- ================= SIDEBAR ================= -->
+      <aside class="sidebar">
         <div class="logo">
-            <div class="logo-box">
-                <img src="pizzapics/oven2doorlogo.png" alt="Oven2Door Logo">
-            </div>
+          <div class="logo-box">
+            <img src="pizzapics/oven2doorlogo.png" alt="Oven2Door Logo" />
+          </div>
 
-            <div class="logo-text">
-                <h1>Oven2Door</h1>
-                <span>Admin Panel</span>
-            </div>
+          <div class="logo-text">
+            <h1>Oven2Door</h1>
+            <span>Admin Panel</span>
+          </div>
         </div>
 
         <nav class="sidebar-nav">
-
-           <a href="index.html" >
-          <i class="fa-solid fa-chart-line"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="order.html" >
-          <i class="fa-solid fa-receipt"></i>
-          <span>Orders</span>
-        </a>
-        <a href="product.html">
-          <i class="fa-solid fa-box"></i>
-          <span>Products</span>
-        </a>
-        <a href="inventory.html">
-          <i class="fa-solid fa-boxes-stacked"></i>
-          <span>Inventory</span>
-        </a>
-        <a href="customers.html" class="active">
-          <i class="fa-solid fa-users"></i>
-          <span>Customers</span>
-        </a>
-        <a href="sales.html">
-          <i class="fa-solid fa-chart-column"></i>
-          <span>Sales Reports</span>
-            </a>
-
+          <a href="index.html">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="order.html">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Orders</span>
+          </a>
+          <a href="product.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Products</span>
+          </a>
+          <a href="inventory.html">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Inventory</span>
+          </a>
+          <a href="customers.html" class="active">
+            <i class="fa-solid fa-users"></i>
+            <span>Customers</span>
+          </a>
+          <a href="sales.html">
+            <i class="fa-solid fa-chart-column"></i>
+            <span>Sales Reports</span>
+          </a>
         </nav>
 
         <div class="sidebar-bottom">
-
-            <a href="login.html">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Log Out</span>
-            </a>
-
+          <a href="login.html">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log Out</span>
+          </a>
         </div>
+      </aside>
 
-    </aside>
-
-
-    <!-- ================= MAIN CONTENT ================= -->
-    <main class="main-content">
-
+      <!-- ================= MAIN CONTENT ================= -->
+      <main class="main-content">
         <!-- PAGE HEADER -->
         <header class="page-header">
+          <div class="header-text">
+            <p class="eyebrow">CUSTOMERS</p>
 
-            <div class="header-text">
-                <p class="eyebrow">CUSTOMERS</p>
+            <h1>Customer Management</h1>
 
-                <h1>Customer Management</h1>
-
-                <p class="subtitle">
-                    View and manage your Oven2Door customers.
-                </p>
-            </div>
-
-            <button class="add-customer-btn" id="openAddCustomer">
-                <i class="fa-solid fa-user-plus"></i>
-                Add Customer
-            </button>
-
+            <p class="subtitle">View and manage your Oven2Door customers.</p>
+          </div>
         </header>
-
 
         <!-- ================= SUMMARY CARDS ================= -->
         <section class="summary-grid">
-
-            <div class="summary-card">
-
-                <div class="summary-info">
-                    <p>Total Customers</p>
-                    <h2 id="totalCustomers">6.2K</h2>
-                </div>
-
-                <div class="summary-icon">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-
+          <div class="summary-card">
+            <div class="summary-info">
+              <p>Total Customers</p>
+              <h2 id="totalCustomers">0</h2>
             </div>
 
+            <div class="summary-icon">
+              <i class="fa-solid fa-users"></i>
+            </div>
+          </div>
 
-            <div class="summary-card">
-
-                <div class="summary-info">
-                    <p>Total Returning Customers</p>
-                    <h2 id="returningCustomers">4.0K</h2>
-                </div>
-
-                <div class="summary-icon">
-                    <i class="fa-solid fa-user-check"></i>
-                </div>
-
+          <div class="summary-card">
+            <div class="summary-info">
+              <p>Total Returning Customers</p>
+              <h2 id="returningCustomers">0</h2>
             </div>
 
+            <div class="summary-icon">
+              <i class="fa-solid fa-user-check"></i>
+            </div>
+          </div>
 
-            <div class="summary-card">
-
-                <div class="summary-info">
-                    <p>Total New Customers</p>
-                    <h2 id="newCustomers">2.5K</h2>
-                </div>
-
-                <div class="summary-icon">
-                    <i class="fa-solid fa-user-plus"></i>
-                </div>
-
+          <div class="summary-card">
+            <div class="summary-info">
+              <p>Total New Customers</p>
+              <h2 id="newCustomers">0</h2>
             </div>
 
+            <div class="summary-icon">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+          </div>
         </section>
-
 
         <!-- ================= CUSTOMER PANEL ================= -->
         <section class="customer-panel">
+          <!-- TOOLBAR -->
+          <div class="panel-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
 
-            <!-- TOOLBAR -->
-            <div class="panel-toolbar">
-
-                <div class="search-box">
-
-                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                    <input
-                        type="text"
-                        id="customerSearch"
-                        placeholder="Search customers..."
-                    >
-
-                </div>
-
-
-                <div class="toolbar-actions">
-
-                    <select id="statusFilter" class="filter-select">
-                        <option value="all">All Status</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-
-
-                    <select id="sortCustomers" class="filter-select">
-                        <option value="default">Sort</option>
-                        <option value="nameAsc">Name A-Z</option>
-                        <option value="nameDesc">Name Z-A</option>
-                        <option value="idAsc">Customer ID</option>
-                    </select>
-
-                </div>
-
+              <input
+                type="text"
+                id="customerSearch"
+                placeholder="Search customers..."
+              />
             </div>
 
+            <div class="toolbar-actions">
+              <select id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+              </select>
 
-            <!-- TABLE -->
-            <div class="table-wrapper">
-
-                <table class="customer-table">
-
-                    <thead>
-                        <tr>
-                            <th>Customer ID</th>
-                            <th>Customer Name</th>
-                            <th>Email</th>
-                            <th>Contact Number</th>
-                            <th>Order Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="customerTableBody">
-                        <!-- JavaScript inserts customer rows here -->
-                    </tbody>
-
-                </table>
-
-
-                <!-- EMPTY STATE -->
-                <div class="empty-state" id="emptyState">
-
-                    <i class="fa-solid fa-user-slash"></i>
-
-                    <h3>No customers found</h3>
-
-                    <p>
-                        Try changing your search or filter.
-                    </p>
-
-                </div>
-
+              <select id="sortCustomers" class="filter-select">
+                <option value="default">Sort</option>
+                <option value="nameAsc">Name A-Z</option>
+                <option value="nameDesc">Name Z-A</option>
+                <option value="idAsc">Customer ID</option>
+              </select>
             </div>
+          </div>
 
+          <!-- TABLE -->
+          <div class="table-wrapper">
+            <table class="customer-table">
+              <thead>
+                <tr>
+                  <th>Customer ID</th>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Contact Number</th>
+                  <th>Account Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
 
-            <!-- FOOTER -->
-            <div class="table-footer">
+              <tbody id="customerTableBody">
+                <!-- JavaScript inserts customer rows here -->
+              </tbody>
+            </table>
 
-                <span id="resultCount">
-                    Showing customers
-                </span>
+            <!-- EMPTY STATE -->
+            <div class="empty-state" id="emptyState">
+              <i class="fa-solid fa-user-slash"></i>
 
+              <h3>No customers found</h3>
 
-                <div class="pagination">
-
-                    <button
-                        class="page-btn disabled"
-                        id="prevPage"
-                    >
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-
-
-                    <button class="page-number active">
-                        1
-                    </button>
-
-
-                    <button
-                        class="page-btn"
-                        id="nextPage"
-                    >
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-
-                </div>
-
+              <p>Try changing your search or filter.</p>
             </div>
+          </div>
 
+          <!-- FOOTER -->
+          <div class="table-footer">
+            <span id="resultCount"> Showing customers </span>
+
+            <div class="pagination">
+              <button class="page-btn disabled" id="prevPage">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+
+              <button class="page-number active">1</button>
+
+              <button class="page-btn" id="nextPage">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
         </section>
+      </main>
+    </div>
 
-    </main>
-
-</div>
-
-
-<!-- ================= VIEW CUSTOMER MODAL ================= -->
-<div class="modal-overlay" id="viewModal">
-
-    <div class="modal">
-
+    <!-- ================= VIEW CUSTOMER MODAL ================= -->
+    <div class="modal-overlay" id="viewModal">
+      <div class="modal">
         <button class="modal-close" data-close="viewModal">
-            <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-xmark"></i>
         </button>
 
-
         <div class="modal-heading">
+          <div class="modal-avatar" id="viewAvatar">JD</div>
 
-            <div class="modal-avatar" id="viewAvatar">
-                JD
-            </div>
+          <div>
+            <p class="eyebrow">CUSTOMER DETAILS</p>
 
-            <div>
-
-                <p class="eyebrow">
-                    CUSTOMER DETAILS
-                </p>
-
-                <h2 id="viewName">
-                    Customer Name
-                </h2>
-
-            </div>
-
+            <h2 id="viewName">Customer Name</h2>
+          </div>
         </div>
-
 
         <div class="details-grid">
+          <div class="detail-item">
+            <span>Customer ID</span>
+            <strong id="viewId">---</strong>
+          </div>
 
-            <div class="detail-item">
-                <span>Customer ID</span>
-                <strong id="viewId">---</strong>
-            </div>
+          <div class="detail-item">
+            <span>Account Status</span>
+            <strong id="viewStatus">---</strong>
+          </div>
 
+          <div class="detail-item">
+            <span>Email</span>
+            <strong id="viewEmail">---</strong>
+          </div>
 
-            <div class="detail-item">
-                <span>Order Status</span>
-                <strong id="viewStatus">---</strong>
-            </div>
-
-
-            <div class="detail-item">
-                <span>Email</span>
-                <strong id="viewEmail">---</strong>
-            </div>
-
-
-            <div class="detail-item">
-                <span>Contact Number</span>
-                <strong id="viewContact">---</strong>
-            </div>
-
+          <div class="detail-item">
+            <span>Contact Number</span>
+            <strong id="viewContact">---</strong>
+          </div>
         </div>
-
+      </div>
     </div>
 
-</div>
-
-
-<!-- ================= ADD CUSTOMER MODAL ================= -->
-<div class="modal-overlay" id="addModal">
-
-    <div class="modal">
-
+    <!-- ================= ADD CUSTOMER MODAL ================= -->
+    <div class="modal-overlay" id="addModal">
+      <div class="modal">
         <button class="modal-close" data-close="addModal">
-            <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-xmark"></i>
         </button>
 
-
         <div class="modal-heading">
+          <div class="modal-avatar">
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
 
-            <div class="modal-avatar">
-                <i class="fa-solid fa-user-plus"></i>
-            </div>
+          <div>
+            <p class="eyebrow">CUSTOMER</p>
 
-            <div>
-
-                <p class="eyebrow">
-                    CUSTOMER
-                </p>
-
-                <h2>
-                    Add Customer
-                </h2>
-
-            </div>
-
+            <h2>Add Customer</h2>
+          </div>
         </div>
-
 
         <form id="addCustomerForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="customerId"> Customer ID </label>
 
-            <div class="form-grid">
-
-                <div class="form-group">
-
-                    <label for="customerId">
-                        Customer ID
-                    </label>
-
-                    <input
-                        type="text"
-                        id="customerId"
-                        placeholder="e.g. 182-4001"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="customerName">
-                        Customer Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="customerName"
-                        placeholder="Full name"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="customerEmail">
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="customerEmail"
-                        placeholder="customer@email.com"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="customerContact">
-                        Contact Number
-                    </label>
-
-                    <input
-                        type="text"
-                        id="customerContact"
-                        placeholder="09XX-XXX-XXXX"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group full">
-
-                    <label for="customerStatus">
-                        Order Status
-                    </label>
-
-                    <select id="customerStatus">
-
-                        <option value="Pending">
-                            Pending
-                        </option>
-
-                        <option value="Completed">
-                            Completed
-                        </option>
-
-                        <option value="Cancelled">
-                            Cancelled
-                        </option>
-
-                    </select>
-
-                </div>
-
+              <input
+                type="text"
+                id="customerId"
+                placeholder="e.g. 182-4001"
+                required
+              />
             </div>
 
+            <div class="form-group">
+              <label for="customerName"> Customer Name </label>
 
-            <div class="form-actions">
-
-                <button
-                    type="button"
-                    class="cancel-btn"
-                    data-close="addModal"
-                >
-                    Cancel
-                </button>
-
-
-                <button
-                    type="submit"
-                    class="save-btn"
-                >
-                    <i class="fa-solid fa-check"></i>
-                    Add Customer
-                </button>
-
+              <input
+                type="text"
+                id="customerName"
+                placeholder="Full name"
+                required
+              />
             </div>
 
+            <div class="form-group">
+              <label for="customerEmail"> Email </label>
+
+              <input
+                type="email"
+                id="customerEmail"
+                placeholder="customer@email.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="customerContact"> Contact Number </label>
+
+              <input
+                type="text"
+                id="customerContact"
+                placeholder="09XX-XXX-XXXX"
+                required
+              />
+            </div>
+
+            <div class="form-group full">
+              <label for="customerStatus"> Order Status </label>
+
+              <select id="customerStatus">
+                <option value="Pending">Pending</option>
+
+                <option value="Completed">Completed</option>
+
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="cancel-btn" data-close="addModal">
+              Cancel
+            </button>
+
+            <button type="submit" class="save-btn">
+              <i class="fa-solid fa-check"></i>
+              Add Customer
+            </button>
+          </div>
         </form>
-
+      </div>
     </div>
 
-</div>
+    <!-- ================= DELETE MODAL ================= -->
 
-
-<!-- ================= DELETE MODAL ================= -->
-<div class="modal-overlay" id="deleteModal">
-
-    <div class="modal small-modal">
-
+    <!-- ================= ACCOUNT STATUS MODAL ================= -->
+    <div class="modal-overlay" id="deleteModal">
+      <div class="modal small-modal">
         <div class="delete-icon">
-            <i class="fa-solid fa-trash"></i>
+          <i class="fa-solid fa-user-gear"></i>
         </div>
 
-
-        <h2>
-            Delete Customer?
-        </h2>
-
+        <h2 id="statusModalTitle">Change Customer Status?</h2>
 
         <p>
-            Are you sure you want to remove
-            <strong id="deleteCustomerName"></strong>?
+          Are you sure you want to
+          <strong id="statusAction">deactivate</strong>
+          <strong id="deleteCustomerName"></strong>?
         </p>
 
+        <p>The customer's profile and order history will be preserved.</p>
 
         <div class="form-actions">
+          <button type="button" class="cancel-btn" data-close="deleteModal">
+            Cancel
+          </button>
 
-            <button
-                class="cancel-btn"
-                data-close="deleteModal"
-            >
-                Cancel
-            </button>
-
-
-            <button
-                class="delete-btn"
-                id="confirmDelete"
-            >
-                <i class="fa-solid fa-trash"></i>
-                Delete
-            </button>
-
+          <button type="button" class="delete-btn" id="confirmDelete">
+            <i class="fa-solid fa-check"></i>
+            Confirm Change
+          </button>
         </div>
-
+      </div>
     </div>
 
-</div>
+    <!-- ================= TOAST ================= -->
+    <div class="toast" id="toast">
+      <i class="fa-solid fa-circle-check"></i>
 
+      <span id="toastMessage"> Customer added successfully. </span>
+    </div>
 
-<!-- ================= TOAST ================= -->
-<div class="toast" id="toast">
-
-    <i class="fa-solid fa-circle-check"></i>
-
-    <span id="toastMessage">
-        Customer added successfully.
-    </span>
-
-</div>
-
-
-<script src="customers.js"></script>
-
-</body>
+    <script type="module" src="customers.js"></script>
+  </body>
 </html>

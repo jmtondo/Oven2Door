@@ -1,141 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Oven2Door Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Oven2Door Admin</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body style="visibility: hidden;">
-
-  <div class="app-container">
-
-    <!-- SIDEBAR  -->
-    <aside class="sidebar">
-      <div class="logo">
-        <div class="logo-box">
-          <img src="pizzapics/oven2doorlogo.png" alt="Oven2Door Logo">
-        </div>
-        <div>
-          <h1>Oven2Door</h1>
-          <span>Admin Panel</span>
-        </div>
-      </div>
-
-      <div class="sidebar-nav">
-        <a href="index.html" class="active">
-          <i class="fa-solid fa-chart-line"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="order.html" >
-          <i class="fa-solid fa-receipt"></i>
-          <span>Orders</span>
-        </a>
-        <a href="product.html" data-admin-only>
-          <i class="fa-solid fa-box"></i>
-          <span>Products</span>
-        </a>
-        <a href="inventory.html">
-          <i class="fa-solid fa-boxes-stacked"></i>
-          <span>Inventory</span>
-        </a>
-        <a href="customers.html" data-admin-only>
-          <i class="fa-solid fa-users"></i>
-          <span>Customers</span>
-        </a>
-        <a href="sales.html">
-          <i class="fa-solid fa-chart-column"></i>
-          <span>Sales Reports</span>
-        </a>
-      </div>
-
-      <div class="sidebar-bottom">
-        
-        <a href="#" data-logout>
-          <i class="fa-solid fa-right-from-bracket"></i>
-          <span>Log Out</span>
-        </a>
-      </div>
-    </aside>
-
-    <main class="main-content">
-
-      <header class="page-header">
-        <div>
-          <h1>Dashboard Overview</h1>
-        </div>
-        <div class="user-badge">
-          <span class="user-role">Admin User</span>
-          <span class="user-company">Oven2Door Admin</span>
-        </div>
-      </header>
-
-      <div class="stats-grid">
-        <!-- Card 1 -->
-        <div class="inventory-card stat-card">
-          <div>
-            <span class="stat-label">Total Orders</span>
-            <h3 class="stat-value">0</h3>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body style="visibility: hidden">
+    <div class="app-container">
+      <!-- SIDEBAR  -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">
+            <img src="pizzapics/oven2doorlogo.png" alt="Oven2Door Logo" />
           </div>
-          <i class="fa-solid fa-cart-shopping fa-2x stat-icon-red"></i>
-        </div>
-        
-        <!-- Card 2 -->
-        <div class="inventory-card stat-card">
           <div>
-            <span class="stat-label">Total Revenue</span>
-            <h3 class="stat-value">₱0.00</h3>
+            <h1>Oven2Door</h1>
+            <span>Admin Panel</span>
           </div>
-          <i class="fa-solid fa-peso-sign fa-2x stat-icon-black"></i>
         </div>
-      </div>
 
-      <div class="dashboard-grid">
+        <div class="sidebar-nav">
+          <a href="index.html" class="active">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="order.html">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Orders</span>
+          </a>
+          <a href="product.html" data-admin-only>
+            <i class="fa-solid fa-box"></i>
+            <span>Products</span>
+          </a>
+          <a href="inventory.html">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Inventory</span>
+          </a>
+          <a href="customers.html" data-admin-only>
+            <i class="fa-solid fa-users"></i>
+            <span>Customers</span>
+          </a>
+          <a href="sales.html">
+            <i class="fa-solid fa-chart-column"></i>
+            <span>Sales Reports</span>
+          </a>
+        </div>
 
-        <div class="inventory-card activity-card">
-          <div class="activity-header">
-            <h3>Recent System Activity</h3>
-            <div class="search-box activity-search">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="activitySearchInput" placeholder="Search activity logs...">
+        <div class="sidebar-bottom">
+          <a href="#" data-logout>
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log Out</span>
+          </a>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="page-header">
+          <div>
+            <h1>Dashboard Overview</h1>
+          </div>
+          <div class="user-badge">
+            <span class="user-role">Admin User</span>
+            <span class="user-company">Oven2Door Admin</span>
+          </div>
+        </header>
+
+        <div class="stats-grid">
+          <!-- Card 1: Total Orders -->
+          <div class="inventory-card stat-card">
+            <div>
+              <span class="stat-label">Total Orders</span>
+              <h3 class="stat-value" id="dashboardTotalOrders">0</h3>
+            </div>
+            <i class="fa-solid fa-cart-shopping fa-2x stat-icon-red"></i>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="inventory-card stat-card">
+            <div>
+              <span class="stat-label">Total Revenue</span>
+              <h3 class="stat-value">₱0.00</h3>
+            </div>
+            <i class="fa-solid fa-peso-sign fa-2x stat-icon-black"></i>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="inventory-card activity-card">
+            <div class="activity-header">
+              <h3>Recent System Activity</h3>
+              <div class="search-box activity-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  type="text"
+                  id="activitySearchInput"
+                  placeholder="Search activity logs..."
+                />
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="activityTableBody">
+                  <tr>
+                    <td class="empty-cell">-</td>
+                    <td class="empty-cell">-</td>
+                    <td class="empty-cell">-</td>
+                    <td class="empty-cell">-</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>User</th>
-                  <th>Action</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody id="activityTableBody">
-                <tr>
-                  <td class="empty-cell">-</td>
-                  <td class="empty-cell">-</td>
-                  <td class="empty-cell">-</td>
-                  <td class="empty-cell">-</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="inventory-card status-widget">
+            <h3>System Status</h3>
+            <p id="dashboardSystemStatus">Checking Firestore connection...</p>
           </div>
         </div>
+      </main>
+    </div>
 
-        <div class="inventory-card status-widget">
-          <h3>System Status</h3>
-          <p>All systems operational.</p>
-        </div>
-
-      </div>
-    </main>
-
-  </div>
-
-  <script type="module" src="admin-auth.js"></script>
-</body>
+    <script type="module" src="admin-auth.js"></script>
+    <script type="module" src="dashboard.js"></script>
+  </body>
 </html>

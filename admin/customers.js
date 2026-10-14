@@ -2,195 +2,103 @@
 // OVEN2DOOR - CUSTOMERS MODULE
 // ==========================================
 
+import { auth, db } from "./firebase-config.js";
 
-// Customer sample data
-const customers = [
-    {
-        id: "182-3824",
-        name: "Trixie Anne Sarmiento",
-        email: "a***@gmail.com",
-        contact: "09******675",
-        status: "Completed",
-        returning: true
-    },
-    {
-        id: "182-2394",
-        name: "Dianna Beltran",
-        email: "r***@gmail.com",
-        contact: "09******341",
-        status: "Cancelled",
-        returning: false
-    },
-    {
-        id: "182-1214",
-        name: "Shai",
-        email: "l***@gmail.com",
-        contact: "09******546",
-        status: "Pending",
-        returning: true
-    },
-    {
-        id: "182-1218",
-        name: "Em Tondo",
-        email: "l***@gmail.com",
-        contact: "09******546",
-        status: "Pending",
-        returning: true
-    },
-{
-        id: "182-1220",
-        name: "Joanna Samonte",
-        email: "l***@gmail.com",
-        contact: "09******546",
-        status: "Pending",
-        returning: true
-    },
- 
-];
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  where,
+  updateDoc,
+  serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-
-
+let customers = [];
+let customerOrderCounts = new Map();
 // ==========================================
 // GET HTML ELEMENTS
 // ==========================================
 
-
 const tableBody = document.getElementById("customerTableBody");
 const emptyState = document.getElementById("emptyState");
-
 
 const searchInput = document.getElementById("customerSearch");
 const statusFilter = document.getElementById("statusFilter");
 const sortSelect = document.getElementById("sortCustomers");
 
-
 const viewModal = document.getElementById("viewModal");
 const addModal = document.getElementById("addModal");
 const deleteModal = document.getElementById("deleteModal");
 
-
-let customerToDelete = null;
-
-
-
-
+let selectedCustomerUid = null;
 // ==========================================
 // GET CUSTOMER INITIALS
 // ==========================================
 
-
 function getInitials(name) {
-
-
-    return name
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, 2)
-        .map(word => word[0].toUpperCase())
-        .join("");
-
-
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0].toUpperCase())
+    .join("");
 }
-
-
-
 
 // ==========================================
 // DISPLAY CUSTOMERS
 // ==========================================
 
-
 function renderCustomers() {
+  const search = searchInput.value.trim().toLowerCase();
+  const status = statusFilter.value;
+  const sort = sortSelect.value;
 
+  // Filter customers
+  let filtered = customers.filter((customer) => {
+    const matchesSearch =
+      customer.name.toLowerCase().includes(search) ||
+      customer.id.toLowerCase().includes(search) ||
+      customer.email.toLowerCase().includes(search) ||
+      customer.contact.toLowerCase().includes(search);
 
-    const search = searchInput.value.trim().toLowerCase();
-    const status = statusFilter.value;
-    const sort = sortSelect.value;
+    const matchesStatus =
+      status === "all" ||
+      String(customer.status || "").toLowerCase() === status;
 
+    return matchesSearch && matchesStatus;
+  });
 
-    // Filter customers
-    let filtered = customers.filter(customer => {
+  // ======================================
+  // SORT CUSTOMERS
+  // ======================================
 
+  if (sort === "nameAsc") {
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+  }
 
-        const matchesSearch =
-            customer.name.toLowerCase().includes(search) ||
-            customer.id.toLowerCase().includes(search) ||
-            customer.email.toLowerCase().includes(search) ||
-            customer.contact.toLowerCase().includes(search);
+  if (sort === "nameDesc") {
+    filtered.sort((a, b) => b.name.localeCompare(a.name));
+  }
 
+  if (sort === "idAsc") {
+    filtered.sort((a, b) => a.id.localeCompare(b.id));
+  }
 
-        const matchesStatus =
-            status === "all" ||
-            customer.status === status;
+  // Clear current table
+  tableBody.innerHTML = "";
 
+  // ======================================
+  // DISPLAY EACH CUSTOMER
+  // ======================================
 
-        return matchesSearch && matchesStatus;
+  filtered.forEach((customer) => {
+    const row = document.createElement("tr");
 
-
-    });
-
-
-
-
-    // ======================================
-    // SORT CUSTOMERS
-    // ======================================
-
-
-    if (sort === "nameAsc") {
-
-
-        filtered.sort((a, b) =>
-            a.name.localeCompare(b.name)
-        );
-
-
-    }
-
-
-    if (sort === "nameDesc") {
-
-
-        filtered.sort((a, b) =>
-            b.name.localeCompare(a.name)
-        );
-
-
-    }
-
-
-    if (sort === "idAsc") {
-
-
-        filtered.sort((a, b) =>
-            a.id.localeCompare(b.id)
-        );
-
-
-    }
-
-
-
-
-    // Clear current table
-    tableBody.innerHTML = "";
-
-
-
-
-    // ======================================
-    // DISPLAY EACH CUSTOMER
-    // ======================================
-
-
-    filtered.forEach(customer => {
-
-
-        const row = document.createElement("tr");
-
-
-        row.innerHTML = `
+    row.innerHTML = `
 
 
             <td>
@@ -258,7 +166,15 @@ function renderCustomers() {
                 <span class="status ${customer.status.toLowerCase()}">
 
 
-                    ${customer.status}
+                    ${
+                      customer.status === "active"
+                        ? "Active"
+                        : customer.status === "inactive"
+                          ? "Inactive"
+                          : customer.status === "suspended"
+                            ? "Suspended"
+                            : "Unknown"
+                    }
 
 
                 </span>
@@ -292,14 +208,10 @@ function renderCustomers() {
 
                     <!-- DELETE BUTTON -->
                     <button
-                        class="action-btn delete"
-                        title="Delete Customer"
+                        class="action-btn toggle-status"
+                        title="${customer.status === "active" ? "Deactivate Customer" : "Reactivate Customer"}"
                         data-index="${customers.indexOf(customer)}">
-
-
-                        <i class="fa-regular fa-trash-can"></i>
-
-
+                        <i class="fa-solid ${customer.status === "active" ? "fa-user-slash" : "fa-user-check"}"></i>
                     </button>
 
 
@@ -311,647 +223,386 @@ function renderCustomers() {
 
         `;
 
+    tableBody.appendChild(row);
+  });
 
-        tableBody.appendChild(row);
+  // ======================================
+  // EMPTY STATE
+  // ======================================
 
+  if (filtered.length === 0) {
+    emptyState.classList.add("show");
+  } else {
+    emptyState.classList.remove("show");
+  }
 
-    });
+  // ======================================
+  // RESULT COUNT
+  // ======================================
 
+  const resultCount = document.getElementById("resultCount");
 
+  resultCount.textContent = `Showing ${filtered.length} customer${filtered.length !== 1 ? "s" : ""}`;
 
-
-    // ======================================
-    // EMPTY STATE
-    // ======================================
-
-
-    if (filtered.length === 0) {
-
-
-        emptyState.classList.add("show");
-
-
-    } else {
-
-
-        emptyState.classList.remove("show");
-
-
-    }
-
-
-
-
-    // ======================================
-    // RESULT COUNT
-    // ======================================
-
-
-    const resultCount =
-        document.getElementById("resultCount");
-
-
-    resultCount.textContent =
-        `Showing ${filtered.length} customer${filtered.length !== 1 ? "s" : ""}`;
-
-
-
-
-    // Update summary cards
-    updateSummary();
-
-
+  // Update summary cards
+  updateSummary();
 }
-
-
-
 
 // ==========================================
 // UPDATE SUMMARY CARDS
 // ==========================================
 
-
 function updateSummary() {
+  const total = customers.length;
 
+  // Returning customers: at least 2 orders
+  const returning = customers.filter((customer) => {
+    return (customerOrderCounts.get(customer.id) || 0) >= 2;
+  }).length;
 
-    const total = customers.length;
+  // New customers: registered within the last 30 days
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now);
 
+  thirtyDaysAgo.setDate(now.getDate() - 30);
 
-    const returning =
-        customers.filter(customer =>
-            customer.returning === true
-        ).length;
+  const newCustomers = customers.filter((customer) => {
+    const registeredAt = customer.createdAt?.toDate?.();
 
+    return (
+      registeredAt instanceof Date &&
+      registeredAt >= thirtyDaysAgo &&
+      registeredAt <= now
+    );
+  }).length;
 
-    const newCustomers =
-        total - returning;
+  document.getElementById("totalCustomers").textContent =
+    total.toLocaleString();
 
+  document.getElementById("returningCustomers").textContent =
+    returning.toLocaleString();
 
-
-
-    document.getElementById("totalCustomers").textContent =
-        total.toLocaleString();
-
-
-    document.getElementById("returningCustomers").textContent =
-        returning.toLocaleString();
-
-
-    document.getElementById("newCustomers").textContent =
-        newCustomers.toLocaleString();
-
-
+  document.getElementById("newCustomers").textContent =
+    newCustomers.toLocaleString();
 }
-
-
-
 
 // ==========================================
 // OPEN MODAL
 // ==========================================
 
-
 function openModal(modal) {
+  modal.classList.add("show");
 
-
-    modal.classList.add("show");
-
-
-    document.body.style.overflow = "hidden";
-
-
+  document.body.style.overflow = "hidden";
 }
-
-
-
 
 // ==========================================
 // CLOSE MODAL
 // ==========================================
 
-
 function closeModal(modal) {
+  modal.classList.remove("show");
 
-
-    modal.classList.remove("show");
-
-
-
-
-    // Enable scrolling again
-    if (!document.querySelector(".modal-overlay.show")) {
-
-
-        document.body.style.overflow = "";
-
-
-    }
-
-
+  // Enable scrolling again
+  if (!document.querySelector(".modal-overlay.show")) {
+    document.body.style.overflow = "";
+  }
 }
-
-
-
 
 // ==========================================
 // SHOW TOAST MESSAGE
 // ==========================================
 
-
 function showToast(message) {
+  const toast = document.getElementById("toast");
 
+  const toastMessage = document.getElementById("toastMessage");
 
-    const toast =
-        document.getElementById("toast");
+  toastMessage.textContent = message;
 
+  toast.classList.add("show");
 
-    const toastMessage =
-        document.getElementById("toastMessage");
-
-
-
-
-    toastMessage.textContent = message;
-
-
-    toast.classList.add("show");
-
-
-
-
-    setTimeout(() => {
-
-
-        toast.classList.remove("show");
-
-
-    }, 2500);
-
-
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
 }
-
-
-
 
 // ==========================================
 // SEARCH
 // ==========================================
 
-
-searchInput.addEventListener("input", function() {
-
-
-    renderCustomers();
-
-
+searchInput.addEventListener("input", function () {
+  renderCustomers();
 });
-
-
-
 
 // ==========================================
 // STATUS FILTER
 // ==========================================
 
-
-statusFilter.addEventListener("change", function() {
-
-
-    renderCustomers();
-
-
+statusFilter.addEventListener("change", function () {
+  renderCustomers();
 });
-
-
-
 
 // ==========================================
 // SORT CUSTOMERS
 // ==========================================
 
-
-sortSelect.addEventListener("change", function() {
-
-
-    renderCustomers();
-
-
+sortSelect.addEventListener("change", function () {
+  renderCustomers();
 });
-
-
-
 
 // ==========================================
 // CUSTOMER ACTION BUTTONS
 // ==========================================
 
+/* ==========================================
+   CUSTOMER ACTION BUTTONS
+========================================== */
 
-tableBody.addEventListener("click", function(event) {
+tableBody.addEventListener("click", function (event) {
+  const button = event.target.closest(".action-btn");
 
+  if (!button) return;
 
-    const button =
-        event.target.closest(".action-btn");
+  const index = Number(button.dataset.index);
+  const customer = customers[index];
 
+  if (!customer) return;
 
+  // VIEW CUSTOMER
+  if (button.classList.contains("view")) {
+    document.getElementById("viewAvatar").textContent = getInitials(
+      customer.name,
+    );
 
+    document.getElementById("viewName").textContent = customer.name;
 
-    // If user did not click a button
-    if (!button) {
-        return;
-    }
+    document.getElementById("viewId").textContent = customer.id;
 
+    document.getElementById("viewEmail").textContent = customer.email;
 
+    document.getElementById("viewContact").textContent = customer.contact;
 
+    document.getElementById("viewStatus").textContent = customer.status;
 
-    const index =
-        Number(button.dataset.index);
+    openModal(viewModal);
+    return;
+  }
 
+  // ACTIVATE / DEACTIVATE
+  if (button.classList.contains("toggle-status")) {
+    selectedCustomerUid = customer.id;
 
+    const isActive = customer.status === "active";
 
+    document.getElementById("statusModalTitle").textContent = isActive
+      ? "Deactivate Customer?"
+      : "Reactivate Customer?";
 
-    const customer =
-        customers[index];
+    document.getElementById("statusAction").textContent = isActive
+      ? "deactivate"
+      : "reactivate";
 
+    document.getElementById("deleteCustomerName").textContent = customer.name;
 
-
-
-    // ======================================
-    // VIEW CUSTOMER
-    // ======================================
-
-
-    if (button.classList.contains("view")) {
-
-
-        document.getElementById("viewAvatar").textContent =
-            getInitials(customer.name);
-
-
-        document.getElementById("viewName").textContent =
-            customer.name;
-
-
-        document.getElementById("viewId").textContent =
-            customer.id;
-
-
-        document.getElementById("viewEmail").textContent =
-            customer.email;
-
-
-        document.getElementById("viewContact").textContent =
-            customer.contact;
-
-
-        document.getElementById("viewStatus").textContent =
-            customer.status;
-
-
-
-
-        openModal(viewModal);
-
-
-    }
-
-
-
-
-    // ======================================
-    // DELETE CUSTOMER
-    // ======================================
-
-
-    if (button.classList.contains("delete")) {
-
-
-        customerToDelete = index;
-
-
-
-
-        document.getElementById(
-            "deleteCustomerName"
-        ).textContent = customer.name;
-
-
-
-
-        openModal(deleteModal);
-
-
-    }
-
-
+    openModal(deleteModal);
+  }
 });
 
-
-
-
-// ==========================================
-// OPEN ADD CUSTOMER MODAL
-// ==========================================
-
+/* ==========================================
+   CONFIRM CUSTOMER STATUS CHANGE
+========================================== */
 
 document
-    .getElementById("openAddCustomer")
-    .addEventListener("click", function() {
-
-
-        openModal(addModal);
-
-
-    });
-
-
-
-
-// ==========================================
-// ADD CUSTOMER
-// ==========================================
-
-
-document
-    .getElementById("addCustomerForm")
-    .addEventListener("submit", function(event) {
-
-
-        // Prevent page refresh
-        event.preventDefault();
-
-
-
-
-        // Get form values
-        const newCustomer = {
-
-
-            id: document
-                .getElementById("customerId")
-                .value
-                .trim(),
-
-
-            name: document
-                .getElementById("customerName")
-                .value
-                .trim(),
-
-
-            email: document
-                .getElementById("customerEmail")
-                .value
-                .trim(),
-
-
-            contact: document
-                .getElementById("customerContact")
-                .value
-                .trim(),
-
-
-            status: document
-                .getElementById("customerStatus")
-                .value,
-
-
-            returning: false
-
-
-        };
-
-
-
-
-        // Add customer to beginning of array
-        customers.unshift(newCustomer);
-
-
-
-
-        // Clear form
-        event.target.reset();
-
-
-
-
-        // Close modal
-        closeModal(addModal);
-
-
-
-
-        // Refresh customer table
-        renderCustomers();
-
-
-
-
-        // Show success message
-        showToast(
-            "Customer added successfully."
-        );
-
-
-    });
-
-
-
-
-// ==========================================
-// DELETE CUSTOMER
-// ==========================================
-
-
-document
-    .getElementById("confirmDelete")
-    .addEventListener("click", function() {
-
-
-        // Make sure a customer is selected
-        if (customerToDelete === null) {
-            return;
-        }
-
-
-
-
-        // Remove customer
-        customers.splice(customerToDelete, 1);
-
-
-
-
-        // Reset selected customer
-        customerToDelete = null;
-
-
-
-
-        // Close modal
-        closeModal(deleteModal);
-
-
-
-
-        // Refresh table
-        renderCustomers();
-
-
-
-
-        // Show message
-        showToast(
-            "Customer deleted successfully."
-        );
-
-
-    });
-
-
-
+  .getElementById("confirmDelete")
+  .addEventListener("click", async function () {
+    if (!selectedCustomerUid) return;
+
+    const customer = customers.find((item) => item.id === selectedCustomerUid);
+
+    if (!customer) {
+      selectedCustomerUid = null;
+      closeModal(deleteModal);
+      showToast("Customer record is no longer available.");
+      return;
+    }
+
+    const newStatus = customer.status === "active" ? "inactive" : "active";
+
+    const button = this;
+    button.disabled = true;
+
+    try {
+      await updateDoc(doc(db, "users", customer.id), {
+        status: newStatus,
+        updatedAt: serverTimestamp(),
+      });
+
+      selectedCustomerUid = null;
+      closeModal(deleteModal);
+
+      showToast(
+        newStatus === "active"
+          ? "Customer reactivated successfully."
+          : "Customer deactivated successfully.",
+      );
+    } catch (error) {
+      console.error("Customer status update failed:", error);
+
+      showToast("Failed to update customer status.");
+    } finally {
+      button.disabled = false;
+    }
+  });
 
 // ==========================================
 // CLOSE MODAL BUTTONS
 // ==========================================
 
+document.querySelectorAll("[data-close]").forEach((button) => {
+  button.addEventListener("click", function () {
+    const modal = document.getElementById(button.dataset.close);
 
-document
-    .querySelectorAll("[data-close]")
-    .forEach(button => {
-
-
-        button.addEventListener("click", function() {
-
-
-            const modal =
-                document.getElementById(
-                    button.dataset.close
-                );
-
-
-            closeModal(modal);
-
-
-        });
-
-
-    });
-
-
-
+    closeModal(modal);
+  });
+});
 
 // ==========================================
 // CLOSE MODAL WHEN CLICKING OUTSIDE
 // ==========================================
 
-
-document
-    .querySelectorAll(".modal-overlay")
-    .forEach(overlay => {
-
-
-        overlay.addEventListener("click", function(event) {
-
-
-            // Only close if clicking the dark background
-            if (event.target === overlay) {
-
-
-                closeModal(overlay);
-
-
-            }
-
-
-        });
-
-
-    });
-
-
-
+document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+  overlay.addEventListener("click", function (event) {
+    // Only close if clicking the dark background
+    if (event.target === overlay) {
+      closeModal(overlay);
+    }
+  });
+});
 
 // ==========================================
 // ESCAPE KEY CLOSES MODAL
 // ==========================================
 
-
-document.addEventListener("keydown", function(event) {
-
-
-    if (event.key === "Escape") {
-
-
-        document
-            .querySelectorAll(".modal-overlay.show")
-            .forEach(modal => {
-
-
-                closeModal(modal);
-
-
-            });
-
-
-    }
-
-
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
+    document.querySelectorAll(".modal-overlay.show").forEach((modal) => {
+      closeModal(modal);
+    });
+  }
 });
-
-
-
 
 // ==========================================
 // SIDEBAR DEMO LINKS
 // ==========================================
 
-
 document
-    .querySelectorAll(
-        ".sidebar-nav .nav-item, .sidebar-bottom .nav-item"
-    )
-    .forEach(link => {
+  .querySelectorAll(".sidebar-nav .nav-item, .sidebar-bottom .nav-item")
+  .forEach((link) => {
+    link.addEventListener("click", function (event) {
+      if (link.getAttribute("href") === "#") {
+        event.preventDefault();
 
+        const label = link.querySelector("span").textContent;
 
-        link.addEventListener("click", function(event) {
+        // Do not show message for current page
+        if (label !== "Customers") {
+          showToast(`${label} page link clicked.`);
+        }
+      }
+    });
+  });
 
+/* ==========================================
+   FIREBASE CUSTOMER DATA
+========================================== */
 
-            if (link.getAttribute("href") === "#") {
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.replace("/login");
+    return;
+  }
 
+  try {
+    const profileSnapshot = await getDoc(doc(db, "users", user.uid));
 
-                event.preventDefault();
+    const profile = profileSnapshot.data();
 
+    if (
+      !profileSnapshot.exists() ||
+      profile?.role !== "admin" ||
+      profile?.status !== "active"
+    ) {
+      window.location.replace("/home");
+      return;
+    }
 
+    // Listen for orders to calculate returning customers
+    onSnapshot(
+      collection(db, "orders"),
+      (snapshot) => {
+        customerOrderCounts = new Map();
 
+        snapshot.forEach((document) => {
+          const order = document.data();
+          const userId = order.userId;
 
-                const label =
-                    link.querySelector("span").textContent;
+          if (!userId) return;
 
+          // Exclude cancelled orders from purchase counts
+          if (String(order.orderStatus || "").toLowerCase() === "cancelled") {
+            return;
+          }
 
-
-
-                // Do not show message for current page
-                if (label !== "Customers") {
-
-
-                    showToast(
-                        `${label} page link clicked.`
-                    );
-
-
-                }
-
-
-            }
-
-
+          customerOrderCounts.set(
+            userId,
+            (customerOrderCounts.get(userId) || 0) + 1,
+          );
         });
 
+        updateSummary();
+      },
+      (error) => {
+        console.error("Unable to calculate customer orders:", error);
+      },
+    );
 
-    });
+    const customersQuery = query(
+      collection(db, "users"),
+      where("role", "==", "customer"),
+    );
 
-renderCustomers();
+    onSnapshot(
+      customersQuery,
+      (snapshot) => {
+        customers = snapshot.docs.map((item) => {
+          const data = item.data();
 
+          return {
+            id: item.id,
+            name:
+              [data.firstName || "", data.lastName || ""].join(" ").trim() ||
+              "Unnamed Customer",
+            email: data.email || "",
+            contact: data.phone || "",
+            status: data.status || "active",
+            returning: false,
+            createdAt: data.createdAt,
+          };
+        });
 
+        console.log("Customers loaded from Firestore:", customers.length);
 
+        // Table layout will be updated in the next step.
+        // For now, this displays the actual customer accounts.
+        renderCustomers();
+      },
+      (error) => {
+        console.error("Unable to load customers:", error);
+      },
+    );
+  } catch (error) {
+    console.error("Customer authorization failed:", error);
+    window.location.replace("/login");
+  }
+});
