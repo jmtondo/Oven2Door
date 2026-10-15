@@ -1,4 +1,3 @@
-
 rules_version = '2';
 
 service cloud.firestore {
@@ -19,13 +18,13 @@ service cloud.firestore {
     function hasProfile() {
       return signedIn()
         && exists(
-          /databases/$(database)/documents/users/$(request.auth.uid)
-        );
+      /databases/$(database)/documents/users/$(request.auth.uid)
+      );
     }
 
     function profile() {
       return get(
-        /databases/$(database)/documents/users/$(request.auth.uid)
+      /databases/$(database)/documents/users/$(request.auth.uid)
       ).data;
     }
 
@@ -61,8 +60,6 @@ service cloud.firestore {
 
     match /users/{userId} {
 
-      allow delete: if false;
-
       allow get: if isOwner(userId) || isAdmin();
 
       allow list: if isAdmin();
@@ -72,51 +69,142 @@ service cloud.firestore {
         && request.resource.data.status == 'active'
         && request.resource.data.email == request.auth.token.email
         && request.resource.data.keys().hasOnly([
-          'firstName',
-          'lastName',
-          'email',
-          'phone',
-          'role',
-          'status',
-          'createdAt',
-          'updatedAt'
-        ]);
-
-      allow update: if (
-  // Customers can edit their own basic information
-  (
-    isOwner(userId)
-    && request.resource.data.diff(resource.data)
-      .affectedKeys()
-      .hasOnly([
         'firstName',
         'lastName',
+        'email',
         'phone',
-        'updatedAt'
-      ])
-  )
-
-  ||
-
-  // Admins can activate or deactivate customer accounts
-  (
-    isAdmin()
-    && resource.data.role == 'customer'
-    && request.resource.data.role == 'customer'
-    && request.resource.data.diff(resource.data)
-      .affectedKeys()
-      .hasOnly([
+        'role',
         'status',
+        'createdAt',
         'updatedAt'
-      ])
-    && request.resource.data.status in [
-      'active',
-      'inactive'
-    ]
-  )
-);
+      ]);
+
+      // Customers may edit their own profile fields.
+      // Admins may activate/deactivate customer accounts.
+      allow update: if (
+        isOwner(userId)
+        && request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly([
+            'firstName', 'lastName', 'phone', 'updatedAt'
+          ])
+      ) || (
+        isAdmin()
+        && resource.data.role == 'customer'
+        && request.resource.data.role == 'customer'
+        && request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly(['status', 'updatedAt'])
+        && request.resource.data.status in ['active', 'inactive']
+      );
+
+      // ==========================================
+      // CUSTOMER WISHLIST
+      // ==========================================
+
+      match /wishlist/{productId} {
+
+        function canManageWishlist() {
+          return isOwner(userId) && isCustomer();
+        }
+
+        function validWishlistItem() {
+          return request.resource.data.keys().hasAll([
+            'productId',
+            'addedAt'
+          ])
+            && request.resource.data.keys().hasOnly([
+            'productId',
+            'addedAt'
+          ])
+            && request.resource.data.productId is string
+            && request.resource.data.productId == productId
+            && request.resource.data.addedAt is timestamp;
+        }
+
+        // Customers can view only their own wishlist.
+        allow get, list: if canManageWishlist();
+
+        // Customers can save existing products.
+        allow create: if canManageWishlist()
+          && validWishlistItem()
+          && exists(
+        /databases/$(database)/documents/products/$(productId)
+        );
+
+        // Wishlist items cannot be modified.
+        // Remove and re-add them instead.
+        allow update: if false;
+
+        // Customers can remove their saved products.
+        allow delete: if canManageWishlist();
+      }
 
       allow delete: if false;
+
+      // ==========================================
+      // CUSTOMER SHIPPING ADDRESSES
+      // ==========================================
+
+      match /addresses/{addressId} {
+
+        // Only the active customer who owns this
+        // account can access its saved addresses.
+        function canManageAddresses() {
+          return isOwner(userId) && isCustomer();
+        }
+
+        function validAddress() {
+          return request.resource.data.keys().hasAll([
+            'label',
+            'address',
+            'barangay',
+            'city',
+            'province',
+            'postalCode',
+            'isDefault',
+            'createdAt',
+            'updatedAt'
+          ])
+            && request.resource.data.keys().hasOnly([
+            'label',
+            'address',
+            'barangay',
+            'city',
+            'province',
+            'postalCode',
+            'isDefault',
+            'createdAt',
+            'updatedAt'
+          ])
+            && request.resource.data.label is string
+            && request.resource.data.label.size() > 0
+            && request.resource.data.address is string
+            && request.resource.data.address.size() > 0
+            && request.resource.data.barangay is string
+            && request.resource.data.barangay.size() > 0
+            && request.resource.data.city is string
+            && request.resource.data.city.size() > 0
+            && request.resource.data.province is string
+            && request.resource.data.province.size() > 0
+            && request.resource.data.postalCode is string
+            && request.resource.data.postalCode.size() > 0
+            && request.resource.data.isDefault is bool
+            && request.resource.data.createdAt is timestamp
+            && request.resource.data.updatedAt is timestamp;
+        }
+
+        allow get, list: if canManageAddresses();
+
+        allow create: if canManageAddresses()
+          && validAddress();
+
+        allow update: if canManageAddresses()
+          && validAddress()
+          && request.resource.data.createdAt
+        == resource.data.createdAt;
+
+        allow delete: if canManageAddresses();
+      }
+
     }
 
     // ==========================================
@@ -142,41 +230,41 @@ service cloud.firestore {
 
       allow update: if isAdmin()
         || (
-          isStaff()
-          && request.resource.data.diff(resource.data)
-            .affectedKeys()
-            .hasOnly([
-              'stock',
-              'stockQuantity',
-              'quantity',
-              'available',
-              'updatedAt'
-            ])
-        );
+      isStaff()
+        && request.resource.data.diff(resource.data)
+      .affectedKeys()
+      .hasOnly([
+        'stock',
+        'stockQuantity',
+        'quantity',
+        'available',
+        'updatedAt'
+      ])
+      );
     }
 
-        // ==========================================
-        // PRODUCT ID COUNTER
-        // ==========================================
+    // ==========================================
+    // PRODUCT ID COUNTER
+    // ==========================================
 
-        match /metadata/productCounter {
+    match /metadata/productCounter {
 
-        // Only active administrators can read the counter.
-        allow get: if isAdmin();
+      // Only active administrators can read the counter.
+      allow get: if isAdmin();
 
-        // Counter is created manually in Firebase Console.
-        allow create, delete: if false;
+      // Counter is created manually in Firebase Console.
+      allow create, delete: if false;
 
-        // Only active administrators can increment by exactly 1.
-        allow update: if isAdmin()
-          && request.resource.data.diff(resource.data)
-            .affectedKeys()
-            .hasOnly(['lastProductId'])
-          && resource.data.lastProductId is int
-          && request.resource.data.lastProductId is int
-          && request.resource.data.lastProductId
-            == resource.data.lastProductId + 1;
-         }
+      // Only active administrators can increment by exactly 1.
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data)
+      .affectedKeys()
+      .hasOnly(['lastProductId'])
+        && resource.data.lastProductId is int
+        && request.resource.data.lastProductId is int
+        && request.resource.data.lastProductId
+      == resource.data.lastProductId + 1;
+    }
 
     // ==========================================
     // ORDERS
@@ -196,7 +284,7 @@ service cloud.firestore {
 
       function changedFields() {
         return request.resource.data.diff(resource.data)
-          .affectedKeys();
+        .affectedKeys();
       }
 
       function validStatus(status) {
@@ -216,13 +304,13 @@ service cloud.firestore {
         return request.resource.data.statusHistory is list
           && resource.data.statusHistory is list
           && request.resource.data.statusHistory.size()
-            == resource.data.statusHistory.size() + 1
+        == resource.data.statusHistory.size() + 1
           && request.resource.data.statusHistory[
-            request.resource.data.statusHistory.size() - 1
-          ].status == request.resource.data.orderStatus
+          request.resource.data.statusHistory.size() - 1
+        ].status == request.resource.data.orderStatus
           && request.resource.data.statusHistory[
-            request.resource.data.statusHistory.size() - 1
-          ].at is timestamp;
+          request.resource.data.statusHistory.size() - 1
+        ].at is timestamp;
       }
 
       function validOrderCreate() {
@@ -246,41 +334,41 @@ service cloud.firestore {
           && request.resource.data.discount >= 0
           && request.resource.data.total >= 0
           && request.resource.data.keys().hasAll([
-            'userId',
-            'orderNumber',
-            'customer',
-            'deliveryAddress',
-            'deliveryLocation',
-            'paymentMethod',
-            'paymentStatus',
-            'orderStatus',
-            'statusHistory',
-            'items',
-            'subtotal',
-            'deliveryFee',
-            'discount',
-            'total',
-            'createdAt',
-            'updatedAt'
-          ])
+          'userId',
+          'orderNumber',
+          'customer',
+          'deliveryAddress',
+          'deliveryLocation',
+          'paymentMethod',
+          'paymentStatus',
+          'orderStatus',
+          'statusHistory',
+          'items',
+          'subtotal',
+          'deliveryFee',
+          'discount',
+          'total',
+          'createdAt',
+          'updatedAt'
+        ])
           && request.resource.data.keys().hasOnly([
-            'userId',
-            'orderNumber',
-            'customer',
-            'deliveryAddress',
-            'deliveryLocation',
-            'paymentMethod',
-            'paymentStatus',
-            'orderStatus',
-            'statusHistory',
-            'items',
-            'subtotal',
-            'deliveryFee',
-            'discount',
-            'total',
-            'createdAt',
-            'updatedAt'
-          ]);
+          'userId',
+          'orderNumber',
+          'customer',
+          'deliveryAddress',
+          'deliveryLocation',
+          'paymentMethod',
+          'paymentStatus',
+          'orderStatus',
+          'statusHistory',
+          'items',
+          'subtotal',
+          'deliveryFee',
+          'discount',
+          'total',
+          'createdAt',
+          'updatedAt'
+        ]);
       }
 
       // Customer creates their own order.
@@ -297,131 +385,208 @@ service cloud.firestore {
       function managementUpdate() {
         return isManagement()
           && changedFields().hasOnly([
-            'orderStatus',
-            'statusHistory',
-            'updatedAt',
-            'assignedRiderId',
-            'assignedRiderName'
-          ])
+          'orderStatus',
+          'statusHistory',
+          'updatedAt',
+          'assignedRiderId',
+          'assignedRiderName'
+        ])
           && changedFields().hasAll([
-            'orderStatus',
-            'statusHistory',
-            'updatedAt'
-          ])
+          'orderStatus',
+          'statusHistory',
+          'updatedAt'
+        ])
           && validStatus(request.resource.data.orderStatus)
           && validStatusHistory()
           && (
-            !changedFields().hasAny([
-              'assignedRiderId',
-              'assignedRiderName'
-            ])
-            || (
-              request.resource.data.assignedRiderId is string
-              && request.resource.data.assignedRiderId.size() > 0
-              && request.resource.data.assignedRiderName is string
-              && request.resource.data.orderStatus == 'rider_assigned'
-            )
-          );
+        !changedFields().hasAny([
+          'assignedRiderId',
+          'assignedRiderName'
+        ])
+          || (
+        request.resource.data.assignedRiderId is string
+          && request.resource.data.assignedRiderId.size() > 0
+          && request.resource.data.assignedRiderName is string
+          && request.resource.data.orderStatus == 'rider_assigned'
+        )
+        );
       }
 
-       // Admin only: archive or restore orders.
-function adminArchiveUpdate() {
-  return isAdmin()
-    && request.resource.data.diff(resource.data)
-      .affectedKeys()
-      .hasOnly([
-        'archived',
-        'archivedAt',
-        'archivedBy'
-      ])
-    && request.resource.data.archived is bool
-    && (
-      (
-        request.resource.data.archived == true
-        && request.resource.data.archivedAt is timestamp
-        && request.resource.data.archivedBy == request.auth.uid
-      )
-      || (
-        request.resource.data.archived == false
-        && !request.resource.data.keys().hasAny([
+      // Admin only: archive or restore orders.
+      function adminArchiveUpdate() {
+        return isAdmin()
+          && request.resource.data.diff(resource.data)
+        .affectedKeys()
+        .hasOnly([
+          'archived',
           'archivedAt',
           'archivedBy'
         ])
-      )
-    );
-}
+          && request.resource.data.archived is bool
+          && (
+        (
+        request.resource.data.archived == true
+          && request.resource.data.archivedAt is timestamp
+          && request.resource.data.archivedBy == request.auth.uid
+        )
+          || (
+        request.resource.data.archived == false
+          && !request.resource.data.keys().hasAny([
+          'archivedAt',
+          'archivedBy'
+        ])
+        )
+        );
+      }
       // Rider: update delivery progress.
       function riderStatusUpdate() {
         return isAssignedRider()
           && changedFields().hasOnly([
-            'orderStatus',
-            'statusHistory',
-            'updatedAt'
-          ])
+          'orderStatus',
+          'statusHistory',
+          'updatedAt'
+        ])
           && changedFields().hasAll([
-            'orderStatus',
-            'statusHistory',
-            'updatedAt'
-          ])
+          'orderStatus',
+          'statusHistory',
+          'updatedAt'
+        ])
           && validStatusHistory()
           && (
-            (
-              resource.data.orderStatus == 'rider_assigned'
-              && request.resource.data.orderStatus == 'picked_up'
-            )
-            || (
-              resource.data.orderStatus == 'picked_up'
-              && request.resource.data.orderStatus == 'on_the_way'
-            )
-            || (
-              resource.data.orderStatus == 'on_the_way'
-              && request.resource.data.orderStatus == 'delivered'
-            )
-          );
+        (
+        resource.data.orderStatus == 'rider_assigned'
+          && request.resource.data.orderStatus == 'picked_up'
+        )
+          || (
+        resource.data.orderStatus == 'picked_up'
+          && request.resource.data.orderStatus == 'on_the_way'
+        )
+          || (
+        resource.data.orderStatus == 'on_the_way'
+          && request.resource.data.orderStatus == 'delivered'
+        )
+        );
       }
 
       // Rider: update GPS position.
       function riderLocationUpdate() {
-  return isAssignedRider()
-    && resource.data.orderStatus in [
-      'rider_assigned',
-      'picked_up',
-      'on_the_way'
-    ]
-    && changedFields().hasOnly([
-      'riderLocation',
-      'updatedAt'
-    ])
-    && changedFields().hasAll([
-      'riderLocation'
-    ])
-    && request.resource.data.riderLocation is map
-    && request.resource.data.riderLocation.keys().hasAll([
-      'lat',
-      'lng'
-    ])
-    && request.resource.data.riderLocation.lat is number
-    && request.resource.data.riderLocation.lng is number
-    && request.resource.data.riderLocation.lat >= -90
-    && request.resource.data.riderLocation.lat <= 90
-    && request.resource.data.riderLocation.lng >= -180
-    && request.resource.data.riderLocation.lng <= 180;
-}
+        return isAssignedRider()
+          && resource.data.orderStatus in [
+          'rider_assigned',
+          'picked_up',
+          'on_the_way'
+        ]
+          && changedFields().hasOnly([
+          'riderLocation',
+          'updatedAt'
+        ])
+          && changedFields().hasAll([
+          'riderLocation'
+        ])
+          && request.resource.data.riderLocation is map
+          && request.resource.data.riderLocation.keys().hasAll([
+          'lat',
+          'lng'
+        ])
+          && request.resource.data.riderLocation.lat is number
+          && request.resource.data.riderLocation.lng is number
+          && request.resource.data.riderLocation.lat >= -90
+          && request.resource.data.riderLocation.lat <= 90
+          && request.resource.data.riderLocation.lng >= -180
+          && request.resource.data.riderLocation.lng <= 180;
+      }
       allow update: if managementUpdate()
-  || riderStatusUpdate()
-  || riderLocationUpdate()
-  || adminArchiveUpdate();
+        || riderStatusUpdate()
+        || riderLocationUpdate()
+        || adminArchiveUpdate();
 
       // Orders are retained for records.
       allow delete: if false;
     }
 
     // ==========================================
+    // CUSTOMER REFUND / ISSUE REQUESTS
+    // ==========================================
+    match /refundRequests/{requestId} {
+      function orderPath() {
+        return /databases/$(database)/documents/orders/$(requestId);
+      }
+
+      function validOrder() {
+        return exists(orderPath())
+          && get(orderPath()).data.userId == request.auth.uid
+          && get(orderPath()).data.orderStatus == 'delivered';
+      }
+
+      function validRequest() {
+        return requestId == request.resource.data.orderId
+          && request.resource.data.keys().hasAll([
+            'orderId', 'orderNumber', 'userId', 'reason',
+            'description', 'requestedResolution', 'paymentMethod',
+            'orderTotal', 'status', 'createdAt', 'updatedAt'
+          ])
+          && request.resource.data.keys().hasOnly([
+            'orderId', 'orderNumber', 'userId', 'reason',
+            'description', 'requestedResolution', 'paymentMethod',
+            'orderTotal', 'status', 'createdAt', 'updatedAt'
+          ])
+          && request.resource.data.orderId is string
+          && request.resource.data.orderNumber is string
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.status == 'pending'
+          && request.resource.data.reason in [
+            'missing_item', 'wrong_item', 'damaged_item',
+            'food_quality', 'other'
+          ]
+          && request.resource.data.requestedResolution in [
+            'refund', 'replacement', 'support'
+          ]
+          && request.resource.data.description is string
+          && request.resource.data.description.size() >= 10
+          && request.resource.data.description.size() <= 2000
+          && request.resource.data.paymentMethod is string
+          && request.resource.data.orderTotal is number
+          && request.resource.data.orderNumber == get(orderPath()).data.orderNumber
+          && request.resource.data.paymentMethod == get(orderPath()).data.paymentMethod
+          && request.resource.data.orderTotal == get(orderPath()).data.total
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.updatedAt == request.time;
+      }
+
+      allow create: if signedIn() && validOrder() && validRequest();
+
+      
+	allow get: if signedIn()
+	  && (
+    	(
+    	  exists(
+        	/databases/$(database)/documents/orders/$(requestId)
+    	  )
+     	 && get(
+       	 /databases/$(database)/documents/orders/$(requestId)
+      	).data.userId == request.auth.uid
+    	)
+    	||
+   	 (
+     	 resource != null
+     	 && resource.data.userId == request.auth.uid
+   	 )
+  	);
+
+allow list: if signedIn()
+  && resource.data.userId == request.auth.uid;
+
+
+      // Admin/staff review access can be added later.
+      allow update, delete: if false;
+    }
+
+    // ==========================================
     // DEFAULT DENY
     // ==========================================
-
     match /{document=**} {
       allow read, write: if false;
     }
+
   }
 }

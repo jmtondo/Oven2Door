@@ -350,6 +350,298 @@ async function restoreOrder(orderId) {
   }
 }
 
+function printOrderDocument(orderId, type) {
+  const order = orders.find((item) => item.id === orderId);
+
+  if (!order) {
+    alert("Order not found. Please refresh the Orders page.");
+    return;
+  }
+
+  if (!["invoice", "packing"].includes(type)) {
+    return;
+  }
+
+  const printWindow = window.open("", "_blank", "width=850,height=900");
+
+  if (!printWindow) {
+    alert("Please allow pop-ups to print this document.");
+    return;
+  }
+
+  const documentType = type === "invoice" ? "ORDER INVOICE" : "PACKING SLIP";
+
+  const money = (value) =>
+    new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(Number(value) || 0);
+
+  const customer = order.customer || {};
+  const address = order.deliveryAddress || {};
+
+  const customerName =
+    [customer.firstName, customer.lastName].filter(Boolean).join(" ") ||
+    "Customer";
+
+  const fullAddress = [
+    address.address,
+    address.barangay,
+    address.city,
+    address.province,
+    address.postalCode,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const items = Array.isArray(order.items) ? order.items : [];
+
+  const printDoc = printWindow.document;
+  printDoc.title = `${documentType} - ${order.orderNumber || order.id}`;
+
+  const style = printDoc.createElement("style");
+  style.textContent = `
+    @page { size: A4; margin: 15mm; }
+
+    body {
+      font-family: Arial, sans-serif;
+      color: #222;
+      margin: 30px;
+      font-size: 13px;
+    }
+
+    h1 { font-size: 26px; margin: 0; }
+    h2 { font-size: 18px; margin: 12px 0; }
+    h3 { font-size: 13px; margin-bottom: 6px; }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 3px solid #e53935;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+
+    .brand { color: #d32f2f; font-weight: bold; }
+    .muted { color: #666; }
+    .section { margin: 20px 0; }
+
+    .details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: #f5f5f5; }
+    .right { text-align: right; }
+    .center { text-align: center; }
+    .item-option { font-size: 11px; color: #666; margin-top: 4px; }
+    .totals { margin: 20px 0 0 auto; width: 280px; }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+    }
+
+    .grand-total {
+      border-top: 2px solid #222;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .footer {
+      border-top: 1px solid #ddd;
+      margin-top: 40px;
+      padding-top: 15px;
+      text-align: center;
+      color: #777;
+    }
+
+    .check-box {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 1px solid #333;
+    }
+
+    tr { break-inside: avoid; }
+
+    @media print {
+      body { margin: 0; }
+    }
+  `;
+  printDoc.head.appendChild(style);
+
+  const root = printDoc.createElement("main");
+  printDoc.body.appendChild(root);
+
+  // Use textContent for Firestore data to avoid HTML injection.
+  function element(tag, text, className, parent = root) {
+    const node = printDoc.createElement(tag);
+    node.textContent = String(text ?? "");
+    if (className) node.className = className;
+    parent.appendChild(node);
+    return node;
+  }
+
+  function detail(label, value, parent) {
+    const wrapper = element("div", "", "", parent);
+    element("strong", label, "", wrapper);
+    element("p", value || "—", "", wrapper);
+  }
+
+  const header = element("header", "", "header");
+  const brand = element("div", "", "", header);
+  element("h1", "OVEN2DOOR", "brand", brand);
+  element("p", "Fresh pizza, delivered to your door.", "muted", brand);
+
+  const heading = element("div", "", "", header);
+  element("h2", documentType, "", heading);
+  element("p", order.orderNumber || order.id, "", heading);
+  element("p", formatDate(order.createdAt), "muted", heading);
+
+  const details = element("section", "", "details section");
+
+  const customerBox = element("div", "", "", details);
+  element("h3", "CUSTOMER INFORMATION", "", customerBox);
+  detail("Name", customerName, customerBox);
+  detail("Phone", customer.phone, customerBox);
+  detail("Email", customer.email, customerBox);
+
+  const deliveryBox = element("div", "", "", details);
+  element("h3", "DELIVERY INFORMATION", "", deliveryBox);
+  detail("Address", fullAddress, deliveryBox);
+  detail("Order status", order.orderStatus || "placed", deliveryBox);
+
+  if (type === "invoice") {
+    const paymentBox = element("section", "", "section");
+    element("h3", "PAYMENT INFORMATION", "", paymentBox);
+    detail(
+      "Payment method",
+      order.paymentMethod === "cod"
+        ? "Cash on Delivery"
+        : String(order.paymentMethod || "Not specified").toUpperCase(),
+      paymentBox,
+    );
+    detail("Payment status", order.paymentStatus || "pending", paymentBox);
+  }
+
+  const itemsSection = element("section", "", "section");
+  element(
+    "h3",
+    type === "invoice" ? "ORDER ITEMS" : "ITEMS TO PACK",
+    "",
+    itemsSection,
+  );
+
+  const table = element("table", "", "", itemsSection);
+  const thead = element("thead", "", "", table);
+  const headingRow = element("tr", "", "", thead);
+
+  const headings =
+    type === "invoice"
+      ? ["Product", "Qty", "Unit Price", "Amount"]
+      : ["Check", "Product / Options", "Quantity"];
+
+  headings.forEach((heading) => {
+    element("th", heading, "", headingRow);
+  });
+
+  const tbody = element("tbody", "", "", table);
+
+  for (const item of items) {
+    const row = element("tr", "", "", tbody);
+
+    if (type === "packing") {
+      const checkCell = element("td", "", "", row);
+      element("span", "", "check-box", checkCell);
+    }
+
+    const productCell = element("td", "", "", row);
+    element("strong", item.productName || "Product", "", productCell);
+
+    const options = [];
+
+    if (item.size?.name) options.push(`Size: ${item.size.name}`);
+    if (item.crust?.name) options.push(`Crust: ${item.crust.name}`);
+
+    if (Array.isArray(item.toppings) && item.toppings.length) {
+      options.push(
+        `Toppings: ${item.toppings.map((t) => t.name || "Topping").join(", ")}`,
+      );
+    }
+
+    if (options.length) {
+      element("div", options.join(" | "), "item-option", productCell);
+    }
+
+    element("td", item.quantity ?? 1, "center", row);
+
+    if (type === "invoice") {
+      element("td", money(item.unitPrice), "right", row);
+      element("td", money(item.subtotal), "right", row);
+    }
+  }
+
+  if (type === "invoice") {
+    const totals = element("section", "", "totals");
+
+    function totalRow(label, value, extraClass = "") {
+      const row = element("div", "", `total-row ${extraClass}`, totals);
+      element("span", label, "", row);
+      element("span", money(value), "", row);
+    }
+
+    totalRow("Subtotal", order.subtotal);
+    totalRow("Delivery Fee", order.deliveryFee);
+    totalRow("Discount", -(Number(order.discount) || 0));
+    totalRow("TOTAL", order.total, "grand-total");
+  } else {
+    const totalQuantity = items.reduce(
+      (sum, item) => sum + (Number(item.quantity) || 0),
+      0,
+    );
+
+    element("p", `Total items to pack: ${totalQuantity}`, "section");
+
+    element(
+      "p",
+      "Packed by: ____________________    Date/Time: ____________________",
+      "section",
+    );
+  }
+
+  const footer = element("footer", "", "footer");
+  element(
+    "p",
+    type === "invoice"
+      ? "Thank you for ordering from Oven2Door!"
+      : "Verify all items and options before dispatch.",
+    "",
+    footer,
+  );
+
+  // Wait for the print document to render.
+  printWindow.focus();
+
+  setTimeout(() => {
+    printWindow.print();
+  }, 400);
+}
+
 // ==========================================
 // RENDER ORDERS
 // ==========================================
@@ -433,6 +725,26 @@ function renderOrders() {
     // ==========================================
 
     const actionsCell = createCell("actions-cell");
+
+    // PRINT INVOICE
+    const invoiceButton = document.createElement("button");
+
+    invoiceButton.type = "button";
+    invoiceButton.className = "print-invoice-btn";
+    invoiceButton.textContent = "Print Invoice";
+    invoiceButton.dataset.printInvoiceId = order.id;
+
+    actionsCell.appendChild(invoiceButton);
+
+    // PRINT PACKING SLIP
+    const packingButton = document.createElement("button");
+
+    packingButton.type = "button";
+    packingButton.className = "print-packing-btn";
+    packingButton.textContent = "Packing Slip";
+    packingButton.dataset.printPackingId = order.id;
+
+    actionsCell.appendChild(packingButton);
 
     if (currentRole === "admin") {
       if (order.archived === true) {
@@ -625,6 +937,19 @@ orderTableBody?.addEventListener("change", (event) => {
 // ==========================================
 
 orderTableBody?.addEventListener("click", (event) => {
+  const invoiceButton = event.target.closest("button[data-print-invoice-id]");
+
+  if (invoiceButton) {
+    printOrderDocument(invoiceButton.dataset.printInvoiceId, "invoice");
+    return;
+  }
+
+  const packingButton = event.target.closest("button[data-print-packing-id]");
+
+  if (packingButton) {
+    printOrderDocument(packingButton.dataset.printPackingId, "packing");
+    return;
+  }
   // Handle Archive button
   const archiveButton = event.target.closest("button[data-archive-order-id]");
 

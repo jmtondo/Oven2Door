@@ -218,17 +218,28 @@
 
           <!-- CART TOOLS -->
           <div class="cart-tools">
-            <div class="coupon">
+            <!-- <div class="coupon">
               <input
                 type="text"
                 placeholder="Coupon Code"
                 [(ngModel)]="couponCode"
+                (ngModelChange)="onCouponCodeChanged()"
+                [disabled]="applyingCoupon"
               />
 
-              <button type="button" (click)="applyCoupon()">
-                APPLY COUPON
+              <button
+                type="button"
+                (click)="applyCoupon()"
+                [disabled]="applyingCoupon"
+              >
+                {{ applyingCoupon ? 'APPLYING...' : 'APPLY COUPON' }}
               </button>
-            </div>
+            </div> -->
+            <p class="coupon-success" *ngIf="couponMessage">
+              {{ couponMessage }}
+            </p>
+
+            <p class="coupon-error" *ngIf="couponError">{{ couponError }}</p>
 
             <button type="button" class="update-btn" (click)="updateCart()">
               <ion-icon name="sync-outline"></ion-icon>

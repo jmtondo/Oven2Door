@@ -1,1 +1,588 @@
-<ion-content class="tracking-page"><main class="tracking-shell"><a routerLink="/home" class="back-link">← Back to home</a><header><p>ORDER TRACKING</p><h1>Follow your order in real time</h1></header><div *ngIf="loading" class="state">Loading your orders…</div><div *ngIf="error" class="state error"><ion-icon name="alert-circle-outline"></ion-icon>{{ error }}</div><div *ngIf="!loading && !error && !selectedOrder" class="state">You have no orders yet. <a routerLink="/menu">Browse the menu</a></div><section *ngIf="selectedOrder" class="tracking-grid"><aside class="order-picker" *ngIf="orders.length > 1"><button *ngFor="let order of orders" (click)="selectOrder(order)" [class.selected]="order.id === selectedOrder.id"><strong>{{ order.orderNumber }}</strong><span>{{ statusLabel(order.orderStatus) }}</span></button></aside><section class="tracking-card"><div class="order-heading"><div><p>ORDER {{ selectedOrder.orderNumber }}</p><h2>{{ statusLabel(selectedOrder.orderStatus) }}</h2></div><span class="status-pill" [class.cancelled]="selectedOrder.orderStatus === 'cancelled'">{{ statusLabel(selectedOrder.orderStatus) }}</span></div><div *ngIf="selectedOrder.orderStatus === 'cancelled'" class="cancelled-note">This order has been cancelled. Contact support if you need help.</div><ol class="timeline" *ngIf="selectedOrder.orderStatus !== 'cancelled'"><li *ngFor="let step of steps" [class.done]="completed(step.status)" [class.current]="active(step.status)"><span><ion-icon *ngIf="completed(step.status)" name="checkmark-circle"></ion-icon></span><div><strong>{{ step.title }}</strong><p>{{ step.description }}</p></div></li></ol><section class="map-section"><h3><ion-icon name="location-outline"></ion-icon> Live rider location</h3><div *ngIf="selectedOrder.riderLocation; else waitingForRider" id="rider-map" aria-label="Live rider location map"></div><ng-template #waitingForRider><div class="map-waiting">Live location will appear after your rider starts the delivery.</div></ng-template><p *ngIf="selectedOrder.riderLocation?.updatedAt" class="location-time"><ion-icon name="time-outline"></ion-icon> Updated {{ asDate(selectedOrder.riderLocation.updatedAt) | date:'short' }}</p></section></section><aside class="details-card"><h3>Order details</h3><div class="detail"><strong>Delivery address</strong><span>{{ selectedOrder.deliveryAddress.address }}, {{ selectedOrder.deliveryAddress.barangay }}, {{ selectedOrder.deliveryAddress.city }}</span></div><div class="detail" *ngIf="selectedOrder.assignedRiderName"><strong>Your rider</strong><span><ion-icon name="bicycle-outline"></ion-icon> {{ selectedOrder.assignedRiderName }}</span></div><div class="detail"><strong>Payment</strong><span>{{ selectedOrder.paymentMethod | uppercase }} · {{ selectedOrder.paymentStatus }}</span></div><div class="items"><div *ngFor="let item of selectedOrder.items"><span>{{ item.quantity }}× {{ item.productName }}</span><strong>{{ item.subtotal | currency:'PHP':'symbol-narrow':'1.2-2' }}</strong></div></div><div class="total"><span>Total</span><strong>{{ selectedOrder.total | currency:'PHP':'symbol-narrow':'1.2-2' }}</strong></div></aside></section></main></ion-content>
+<ion-content class="tracking-page">
+  <main class="tracking-shell">
+    <!-- ==========================================
+         BACK NAVIGATION
+    ========================================== -->
+    <a routerLink="/home" class="back-link">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+      <span>Back to home</span>
+    </a>
+
+    <!-- ==========================================
+         PAGE HEADER
+    ========================================== -->
+    <header class="tracking-header">
+      <div class="header-content">
+        <span class="section-eyebrow">ORDER TRACKING</span>
+
+        <h1>Follow your order in real time</h1>
+
+        <p class="header-description">
+          Stay updated with your order's progress, from preparation to delivery
+          at your doorstep.
+        </p>
+      </div>
+    </header>
+
+    <!-- ==========================================
+         LOADING STATE
+    ========================================== -->
+    <div *ngIf="loading" class="state loading-state">
+      <ion-icon name="hourglass-outline"></ion-icon>
+      <p>Loading your orders...</p>
+    </div>
+
+    <!-- ==========================================
+         ERROR STATE
+    ========================================== -->
+    <div *ngIf="error" class="state error">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- ==========================================
+         EMPTY STATE
+    ========================================== -->
+    <div
+      *ngIf="!loading && !error && !selectedOrder"
+      class="state empty-orders-state"
+    >
+      <ion-icon name="bag-handle-outline"></ion-icon>
+
+      <h2>No orders yet</h2>
+
+      <p>
+        You haven't placed any orders yet. Explore our menu and order your
+        favorites!
+      </p>
+
+      <a routerLink="/menu" class="browse-menu-btn">
+        Browse Menu
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </a>
+    </div>
+
+    <!-- ==========================================
+         TRACKING CONTENT
+    ========================================== -->
+    <section *ngIf="!loading && !error && selectedOrder" class="tracking-grid">
+      <!-- ========================================
+           ORDER SELECTION
+      ======================================== -->
+      <aside class="order-picker" *ngIf="orders.length > 1">
+        <div class="order-picker-heading">
+          <div>
+            <span class="section-eyebrow">YOUR ORDERS</span>
+
+            <h3>Select an order</h3>
+
+            <p>Choose an order to view its delivery progress.</p>
+          </div>
+
+          <span class="order-count"> {{ orders.length }} Orders </span>
+        </div>
+
+        <div class="order-picker-list">
+          <button
+            type="button"
+            class="order-choice"
+            *ngFor="let order of orders"
+            (click)="selectOrder(order)"
+            [class.selected]="order.id === selectedOrder.id"
+            [attr.aria-pressed]="order.id === selectedOrder.id"
+          >
+            <div class="order-choice-top">
+              <span class="order-choice-icon">
+                <ion-icon name="receipt-outline"></ion-icon>
+              </span>
+
+              <span
+                class="order-choice-status"
+                [class.delivered]="order.orderStatus === 'delivered'"
+                [class.cancelled]="order.orderStatus === 'cancelled'"
+              >
+                {{ statusLabel(order.orderStatus) }}
+              </span>
+            </div>
+
+            <strong class="order-choice-number">
+              {{ order.orderNumber }}
+            </strong>
+
+            <span class="order-choice-date">
+              <ion-icon name="calendar-outline"></ion-icon>
+
+              {{ asDate(order.createdAt) | date:'mediumDate' }}
+            </span>
+
+            <div class="order-choice-bottom">
+              <strong class="order-choice-total">
+                {{ order.total | currency:'PHP':'symbol-narrow':'1.2-2' }}
+              </strong>
+
+              <span class="order-choice-action">
+                {{ order.id === selectedOrder.id ? 'Viewing order' : 'Track
+                order' }}
+
+                <ion-icon name="arrow-forward-outline"></ion-icon>
+              </span>
+            </div>
+          </button>
+        </div>
+      </aside>
+
+      <!-- ========================================
+           ORDER TRACKING CARD
+      ======================================== -->
+      <section class="tracking-card">
+        <div class="order-heading">
+          <div>
+            <p>ORDER {{ selectedOrder.orderNumber }}</p>
+
+            <h2>{{ statusLabel(selectedOrder.orderStatus) }}</h2>
+          </div>
+
+          <span
+            class="status-pill"
+            [class.cancelled]="selectedOrder.orderStatus === 'cancelled'"
+          >
+            {{ statusLabel(selectedOrder.orderStatus) }}
+          </span>
+        </div>
+
+        <!-- CANCELLED ORDER -->
+        <div
+          *ngIf="selectedOrder.orderStatus === 'cancelled'"
+          class="cancelled-note"
+        >
+          <ion-icon name="alert-circle-outline"></ion-icon>
+
+          This order has been cancelled. Contact support if you need assistance.
+        </div>
+
+        <!-- ======================================
+             ORDER PROGRESS TIMELINE
+        ====================================== -->
+        <div
+          class="timeline-section"
+          *ngIf="selectedOrder.orderStatus !== 'cancelled'"
+        >
+          <div class="section-heading">
+            <h3>Order Progress</h3>
+
+            <p>Track every step of your delivery.</p>
+          </div>
+
+          <ol class="timeline">
+            <li
+              *ngFor="let step of steps"
+              [class.done]="completed(step.status)"
+              [class.current]="active(step.status)"
+            >
+              <span class="timeline-indicator">
+                <ion-icon
+                  *ngIf="completed(step.status)"
+                  name="checkmark-circle"
+                ></ion-icon>
+              </span>
+
+              <div class="timeline-content">
+                <strong>{{ step.title }}</strong>
+                <p>{{ step.description }}</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <!-- ======================================
+             LIVE RIDER LOCATION
+        ====================================== -->
+        <section
+          class="map-section"
+          *ngIf="
+            selectedOrder.orderStatus !== 'delivered' &&
+            selectedOrder.orderStatus !== 'cancelled'
+          "
+        >
+          <div class="section-heading">
+            <h3>
+              <ion-icon name="location-outline"></ion-icon>
+              Live Rider Location
+            </h3>
+
+            <p>Follow your rider's location during delivery.</p>
+          </div>
+
+          <div
+            *ngIf="selectedOrder.riderLocation; else waitingForRider"
+            id="rider-map"
+            aria-label="Live rider location map"
+          ></div>
+
+          <ng-template #waitingForRider>
+            <div class="map-waiting">
+              <ion-icon name="bicycle-outline"></ion-icon>
+
+              <p>
+                Live location will appear once your rider starts the delivery.
+              </p>
+            </div>
+          </ng-template>
+
+          <p
+            *ngIf="selectedOrder.riderLocation?.updatedAt"
+            class="location-time"
+          >
+            <ion-icon name="time-outline"></ion-icon>
+
+            Updated {{ asDate(selectedOrder.riderLocation.updatedAt) |
+            date:'short' }}
+          </p>
+        </section>
+      </section>
+
+      <!-- ========================================
+           ORDER DETAILS SIDEBAR
+      ======================================== -->
+      <aside class="details-card">
+        <div class="details-header">
+          <h3>Order Details</h3>
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+
+        <!-- DELIVERY ADDRESS -->
+        <div class="detail">
+          <strong>
+            <ion-icon name="location-outline"></ion-icon>
+            Delivery Address
+          </strong>
+
+          <span>
+            {{ selectedOrder.deliveryAddress.address }}, {{
+            selectedOrder.deliveryAddress.barangay }}, {{
+            selectedOrder.deliveryAddress.city }}
+          </span>
+        </div>
+
+        <!-- RIDER -->
+        <div class="detail" *ngIf="selectedOrder.assignedRiderName">
+          <strong>
+            <ion-icon name="bicycle-outline"></ion-icon>
+            Your Rider
+          </strong>
+
+          <span> {{ selectedOrder.assignedRiderName }} </span>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="detail">
+          <strong>
+            <ion-icon name="card-outline"></ion-icon>
+            Payment
+          </strong>
+
+          <span>
+            {{ selectedOrder.paymentMethod | uppercase }} · {{
+            selectedOrder.paymentStatus }}
+          </span>
+        </div>
+
+        <!-- ======================================
+             ORDER ITEMS
+        ====================================== -->
+        <div class="ordered-items-section">
+          <h4>Items Ordered</h4>
+
+          <div class="items">
+            <div class="order-item" *ngFor="let item of selectedOrder.items">
+              <span> {{ item.quantity }}× {{ item.productName }} </span>
+
+              <strong>
+                {{ item.subtotal | currency:'PHP':'symbol-narrow':'1.2-2' }}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORDER TOTAL -->
+        <div class="total">
+          <span>Total Amount</span>
+
+          <strong>
+            {{ selectedOrder.total | currency:'PHP':'symbol-narrow':'1.2-2' }}
+          </strong>
+        </div>
+
+        <!-- ======================================
+             CUSTOMER SUPPORT
+        ====================================== -->
+        <section
+          class="order-support-section"
+          *ngIf="selectedOrder.orderStatus === 'delivered'"
+        >
+          <div class="support-heading">
+            <ion-icon name="help-circle-outline"></ion-icon>
+
+            <div>
+              <strong>Need help with your order?</strong>
+
+              <p>
+                Missing items, incorrect orders, damaged packaging, or food
+                quality concerns?
+              </p>
+            </div>
+          </div>
+
+          <!-- SUCCESS MESSAGE -->
+          <div class="issue-success" *ngIf="issueSuccess" role="status">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>{{ issueSuccess }}</span>
+          </div>
+
+          <!-- ======================================
+     REFUND / ISSUE REQUEST TRACKING
+====================================== -->
+
+          <div class="refund-tracking" *ngIf="refundRequest as request">
+            <div class="refund-tracking-header">
+              <div>
+                <span class="refund-eyebrow"> RETURNS & REFUNDS </span>
+
+                <h3>Request Status</h3>
+              </div>
+
+              <span class="refund-tracking-badge" [ngClass]="request.status">
+                {{ request.status | titlecase }}
+              </span>
+            </div>
+
+            <!-- REQUEST DETAILS -->
+            <div class="refund-tracking-details">
+              <div>
+                <span>Order Number</span>
+                <strong>{{ request.orderNumber }}</strong>
+              </div>
+
+              <div>
+                <span>Reported Issue</span>
+                <strong>
+                  {{ request.reason === 'missing_item' ? 'Missing item' :
+                  request.reason === 'wrong_item' ? 'Wrong item delivered' :
+                  request.reason === 'damaged_item' ? 'Damaged packaging or
+                  item' : request.reason === 'food_quality' ? 'Food quality
+                  concern' : 'Other issue' }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Preferred Resolution</span>
+                <strong>
+                  {{ request.requestedResolution === 'refund' ? 'Refund' :
+                  request.requestedResolution === 'replacement' ? 'Replacement'
+                  : 'Customer support' }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Date Submitted</span>
+                <strong>
+                  {{ asDate(request.createdAt) | date:'mediumDate' }}
+                </strong>
+              </div>
+            </div>
+
+            <!-- STATUS MESSAGE -->
+            <div class="refund-tracking-message" [ngClass]="request.status">
+              <ng-container [ngSwitch]="request.status">
+                <div *ngSwitchCase="'pending'">
+                  <strong>Request under review</strong>
+                  <p>
+                    Your issue has been submitted successfully. Our team is
+                    currently reviewing your request.
+                  </p>
+                </div>
+
+                <div *ngSwitchCase="'approved'">
+                  <strong>Request approved</strong>
+                  <p>
+                    Your request has been approved by the Oven2Door team. Please
+                    review the response below for the next steps.
+                  </p>
+                </div>
+
+                <div *ngSwitchCase="'rejected'">
+                  <strong>Request rejected</strong>
+                  <p>
+                    Your request was not approved. Please review the
+                    administrator's explanation.
+                  </p>
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- CUSTOMER'S ORIGINAL REPORT -->
+            <div class="refund-admin-note">
+              <strong>Your Report</strong>
+              <p>{{ request.description }}</p>
+            </div>
+
+            <!-- ADMIN RESPONSE -->
+            <div class="refund-admin-note" *ngIf="request.adminNote">
+              <strong>Response from Oven2Door</strong>
+              <p>{{ request.adminNote }}</p>
+            </div>
+
+            <!-- REVIEW DATE -->
+            <p class="refund-review-date" *ngIf="request.reviewedAt">
+              Reviewed on {{ asDate(request.reviewedAt) | date:'medium' }}
+            </p>
+          </div>
+
+          <!-- LOADING REQUEST STATUS -->
+          <div class="refund-loading" *ngIf="refundLoading" role="status">
+            Checking your request status...
+          </div>
+
+          <!-- REQUEST STATUS ERROR -->
+          <div class="issue-error" *ngIf="refundError" role="alert">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            {{ refundError }}
+          </div>
+
+          <!-- REPORT BUTTON -->
+          <button
+            type="button"
+            class="report-issue-btn"
+            *ngIf="
+              !showIssueForm &&
+              !issueSuccess &&
+              !refundRequest &&
+              !refundLoading &&
+              !refundError
+            "
+            (click)="openIssueForm()"
+          >
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            Report an Issue
+          </button>
+
+          <!-- ====================================
+               REPORT AN ISSUE FORM
+          ==================================== -->
+          <form
+            class="issue-form"
+            *ngIf="showIssueForm && !refundRequest"
+            (ngSubmit)="submitIssue()"
+          >
+            <div class="issue-form-header">
+              <h3>Report an Order Issue</h3>
+
+              <p>Tell us what went wrong. Our team will review your request.</p>
+            </div>
+
+            <!-- ISSUE REASON -->
+            <div class="issue-field">
+              <label for="issueReason">
+                What went wrong?
+                <span class="required">*</span>
+              </label>
+
+              <select
+                id="issueReason"
+                name="issueReason"
+                [(ngModel)]="issueReason"
+                required
+              >
+                <option value="missing_item">Missing item</option>
+
+                <option value="wrong_item">Wrong item delivered</option>
+
+                <option value="damaged_item">Damaged packaging or item</option>
+
+                <option value="food_quality">Food quality concern</option>
+
+                <option value="other">Other issue</option>
+              </select>
+            </div>
+
+            <!-- ISSUE DESCRIPTION -->
+            <div class="issue-field">
+              <label for="issueDescription">
+                Describe the issue
+                <span class="required">*</span>
+              </label>
+
+              <textarea
+                id="issueDescription"
+                name="issueDescription"
+                [(ngModel)]="issueDescription"
+                rows="5"
+                minlength="10"
+                maxlength="2000"
+                required
+                placeholder="Example: My order was delivered without the Coca Cola."
+              ></textarea>
+
+              <small>
+                Minimum 10 characters. {{ issueDescription.length }}/2000
+              </small>
+            </div>
+
+            <!-- PREFERRED RESOLUTION -->
+            <div class="issue-field">
+              <label for="requestedResolution"> Preferred resolution </label>
+
+              <select
+                id="requestedResolution"
+                name="requestedResolution"
+                [(ngModel)]="requestedResolution"
+                required
+              >
+                <option value="refund">Request a refund</option>
+
+                <option value="replacement">Request a replacement</option>
+
+                <option value="support">Contact customer support</option>
+              </select>
+            </div>
+
+            <!-- NOTICE -->
+            <p class="issue-disclaimer">
+              Submitting a request does not guarantee a refund. All requests are
+              subject to review by the Oven2Door team.
+            </p>
+
+            <!-- ERROR -->
+            <div class="issue-error" *ngIf="issueError" role="alert">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              {{ issueError }}
+            </div>
+
+            <!-- FORM ACTIONS -->
+            <div class="issue-form-actions">
+              <button
+                type="button"
+                class="issue-cancel-btn"
+                [disabled]="submittingIssue"
+                (click)="closeIssueForm()"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                class="issue-submit-btn"
+                [disabled]="
+                  submittingIssue ||
+                  issueDescription.trim().length < 10
+                "
+              >
+                {{ submittingIssue ? 'Submitting...' : 'Submit Request' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      </aside>
+    </section>
+  </main>
+</ion-content>

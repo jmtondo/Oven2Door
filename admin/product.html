@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <nav class="sidebar-nav">
+      <div class="sidebar-nav">
         <a href="index.html">
           <i class="fa-solid fa-chart-line"></i>
           <span>Dashboard</span>
@@ -42,7 +42,12 @@
           <span>Orders</span>
         </a>
 
-        <a href="product.html" class="active">
+        <a href="refunds.html" data-admin-only>
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Returns &amp; Refunds</span>
+        </a>
+
+        <a href="product.html" data-admin-only class="active">
           <i class="fa-solid fa-box"></i>
           <span>Products</span>
         </a>
@@ -52,16 +57,25 @@
           <span>Inventory</span>
         </a>
 
-        <a href="customers.html">
+        <a href="customers.html" data-admin-only>
           <i class="fa-solid fa-users"></i>
           <span>Customers</span>
         </a>
 
-        <a href="sales.html">
+        <a href="accounts.html" data-admin-only>
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Account Management</span>
+        </a>
+        <a href="promos.html" data-admin-only>
+          <i class="fas fa-tags"></i>
+          Promos
+        </a>
+
+        <a href="sales.html" data-admin-only>
           <i class="fa-solid fa-chart-column"></i>
           <span>Sales Reports</span>
         </a>
-      </nav>
+      </div>
 
       <div class="sidebar-bottom">
         <a href="login.html">

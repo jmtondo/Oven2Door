@@ -101,56 +101,149 @@
   <section class="popular-section">
     <div class="popular-container">
       <div class="popular-header">
-        <h2>FEATURED PIZZAS</h2>
-
+        <h2>BEST SELLER</h2>
         <a routerLink="/menu" class="view-all">
-          VIEW ALL PIZZAS
-          <ion-icon name="chevron-forward-outline"></ion-icon>
+          VIEW ALL PIZZAS <ion-icon name="chevron-forward-outline"></ion-icon>
         </a>
       </div>
-
-      <!-- Loading -->
-      <div class="pizza-loading" *ngIf="isLoading">
-        <p>Loading pizzas...</p>
-      </div>
-
-      <!-- Error -->
-      <div class="pizza-error" *ngIf="!isLoading && errorMessage">
-        <p>{{ errorMessage }}</p>
-      </div>
-
-      <!-- Real Firestore Products -->
-      <div class="pizza-grid" *ngIf="!isLoading && !errorMessage">
-        <div class="pizza-card" *ngFor="let product of featuredProducts">
+      <div class="pizza-grid">
+        <div class="pizza-card">
           <div class="pizza-img-wrap">
-            <img [src]="product.imagePath" [alt]="product.name" />
+            <img
+              src="assets/images/pizzapics/Hawaiianstuffedcrust.png"
+              alt="Hawaiian"
+            />
           </div>
-
           <div class="pizza-info">
-            <h3>{{ product.name }}</h3>
-
-            <p>{{ product.description }}</p>
-
-            <div class="pizza-price">₱{{ product.price | number:'1.0-0' }}</div>
-
+            <h3>Hawaiian</h3>
+            <p>Ham, Pineapple, Mozzarella, Tomato Sauce</p>
+            <div class="pizza-price">₱299</div>
             <button type="button" class="add-to-cart-btn">
-              <ion-icon name="cart-outline"></ion-icon>
-              ADD TO CART
+              <ion-icon name="cart-outline"></ion-icon> ADD TO CART
+            </button>
+          </div>
+        </div>
+        <div class="pizza-card">
+          <div class="pizza-img-wrap">
+            <img
+              src="assets/images/pizzapics/Pepperonistuffedcrust.png"
+              alt="Pepperoni Delight"
+            />
+          </div>
+          <div class="pizza-info">
+            <h3>Pepperoni Delight</h3>
+            <p>Pepperoni, Mozzarella, Pizza Sauce</p>
+            <div class="pizza-price">₱299</div>
+            <button type="button" class="add-to-cart-btn">
+              <ion-icon name="cart-outline"></ion-icon> ADD TO CART
+            </button>
+          </div>
+        </div>
+        <div class="pizza-card">
+          <div class="pizza-img-wrap">
+            <img
+              src="assets/images/pizzapics/Veggiethincrust.png"
+              alt="Veggie Supreme"
+            />
+          </div>
+          <div class="pizza-info">
+            <h3>Veggie Supreme</h3>
+            <p>Bell Peppers, Olives, Onions, Corn, Mushrooms</p>
+            <div class="pizza-price">₱299</div>
+            <button type="button" class="add-to-cart-btn">
+              <ion-icon name="cart-outline"></ion-icon> ADD TO CART
+            </button>
+          </div>
+        </div>
+        <div class="pizza-card">
+          <div class="pizza-img-wrap">
+            <img
+              src="assets/images/pizzapics/Bbqchickenthincrust.png"
+              alt="BBQ Chicken Crust"
+            />
+          </div>
+          <div class="pizza-info">
+            <h3>BBQ Chicken</h3>
+            <p>BBQ Sauce, Chicken, Red Onions, Cilantro</p>
+            <div class="pizza-price">₱329</div>
+            <button type="button" class="add-to-cart-btn">
+              <ion-icon name="cart-outline"></ion-icon> ADD TO CART
+            </button>
+          </div>
+        </div>
+        <div class="pizza-card">
+          <div class="pizza-img-wrap">
+            <img
+              src="assets/images/pizzapics/Cheesestuffedcrust.png"
+              alt="Cheese Burst"
+            />
+          </div>
+          <div class="pizza-info">
+            <h3>Cheese Burst</h3>
+            <p>Extra Cheese, Mozzarella, Cheddar, Parmesan</p>
+            <div class="pizza-price">₱369</div>
+            <button type="button" class="add-to-cart-btn">
+              <ion-icon name="cart-outline"></ion-icon> ADD TO CART
+            </button>
+          </div>
+        </div>
+        <div class="pizza-card">
+          <div class="pizza-img-wrap">
+            <img
+              src="assets/images/pizzapics/Meatloversstuffedcrust.png"
+              alt="Meat Lovers"
+            />
+          </div>
+          <div class="pizza-info">
+            <h3>Meat Lovers</h3>
+            <p>Pepperoni, Sausage, Bacon, Ham, Beef</p>
+            <div class="pizza-price">₱399</div>
+            <button type="button" class="add-to-cart-btn">
+              <ion-icon name="cart-outline"></ion-icon> ADD TO CART
             </button>
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- No products -->
-      <div
-        class="pizza-error"
-        *ngIf="
-            !isLoading &&
-            !errorMessage &&
-            featuredProducts.length === 0
-          "
-      >
-        <p>No pizzas available.</p>
+  <!-- PROMO SECTION -->
+  <section class="promo-banner-section">
+    <div class="promo-banner-container">
+      <!-- Promo Card 1: WELCOME10 -->
+      <div class="promo-card-modern welcome-card">
+        <div class="promo-badge-pill">First Bite Treat</div>
+        <div class="promo-text">
+          <h3>Welcome Discount</h3>
+          <p>
+            Enjoy 10% off your very first freshly baked order! Use code:
+            <strong>WELCOME10</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Promo Card 2: CREWFEAST -->
+      <div class="promo-card-modern crew-card">
+        <div class="promo-badge-pill">Best Deal 🔥</div>
+        <div class="promo-text">
+          <h3>Crew Feast Bundle</h3>
+          <p>
+            Slash ₱150 off when ordering pizzas for the whole team! Use code:
+            <strong>CREWFEAST</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Promo Card 3 OVENDEAL -->
+      <div class="promo-card-modern drink-card">
+        <div class="promo-badge-pill">Thirst Quencher</div>
+        <div class="promo-text">
+          <h3>Oven Fresh Combo</h3>
+          <p>
+            Get a special discount when you order any 2 Large Pizzas! Use code:
+            <strong>OVENDEAL</strong>
+          </p>
+        </div>
       </div>
     </div>
   </section>

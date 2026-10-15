@@ -1,530 +1,322 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Oven2Door | Inventory Management</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="inventory.css">
+    <link rel="stylesheet" href="inventory.css" />
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
 
-<body>
-
+  <body>
     <!-- ================= SIDEBAR ================= -->
 
     <aside class="sidebar">
-
-    <div class="logo">
-
+      <div class="logo">
         <div class="logo-box">
-            <img src="pizzapics/oven2doorlogo.png"
-                 alt="Oven2Door Logo">
+          <img src="pizzapics/oven2doorlogo.png" alt="Oven2Door Logo" />
         </div>
 
         <div>
-            <h1>Oven2Door</h1>
-            <span>Admin Panel</span>
+          <h1>Oven2Door</h1>
+          <span>Admin Panel</span>
         </div>
+      </div>
 
-    </div>
+      <!-- Sidebar navigation here -->
 
-    <!-- Sidebar navigation here -->
-
-
-        <nav class="sidebar-nav">
-
-            <a href="index.html">
+      <div class="sidebar-nav">
+        <a href="index.html">
           <i class="fa-solid fa-chart-line"></i>
           <span>Dashboard</span>
         </a>
-        <a href="order.html" >
+
+        <a href="order.html">
           <i class="fa-solid fa-receipt"></i>
           <span>Orders</span>
         </a>
-        <a href="product.html">
+
+        <a href="refunds.html" data-admin-only>
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Returns &amp; Refunds</span>
+        </a>
+
+        <a href="product.html" data-admin-only>
           <i class="fa-solid fa-box"></i>
           <span>Products</span>
         </a>
-        <a href="inventory.html"  class="active">
+
+        <a href="inventory.html" class="active">
           <i class="fa-solid fa-boxes-stacked"></i>
           <span>Inventory</span>
         </a>
-        <a href="customers.html">
+
+        <a href="customers.html" data-admin-only>
           <i class="fa-solid fa-users"></i>
           <span>Customers</span>
         </a>
-        <a href="sales.html">
+
+        <a href="accounts.html" data-admin-only>
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Account Management</span>
+        </a>
+        <a href="promos.html" data-admin-only>
+          <i class="fas fa-tags"></i>
+          Promos
+        </a>
+
+        <a href="sales.html" data-admin-only>
           <i class="fa-solid fa-chart-column"></i>
           <span>Sales Reports</span>
-            </a>
-            </a>
+        </a>
+      </div>
 
-        </nav>
-
-
-        <div class="sidebar-bottom">
-
-        
-
-            <a href="login.html">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Log Out</span>
-            </a>
-
-        </div>
-
+      <div class="sidebar-bottom">
+        <a href="login.html">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Log Out</span>
+        </a>
+      </div>
     </aside>
-
-
 
     <!-- ================= MAIN CONTENT ================= -->
 
     <main class="main-content">
+      <!-- PAGE HEADER -->
 
-        <!-- PAGE HEADER -->
+      <header class="page-header">
+        <div>
+          <span class="page-label"> INVENTORY </span>
 
-        <header class="page-header">
+          <h1>Inventory Management</h1>
 
-            <div>
+          <p>Manage and monitor the available stocks of your products.</p>
+        </div>
 
-                <span class="page-label">
-                    INVENTORY
-                </span>
+        <button class="view-products-btn">
+          <i class="fa-solid fa-box-open"></i>
+          View Products
+        </button>
+      </header>
 
-                <h1>
-                    Inventory Management
-                </h1>
+      <!-- ================= INVENTORY CARD ================= -->
 
-                <p>
-                    Manage and monitor the available stocks of your products.
-                </p>
+      <section class="inventory-card">
+        <!-- TOP BAR -->
 
-            </div>
+        <div class="inventory-top">
+          <div class="category-tabs">
+            <button class="category-tab active" data-category="all">All</button>
 
+            <button class="category-tab" data-category="pizza">Pizza</button>
 
-            <button class="view-products-btn">
-                <i class="fa-solid fa-box-open"></i>
-                View Products
-            </button>
+            <button class="category-tab" data-category="drinks">Drinks</button>
 
-        </header>
+            <button class="category-tab" data-category="sides">Sides</button>
 
+            <button class="category-tab" data-category="pasta">Pasta</button>
+          </div>
 
+          <div class="store-name">
+            <i class="fa-solid fa-location-dot"></i>
 
-        <!-- ================= INVENTORY CARD ================= -->
+            Oven2Door Main Store
+          </div>
+        </div>
 
-        <section class="inventory-card">
+        <!-- ================= TOOLBAR ================= -->
 
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
 
-            <!-- TOP BAR -->
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search inventory"
+            />
+          </div>
 
-            <div class="inventory-top">
+          <button class="toolbar-btn" id="filterButton">
+            <i class="fa-solid fa-filter"></i>
 
-                <div class="category-tabs">
+            Filter
+          </button>
 
-                    <button
-                        class="category-tab active"
-                        data-category="all">
-                        All
-                    </button>
+          <button class="toolbar-btn" id="sortButton">
+            <i class="fa-solid fa-arrow-down-a-z"></i>
 
-                    <button
-                        class="category-tab"
-                        data-category="pizza">
-                        Pizza
-                    </button>
+            Sort
+          </button>
+        </div>
 
-                    <button
-                        class="category-tab"
-                        data-category="drinks">
-                        Drinks
-                    </button>
+        <!-- ================= FILTER ================= -->
 
-                    <button
-                        class="category-tab"
-                        data-category="sides">
-                        Sides
-                    </button>
+        <div class="filter-panel" id="filterPanel">
+          <div class="filter-group">
+            <label> Category </label>
 
-                    <button
-                        class="category-tab"
-                        data-category="pasta">
-                        Pasta
-                    </button>
+            <select id="categoryFilter">
+              <option value="all">All Categories</option>
 
-                </div>
+              <option value="pizza">Pizza</option>
 
+              <option value="drinks">Drinks</option>
 
-                <div class="store-name">
+              <option value="sides">Sides</option>
 
-                    <i class="fa-solid fa-location-dot"></i>
+              <option value="pasta">Pasta</option>
+            </select>
+          </div>
 
-                    Oven2Door Main Store
+          <div class="filter-group">
+            <label> Stock Status </label>
 
-                </div>
+            <select id="stockFilter">
+              <option value="all">All Stocks</option>
 
-            </div>
+              <option value="in">In Stock</option>
 
+              <option value="low">Low Stock</option>
 
+              <option value="out">Out of Stock</option>
+            </select>
+          </div>
+        </div>
 
-            <!-- ================= TOOLBAR ================= -->
+        <!-- ================= TABLE ================= -->
 
-            <div class="toolbar">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th class="product-heading">PRODUCT</th>
 
-                <div class="search-box">
+                <th>CATEGORY</th>
 
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                <th>IN STOCKS</th>
 
-                    <input
-                        type="text"
-                        id="searchInput"
-                        placeholder="Search inventory">
+                <th>STATUS</th>
 
-                </div>
+                <th>ACTION</th>
+              </tr>
+            </thead>
 
+            <tbody id="inventoryTable"></tbody>
+          </table>
+        </div>
 
-                <button
-                    class="toolbar-btn"
-                    id="filterButton">
+        <!-- EMPTY RESULT -->
 
-                    <i class="fa-solid fa-filter"></i>
+        <div class="empty-state" id="emptyState">
+          <i class="fa-solid fa-box-open"></i>
 
-                    Filter
+          <h3>No products found</h3>
 
-                </button>
-
-
-                <button
-                    class="toolbar-btn"
-                    id="sortButton">
-
-                    <i class="fa-solid fa-arrow-down-a-z"></i>
-
-                    Sort
-
-                </button>
-
-            </div>
-
-
-
-            <!-- ================= FILTER ================= -->
-
-            <div
-                class="filter-panel"
-                id="filterPanel">
-
-                <div class="filter-group">
-
-                    <label>
-                        Category
-                    </label>
-
-                    <select id="categoryFilter">
-
-                        <option value="all">
-                            All Categories
-                        </option>
-
-                        <option value="pizza">
-                            Pizza
-                        </option>
-
-                        <option value="drinks">
-                            Drinks
-                        </option>
-
-                        <option value="sides">
-                            Sides
-                        </option>
-
-                        <option value="pasta">
-                            Pasta
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="filter-group">
-
-                    <label>
-                        Stock Status
-                    </label>
-
-                    <select id="stockFilter">
-
-                        <option value="all">
-                            All Stocks
-                        </option>
-
-                        <option value="in">
-                            In Stock
-                        </option>
-
-                        <option value="low">
-                            Low Stock
-                        </option>
-
-                        <option value="out">
-                            Out of Stock
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- ================= TABLE ================= -->
-
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th class="product-heading">
-                                PRODUCT
-                            </th>
-
-                            <th>
-                                CATEGORY
-                            </th>
-
-                            <th>
-                                IN STOCKS
-                            </th>
-
-                            <th>
-                                STATUS
-                            </th>
-
-                            <th>
-                                ACTION
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody id="inventoryTable">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-
-            <!-- EMPTY RESULT -->
-
-            <div
-                class="empty-state"
-                id="emptyState">
-
-                <i class="fa-solid fa-box-open"></i>
-
-                <h3>
-                    No products found
-                </h3>
-
-                <p>
-                    Try searching for another product.
-                </p>
-
-            </div>
-
-        </section>
-
+          <p>Try searching for another product.</p>
+        </div>
+      </section>
     </main>
-
-
 
     <!-- =====================================================
          STOCK MODAL
     ====================================================== -->
 
-    <div
-        class="modal-overlay"
-        id="modalOverlay">
+    <div class="modal-overlay" id="modalOverlay"></div>
 
+    <div class="stock-modal" id="stockModal">
+      <!-- MODAL HEADER -->
+
+      <div class="modal-header">
+        <div>
+          <span class="modal-label"> INVENTORY ADJUSTMENT </span>
+
+          <h2 id="modalTitle">Add Stocks</h2>
+        </div>
+
+        <button class="modal-close" id="closeModal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- MODAL BODY -->
+
+      <div class="modal-body">
+        <!-- PRODUCT -->
+
+        <div class="modal-product">
+          <img id="modalProductImage" src="" alt="Product" />
+
+          <div class="modal-product-info">
+            <h3 id="modalProductName">Product Name</h3>
+
+            <p id="modalProductCategory">Category • Subcategory</p>
+
+            <div class="modal-current-stock">
+              Current stocks:
+
+              <strong id="modalCurrentStock"> 0 </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUANTITY -->
+
+        <div class="quantity-section">
+          <label> Quantity </label>
+
+          <div class="quantity-control">
+            <button id="minusButton" type="button">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+
+            <input
+              type="number"
+              id="quantityDisplay"
+              class="quantity-input"
+              value="0"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              aria-label="Stock adjustment quantity"
+            />
+
+            <button id="plusButton" type="button">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL FOOTER -->
+
+      <div class="modal-footer">
+        <button class="cancel-btn" id="cancelButton">Cancel</button>
+
+        <button class="save-btn" id="saveButton">Save</button>
+      </div>
     </div>
-
-
-    <div
-        class="stock-modal"
-        id="stockModal">
-
-
-        <!-- MODAL HEADER -->
-
-        <div class="modal-header">
-
-            <div>
-
-                <span class="modal-label">
-                    INVENTORY ADJUSTMENT
-                </span>
-
-                <h2 id="modalTitle">
-                    Add Stocks
-                </h2>
-
-            </div>
-
-
-            <button
-                class="modal-close"
-                id="closeModal">
-
-                <i class="fa-solid fa-xmark"></i>
-
-            </button>
-
-        </div>
-
-
-
-        <!-- MODAL BODY -->
-
-        <div class="modal-body">
-
-
-            <!-- PRODUCT -->
-
-            <div class="modal-product">
-
-                <img
-                    id="modalProductImage"
-                    src=""
-                    alt="Product">
-
-                <div class="modal-product-info">
-
-                    <h3 id="modalProductName">
-                        Product Name
-                    </h3>
-
-                    <p id="modalProductCategory">
-                        Category • Subcategory
-                    </p>
-
-                    <div class="modal-current-stock">
-
-                        Current stocks:
-
-                        <strong id="modalCurrentStock">
-                            0
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- QUANTITY -->
-
-            <div class="quantity-section">
-
-                <label>
-                    Quantity
-                </label>
-
-                <div class="quantity-control">
-
-                    <button
-                        id="minusButton"
-                        type="button">
-
-                        <i class="fa-solid fa-minus"></i>
-
-                    </button>
-
-
-                    <input
-                    type="number"
-                    id="quantityDisplay"
-                    class="quantity-input"
-                    value="0"
-                    min="0"
-                    step="1"
-                    inputmode="numeric"
-                    aria-label="Stock adjustment quantity"
-                    >
-
-
-                    <button
-                        id="plusButton"
-                        type="button">
-
-                        <i class="fa-solid fa-plus"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- MODAL FOOTER -->
-
-        <div class="modal-footer">
-
-            <button
-                class="cancel-btn"
-                id="cancelButton">
-
-                Cancel
-
-            </button>
-
-
-            <button
-                class="save-btn"
-                id="saveButton">
-
-                Save
-
-            </button>
-
-        </div>
-
-    </div>
-
-
 
     <!-- JS -->
 
     <!-- Firebase Inventory Management -->
     <script type="module" src="inventory.js"></script>
-
-</body>
-
+  </body>
 </html>

@@ -21,6 +21,7 @@ import { auth, db } from '../../firebase.config';
 import { CartLine, lineSubtotal } from '../../models/storefront.models';
 
 export interface CreateOrderData {
+  promoCode?: string | null;
   userId: string;
 
   firstName: string;
@@ -152,6 +153,7 @@ export class OrderService {
     const requestId = crypto.randomUUID();
 
     const payload = {
+      promoCode: data.promoCode?.trim().toUpperCase() || null,
       requestId,
       paymentMethod: data.paymentMethod,
 

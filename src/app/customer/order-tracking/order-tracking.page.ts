@@ -1,9 +1,17 @@
+import { FormsModule } from '@angular/forms';
+
+import {
+  RefundRequestService,
+  RefundRequest,
+  IssueReason,
+  RequestedResolution,
+} from '../../services/firebase/refund-request.service';
 import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
   OnDestroy,
-  OnInit
+  OnInit,
 } from '@angular/core';
 
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
@@ -14,10 +22,18 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   alertCircleOutline,
+  arrowBackOutline,
+  arrowForwardOutline,
+  bagHandleOutline,
   bicycleOutline,
+  calendarOutline,
+  cardOutline,
   checkmarkCircle,
+  helpCircleOutline,
+  hourglassOutline,
   locationOutline,
-  timeOutline
+  receiptOutline,
+  timeOutline,
 } from 'ionicons/icons';
 
 import * as L from 'leaflet';
@@ -29,7 +45,7 @@ import { auth } from '../../firebase.config';
 import {
   OrderStatus,
   OrderService,
-  TrackedOrder
+  TrackedOrder,
 } from '../../services/firebase/order.service';
 
 @Component({
@@ -39,15 +55,138 @@ import {
   styleUrls: ['./order-tracking.page.scss'],
   imports: [
     CommonModule,
+    FormsModule,
     RouterLink,
     CurrencyPipe,
     DatePipe,
     IonContent,
-    IonIcon
-  ]
+    IonIcon,
+  ],
 })
-export class OrderTrackingPage
-  implements OnInit, AfterViewChecked, OnDestroy {
+export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
+  private observeSelectedRefund(orderId: string): void {
+    if (this.refundOrderId === orderId && this.unsubscribeRefund) {
+      return;
+    }
+
+    this.unsubscribeRefund?.();
+    this.unsubscribeRefund = undefined;
+
+    this.refundOrderId = orderId;
+    this.refundRequest = null;
+    this.refundLoading = true;
+    this.refundError = '';
+
+    try {
+      this.unsubscribeRefund = this.refundRequestService.observeRequest(
+        orderId,
+        (request) => {
+          if (this.refundOrderId !== orderId) return;
+
+          this.refundRequest = request;
+          this.refundLoading = false;
+
+          if (request) {
+            this.showIssueForm = false;
+          }
+
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          if (this.refundOrderId !== orderId) return;
+
+          this.refundLoading = false;
+          this.refundError =
+            'Unable to load your issue request. Please try again.';
+
+          console.error(error);
+          this.cdr.detectChanges();
+        },
+      );
+    } catch (error) {
+      this.refundLoading = false;
+      this.refundError = 'Unable to check your request status.';
+      console.error(error);
+    }
+  }
+
+  private clearRefundListener(): void {
+    this.unsubscribeRefund?.();
+    this.unsubscribeRefund = undefined;
+    this.refundOrderId = undefined;
+    this.refundRequest = null;
+    this.refundLoading = false;
+    this.refundError = '';
+  }
+  refundRequest: RefundRequest | null = null;
+  refundLoading = false;
+  refundError = '';
+
+  private unsubscribeRefund?: Unsubscribe;
+  private refundOrderId?: string;
+
+  showIssueForm = false;
+  issueReason = 'missing_item';
+  issueDescription = '';
+  requestedResolution = 'refund';
+  submittingIssue = false;
+  issueError = '';
+  issueSuccess = '';
+
+  openIssueForm(): void {
+    if (this.refundRequest || this.refundLoading || this.refundError) {
+      return;
+    }
+    if (!this.selectedOrder || this.selectedOrder.orderStatus !== 'delivered') {
+      return;
+    }
+
+    this.showIssueForm = true;
+    this.issueError = '';
+    this.issueSuccess = '';
+  }
+
+  closeIssueForm(): void {
+    this.showIssueForm = false;
+    this.issueError = '';
+  }
+
+  async submitIssue(): Promise<void> {
+    if (
+      !this.selectedOrder ||
+      this.selectedOrder.orderStatus !== 'delivered' ||
+      this.submittingIssue ||
+      this.refundRequest ||
+      this.refundLoading ||
+      this.refundError
+    ) {
+      return;
+    }
+
+    this.submittingIssue = true;
+    this.issueError = '';
+
+    try {
+      await this.refundRequestService.submitIssue({
+        orderId: this.selectedOrder.id,
+        reason: this.issueReason as IssueReason,
+        description: this.issueDescription,
+        resolution: this.requestedResolution as RequestedResolution,
+      });
+
+      this.issueSuccess = 'Your issue has been submitted for review.';
+      this.showIssueForm = false;
+      this.issueDescription = '';
+    } catch (error) {
+      this.issueError =
+        error instanceof Error
+          ? error.message
+          : 'Unable to submit your request.';
+    } finally {
+      this.submittingIssue = false;
+      this.cdr.detectChanges();
+    }
+  }
 
   readonly steps: {
     status: OrderStatus;
@@ -57,38 +196,38 @@ export class OrderTrackingPage
     {
       status: 'placed',
       title: 'Order placed',
-      description: 'We received your order.'
+      description: 'We received your order.',
     },
     {
       status: 'preparing',
       title: 'Preparing',
-      description: 'Your food is being prepared.'
+      description: 'Your food is being prepared.',
     },
     {
       status: 'ready_for_pickup',
       title: 'Ready for pickup',
-      description: 'Your order is ready for a rider.'
+      description: 'Your order is ready for a rider.',
     },
     {
       status: 'rider_assigned',
       title: 'Rider assigned',
-      description: 'A rider has been assigned to your order.'
+      description: 'A rider has been assigned to your order.',
     },
     {
       status: 'picked_up',
       title: 'Picked up',
-      description: 'Your rider has collected your order.'
+      description: 'Your rider has collected your order.',
     },
     {
       status: 'on_the_way',
       title: 'On the way',
-      description: 'Your order is on its way to you.'
+      description: 'Your order is on its way to you.',
     },
     {
       status: 'delivered',
       title: 'Delivered',
-      description: 'Your order has been delivered.'
-    }
+      description: 'Your order has been delivered.',
+    },
   ];
 
   orders: TrackedOrder[] = [];
@@ -114,92 +253,104 @@ export class OrderTrackingPage
 
   constructor(
     private readonly ordersService: OrderService,
+    private readonly refundRequestService: RefundRequestService,
     private readonly route: ActivatedRoute,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
   ) {
     addIcons({
       alertCircleOutline,
+      arrowBackOutline,
+      arrowForwardOutline,
+      bagHandleOutline,
       bicycleOutline,
+      calendarOutline,
+      cardOutline,
       checkmarkCircle,
+      helpCircleOutline,
+      hourglassOutline,
       locationOutline,
-      timeOutline
+      receiptOutline,
+      timeOutline,
     });
   }
 
   ngOnInit(): void {
-  console.log('[TRACKING] Page initialized');
+    console.log('[TRACKING] Page initialized');
 
-  const requestedOrderId =
-    this.route.snapshot.queryParamMap.get('orderId');
-
-  this.loading = true;
-  this.error = '';
-
-  this.authUnsubscribe = auth.onAuthStateChanged(user => {
-    this.unsubscribe?.();
-    this.unsubscribe = undefined;
-
-    if (!user) {
-      this.orders = [];
-      this.selectedOrder = undefined;
-      this.loading = false;
-      this.error = 'Please sign in to view your orders.';
-      this.cdr.detectChanges();
-      return;
-    }
-
-    console.log('[TRACKING] Customer UID:', user.uid);
+    const requestedOrderId = this.route.snapshot.queryParamMap.get('orderId');
 
     this.loading = true;
     this.error = '';
 
-    this.unsubscribe = this.ordersService.observeCustomerOrders(
-      user.uid,
+    this.authUnsubscribe = auth.onAuthStateChanged((user) => {
+      this.unsubscribe?.();
+      this.unsubscribe = undefined;
+      this.clearRefundListener();
 
-      (orders: TrackedOrder[]) => {
-        console.log('[TRACKING] Customer orders:', orders);
-
-        this.orders = orders;
+      if (!user) {
+        this.orders = [];
+        this.selectedOrder = undefined;
         this.loading = false;
-        this.error = '';
-
-        if (orders.length === 0) {
-          this.selectedOrder = undefined;
-          this.clearMap();
-          this.cdr.detectChanges();
-          return;
-        }
-
-        const previouslySelectedId = this.selectedOrder?.id;
-
-        this.selectedOrder =
-          orders.find(order => order.id === requestedOrderId) ??
-          orders.find(order => order.id === previouslySelectedId) ??
-          orders[0];
-
-        if (this.mapOrderId !== this.selectedOrder.id) {
-          this.clearMap();
-        }
-
+        this.error = 'Please sign in to view your orders.';
         this.cdr.detectChanges();
-
-        setTimeout(() => {
-          this.updateMap();
-        }, 100);
-      },
-
-      (error: unknown) => {
-        console.error('[TRACKING] Firestore error:', error);
-
-        this.loading = false;
-        this.error =
-          'Unable to load your orders. Check Firestore permissions or indexes.';
-
-        this.cdr.detectChanges();
+        return;
       }
-    );
-  });
-}
+
+      console.log('[TRACKING] Customer UID:', user.uid);
+
+      this.loading = true;
+      this.error = '';
+
+      this.unsubscribe = this.ordersService.observeCustomerOrders(
+        user.uid,
+
+        (orders: TrackedOrder[]) => {
+          console.log('[TRACKING] Customer orders:', orders);
+
+          this.orders = orders;
+          this.loading = false;
+          this.error = '';
+
+          if (orders.length === 0) {
+            this.clearRefundListener();
+            this.selectedOrder = undefined;
+            this.clearMap();
+            this.cdr.detectChanges();
+            return;
+          }
+
+          const previouslySelectedId = this.selectedOrder?.id;
+
+          this.selectedOrder =
+            orders.find((order) => order.id === requestedOrderId) ??
+            orders.find((order) => order.id === previouslySelectedId) ??
+            orders[0];
+
+          this.observeSelectedRefund(this.selectedOrder.id);
+
+          if (this.mapOrderId !== this.selectedOrder.id) {
+            this.clearMap();
+          }
+
+          this.cdr.detectChanges();
+
+          setTimeout(() => {
+            this.updateMap();
+          }, 100);
+        },
+
+        (error: unknown) => {
+          console.error('[TRACKING] Firestore error:', error);
+
+          this.loading = false;
+          this.error =
+            'Unable to load your orders. Check Firestore permissions or indexes.';
+
+          this.cdr.detectChanges();
+        },
+      );
+    });
+  }
 
   ngAfterViewChecked(): void {
     if (this.selectedOrder?.riderLocation) {
@@ -214,30 +365,37 @@ export class OrderTrackingPage
     this.authUnsubscribe?.();
 
     this.clearMap();
+    this.clearRefundListener();
   }
 
   selectOrder(order: TrackedOrder): void {
-  if (this.selectedOrder?.id === order.id) {
-    return;
+    if (this.selectedOrder?.id === order.id) {
+      return;
+    }
+
+    this.clearMap();
+
+    this.showIssueForm = false;
+    this.issueReason = 'missing_item';
+    this.issueDescription = '';
+    this.requestedResolution = 'refund';
+    this.issueError = '';
+    this.issueSuccess = '';
+
+    this.selectedOrder = order;
+    this.observeSelectedRefund(order.id);
+
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.updateMap();
+    }, 100);
   }
-
-  this.clearMap();
-
-  this.selectedOrder = order;
-
-  this.cdr.detectChanges();
-
-  setTimeout(() => {
-    this.updateMap();
-  }, 100);
-}
 
   statusLabel(status: OrderStatus): string {
     return status
       .replaceAll('_', ' ')
-      .replace(/\b\w/g, (letter) =>
-        letter.toUpperCase()
-      );
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
   }
 
   completed(step: OrderStatus): boolean {
@@ -249,16 +407,11 @@ export class OrderTrackingPage
       return false;
     }
 
-    const currentIndex =
-      this.steps.findIndex(
-        item =>
-          item.status === this.selectedOrder?.orderStatus
-      );
+    const currentIndex = this.steps.findIndex(
+      (item) => item.status === this.selectedOrder?.orderStatus,
+    );
 
-    const stepIndex =
-      this.steps.findIndex(
-        item => item.status === step
-      );
+    const stepIndex = this.steps.findIndex((item) => item.status === step);
 
     if (currentIndex === -1 || stepIndex === -1) {
       return false;
@@ -272,11 +425,7 @@ export class OrderTrackingPage
   }
 
   asDate(
-    value:
-      { toDate?: () => Date }
-      | Date
-      | null
-      | undefined
+    value: { toDate?: () => Date } | Date | null | undefined,
   ): Date | undefined {
     if (!value) {
       return undefined;
@@ -290,11 +439,7 @@ export class OrderTrackingPage
   }
 
   private async updateRoute(order: TrackedOrder): Promise<void> {
-    if (
-      !this.map ||
-      !order.riderLocation ||
-      !order.deliveryLocation
-    ) {
+    if (!this.map || !order.riderLocation || !order.deliveryLocation) {
       return;
     }
 
@@ -312,7 +457,7 @@ export class OrderTrackingPage
     ) {
       console.error('Invalid route coordinates:', {
         riderLocation: order.riderLocation,
-        deliveryLocation: order.deliveryLocation
+        deliveryLocation: order.deliveryLocation,
       });
 
       return;
@@ -330,76 +475,54 @@ export class OrderTrackingPage
       const response = await fetch(url);
 
       if (!response.ok) {
-        throw new Error(
-          `Routing request failed: ${response.status}`
-        );
+        throw new Error(`Routing request failed: ${response.status}`);
       }
 
       const data = await response.json();
 
-      if (
-        data.code !== 'Ok' ||
-        !data.routes ||
-        data.routes.length === 0
-      ) {
+      if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
         console.error('No road route found:', data);
         return;
       }
 
-      const coordinates =
-        data.routes[0].geometry.coordinates.map(
-          (coordinate: [number, number]) =>
-            [
-              coordinate[1],
-              coordinate[0]
-            ] as L.LatLngExpression
-        );
+      const coordinates = data.routes[0].geometry.coordinates.map(
+        (coordinate: [number, number]) =>
+          [coordinate[1], coordinate[0]] as L.LatLngExpression,
+      );
 
       if (this.routeLine) {
         this.routeLine.setLatLngs(coordinates);
       } else {
-        this.routeLine = L.polyline(
-          coordinates,
-          {
-            weight: 5,
-            opacity: 0.85
-          }
-        ).addTo(this.map);
+        this.routeLine = L.polyline(coordinates, {
+          weight: 5,
+          opacity: 0.85,
+        }).addTo(this.map);
       }
 
       // Customer destination marker
       if (!this.destinationMarker) {
-        this.destinationMarker = L.marker(
-          [destinationLat, destinationLng],
-          {
-            icon: L.divIcon({
-              className: 'destination-map-marker',
-              html: '📍',
-              iconSize: [32, 32],
-              iconAnchor: [16, 32]
-            })
-          }
-        ).addTo(this.map);
+        this.destinationMarker = L.marker([destinationLat, destinationLng], {
+          icon: L.divIcon({
+            className: 'destination-map-marker',
+            html: '📍',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+          }),
+        }).addTo(this.map);
       } else {
-        this.destinationMarker.setLatLng([
-          destinationLat,
-          destinationLng
-        ]);
+        this.destinationMarker.setLatLng([destinationLat, destinationLng]);
       }
 
       // Show the complete route on the map
       const bounds = L.latLngBounds(coordinates);
 
       this.map.fitBounds(bounds, {
-        padding: [40, 40]
+        padding: [40, 40],
       });
 
       console.log('Road route successfully displayed.');
     } catch (error) {
-      console.error(
-        'Unable to calculate road route:',
-        error
-      );
+      console.error('Unable to calculate road route:', error);
     }
   }
 
@@ -418,13 +541,16 @@ export class OrderTrackingPage
   private updateMap(): void {
     const order = this.selectedOrder;
 
-    const target =
-      document.getElementById('rider-map');
+    const target = document.getElementById('rider-map');
 
     if (
-      !order?.riderLocation ||
+      !order ||
+      order.orderStatus === 'delivered' ||
+      order.orderStatus === 'cancelled' ||
+      !order.riderLocation ||
       !target
     ) {
+      this.clearMap();
       return;
     }
 
@@ -433,42 +559,27 @@ export class OrderTrackingPage
     //   lat: 14.5995
     //   lng: 120.9842
 
-    const latitude =
-      Number(order.riderLocation.lat);
+    const latitude = Number(order.riderLocation.lat);
 
-    const longitude =
-      Number(order.riderLocation.lng);
+    const longitude = Number(order.riderLocation.lng);
 
-    if (
-      !Number.isFinite(latitude) ||
-      !Number.isFinite(longitude)
-    ) {
-      console.error(
-        'Invalid rider coordinates:',
-        order.riderLocation
-      );
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      console.error('Invalid rider coordinates:', order.riderLocation);
       return;
     }
 
-    const point: L.LatLngExpression = [
-      latitude,
-      longitude
-    ];
+    const point: L.LatLngExpression = [latitude, longitude];
 
     // Create the Leaflet map once.
     if (!this.map) {
       this.map = L.map(target, {
-        zoomControl: true
+        zoomControl: true,
       }).setView(point, 15);
 
-      L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        {
-          maxZoom: 19,
-          attribution:
-            '&copy; OpenStreetMap contributors'
-        }
-      ).addTo(this.map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(this.map);
     }
 
     // Create rider marker.
@@ -477,15 +588,9 @@ export class OrderTrackingPage
         icon: L.divIcon({
           className: 'rider-map-marker',
           html: '🛵',
-          iconSize: [
-            66,
-            66
-          ],
-          iconAnchor: [
-            44,
-            44
-          ]
-        })
+          iconSize: [66, 66],
+          iconAnchor: [44, 44],
+        }),
       }).addTo(this.map);
     } else {
       // Update rider position in real time.
@@ -494,10 +599,7 @@ export class OrderTrackingPage
 
     // Center map on the rider when viewing a different order.
     if (this.mapOrderId !== order.id) {
-      this.map.setView(
-        point,
-        this.map.getZoom() || 15
-      );
+      this.map.setView(point, this.map.getZoom() || 15);
 
       this.mapOrderId = order.id;
     }
@@ -506,6 +608,6 @@ export class OrderTrackingPage
     setTimeout(() => {
       this.map?.invalidateSize();
     }, 100);
-      void this.updateRoute(order); 
+    void this.updateRoute(order);
   }
 }

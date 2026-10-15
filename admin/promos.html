@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promo Management | Oven2Door</title>
+
+    <link rel="stylesheet" href="promos.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body style="visibility: hidden">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Oven2Door</h2>
+          <p>ADMIN PANEL</p>
+        </div>
+
+        <div class="sidebar-nav">
+          <a href="index.html">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <a href="order.html">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Orders</span>
+          </a>
+
+          <a href="refunds.html" data-admin-only>
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Returns &amp; Refunds</span>
+          </a>
+
+          <a href="product.html" data-admin-only>
+            <i class="fa-solid fa-box"></i>
+            <span>Products</span>
+          </a>
+
+          <a href="inventory.html">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Inventory</span>
+          </a>
+
+          <a href="customers.html" data-admin-only>
+            <i class="fa-solid fa-users"></i>
+            <span>Customers</span>
+          </a>
+
+          <a href="accounts.html" data-admin-only>
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Account Management</span>
+          </a>
+          <a href="promos.html" data-admin-only class="active">
+            <i class="fas fa-tags"></i>
+            Promos
+          </a>
+
+          <a href="sales.html" data-admin-only>
+            <i class="fa-solid fa-chart-column"></i>
+            <span>Sales Reports</span>
+          </a>
+        </div>
+
+        <a href="#" class="logout-btn" data-logout>
+          <i class="fas fa-right-from-bracket"></i> Logout
+        </a>
+      </aside>
+
+      <main class="main-content">
+        <header class="page-header">
+          <div>
+            <p class="page-label">MARKETING</p>
+            <h1>Promo Management</h1>
+            <p>Create and manage customer discount codes.</p>
+          </div>
+          <button id="addPromoBtn" class="primary-button">
+            <i class="fas fa-plus"></i> Create Promo
+          </button>
+        </header>
+
+        <section class="promo-stats">
+          <div class="stat-card">
+            <p>Total Promos</p>
+            <h2 id="totalPromos">0</h2>
+          </div>
+          <div class="stat-card">
+            <p>Active Promos</p>
+            <h2 id="activePromos">0</h2>
+          </div>
+          <div class="stat-card">
+            <p>Scheduled</p>
+            <h2 id="scheduledPromos">0</h2>
+          </div>
+          <div class="stat-card">
+            <p>Expired</p>
+            <h2 id="expiredPromos">0</h2>
+          </div>
+        </section>
+
+        <section class="promo-panel">
+          <div class="promo-toolbar">
+            <input
+              id="promoSearch"
+              type="search"
+              placeholder="Search promo code..."
+            />
+
+            <select id="promoStatusFilter">
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="expired">Expired</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <p id="promoMessage" role="status"></p>
+
+          <div class="table-responsive">
+            <table class="promo-table">
+              <thead>
+                <tr>
+                  <th>Promo Code</th>
+                  <th>Discount</th>
+                  <th>Minimum Order</th>
+                  <th>Usage</th>
+                  <th>Expiration</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="promosTableBody">
+                <tr>
+                  <td colspan="7">Loading promos...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="promoDialog" class="promo-dialog">
+      <form id="promoForm">
+        <div class="dialog-header">
+          <h2 id="promoDialogTitle">Create Promo</h2>
+          <button type="button" id="closePromoDialog" class="icon-button">
+            ✕
+          </button>
+        </div>
+
+        <div class="promo-form-grid">
+          <label
+            >Promo Code
+            <input
+              id="promoCode"
+              maxlength="24"
+              placeholder="WELCOME10"
+              required
+            />
+          </label>
+
+          <label
+            >Discount Type
+            <select id="discountType">
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount (₱)</option>
+            </select>
+          </label>
+
+          <label
+            >Discount Value
+            <input
+              id="discountValue"
+              type="number"
+              min="0.01"
+              step="0.01"
+              required
+            />
+          </label>
+
+          <label
+            >Minimum Order (₱)
+            <input
+              id="minimumOrder"
+              type="number"
+              min="0"
+              step="0.01"
+              value="0"
+              required
+            />
+          </label>
+
+          <label
+            >Maximum Discount (₱)
+            <input
+              id="maximumDiscount"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Optional for percentage"
+            />
+          </label>
+
+          <label
+            >Usage Limit
+            <input id="usageLimit" type="number" min="1" step="1" required />
+          </label>
+
+          <label
+            >Start Date
+            <input id="startDate" type="datetime-local" required />
+          </label>
+
+          <label
+            >Expiration Date
+            <input id="endDate" type="datetime-local" required />
+          </label>
+
+          <label class="check-field">
+            <input id="promoEnabled" type="checkbox" checked />
+            Enabled
+          </label>
+        </div>
+
+        <p id="promoFormMessage" role="alert"></p>
+
+        <div class="dialog-actions">
+          <button type="button" id="cancelPromo" class="btn-secondary">
+            Cancel
+          </button>
+          <button type="submit" id="savePromoBtn" class="primary-button">
+            Save Promo
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="promos.js"></script>
+  </body>
+</html>

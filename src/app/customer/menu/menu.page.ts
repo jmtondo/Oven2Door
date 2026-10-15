@@ -47,6 +47,7 @@ interface MenuCategory {
   imports: [CommonModule, RouterLink, IonContent, IonIcon, IonRange, IonButton],
 })
 export class MenuPage implements OnInit, OnDestroy {
+  private catalogUnsubscribe?: FirestoreUnsubscribe;
   // ==========================================
   // WISHLIST STATE
   // ==========================================
@@ -85,6 +86,7 @@ export class MenuPage implements OnInit, OnDestroy {
 
   minPrice = 0;
   maxPrice = 500;
+  catalogMaxPrice = 500;
 
   isLoading = true;
   errorMessage = '';
@@ -119,41 +121,62 @@ export class MenuPage implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.listenToCustomerWishlist();
-    await this.loadCatalog();
+    this.loadCatalog();
   }
 
   ngOnDestroy(): void {
     this.authUnsubscribe?.();
     this.wishlistUnsubscribe?.();
+    this.catalogUnsubscribe?.();
   }
 
   // ==========================================
   // LOAD FIREBASE CATALOG
   // ==========================================
 
-  async loadCatalog(): Promise<void> {
+  loadCatalog(): void {
+    this.catalogUnsubscribe?.();
+
     this.isLoading = true;
     this.errorMessage = '';
 
-    try {
-      this.products = await this.catalogService.getProducts();
+    this.catalogUnsubscribe = this.catalogService.listenToProducts(
+      (products) => {
+        this.products = products;
 
-      console.log('Firebase menu products:', this.products.length);
+        // Determine the highest product price
+        const highestPrice = Math.max(
+          500,
+          ...products.map((product) => product.price),
+        );
 
-      console.log('First Firebase product:', this.products[0]);
+        // Round up to the nearest 100
+        const newCatalogMaxPrice = Math.ceil(highestPrice / 100) * 100;
 
-      this.applyFilters();
+        // Keep an intentionally selected price limit,
+        // but expand the default limit when products are added.
+        const wasAtMaximum = this.maxPrice === this.catalogMaxPrice;
 
-      console.log('Filtered menu products:', this.filteredProducts.length);
-    } catch (error) {
-      console.error('Failed to load Firebase catalog:', error);
+        this.catalogMaxPrice = newCatalogMaxPrice;
 
-      this.errorMessage =
-        'Unable to load the menu right now. Please try again.';
-    } finally {
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    }
+        if (wasAtMaximum) {
+          this.maxPrice = this.catalogMaxPrice;
+        }
+
+        this.applyFilters();
+
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Failed to load catalog:', error);
+
+        this.errorMessage = 'Unable to load products. Please try again.';
+
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    );
   }
 
   // ==========================================
@@ -266,8 +289,9 @@ export class MenuPage implements OnInit, OnDestroy {
     this.selectedCategory = 'All';
     this.searchQuery = '';
     this.sortOption = 'Recommended';
+
     this.minPrice = 0;
-    this.maxPrice = 500;
+    this.maxPrice = this.catalogMaxPrice;
 
     this.applyFilters();
   }

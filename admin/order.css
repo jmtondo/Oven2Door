@@ -734,3 +734,73 @@ input[type="checkbox"] {
   outline: 2px solid #237a43;
   outline-offset: 3px;
 }
+
+/* ==========================================
+   ORDER PRINT ACTIONS
+========================================== */
+
+.actions-cell {
+  min-width: 260px;
+}
+
+.print-invoice-btn,
+.print-packing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 9px 12px;
+  margin: 3px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  font-family: "DM Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.print-invoice-btn {
+  background: #e8f0fe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.print-invoice-btn:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+}
+
+.print-packing-btn {
+  background: #fff3e6;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+.print-packing-btn:hover {
+  background: #ffedd5;
+  transform: translateY(-1px);
+}
+
+.print-invoice-btn i,
+.print-packing-btn i {
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .actions-cell {
+    min-width: 200px;
+  }
+
+  .print-invoice-btn,
+  .print-packing-btn {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+}

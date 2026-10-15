@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { PromoService, AppliedPromo } from '../../services/promo.service';
 
 import { IonContent, IonIcon } from '@ionic/angular';
 
@@ -25,42 +26,38 @@ import {
   logoTiktok,
   locationOutline,
   callOutline,
-  mailOutline
+  mailOutline,
 } from 'ionicons/icons';
 
 import { StorefrontService } from '../../services/storefront.service';
 
-import {
-  CartLine,
-  money,
-  lineSubtotal
-} from '../../models/storefront.models';
+import { CartLine, money, lineSubtotal } from '../../models/storefront.models';
 
 @Component({
   selector: 'app-cart',
   templateUrl: 'cart.page.html',
   styleUrls: ['cart.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    IonContent,
-    IonIcon
-  ]
+  imports: [CommonModule, FormsModule, RouterLink, IonContent, IonIcon],
 })
 export class CartPage implements OnInit, OnDestroy {
-
   isMobileMenuOpen = false;
   isSearchOpen = false;
 
   couponCode = '';
   discount = 0;
 
+  appliedPromo: AppliedPromo | null = null;
+  couponMessage = '';
+  couponError = '';
+  applyingCoupon = false;
+
   private cartSubscription?: Subscription;
 
   constructor(
-    public storefront: StorefrontService
+    public storefront: StorefrontService,
+    private promoService: PromoService,
+    private cdr: ChangeDetectorRef,
   ) {
     addIcons({
       flameOutline,
@@ -80,7 +77,7 @@ export class CartPage implements OnInit, OnDestroy {
       logoTiktok,
       locationOutline,
       callOutline,
-      mailOutline
+      mailOutline,
     });
   }
 
@@ -91,6 +88,7 @@ export class CartPage implements OnInit, OnDestroy {
 
     this.cartSubscription = this.storefront.changed.subscribe(() => {
       console.log('Cart changed:', this.storefront.cart);
+      this.clearCoupon();
     });
   }
 
@@ -143,16 +141,72 @@ export class CartPage implements OnInit, OnDestroy {
   }
 
   get total(): number {
-    return Math.max(
-      this.subtotal +
-      this.deliveryFee -
-      this.discount,
-      0
-    );
+    return Math.max(this.subtotal + this.deliveryFee - this.discount, 0);
   }
 
-  applyCoupon(): void {
-    // Coupon logic will be connected later.
+  async applyCoupon(): Promise<void> {
+    if (this.applyingCoupon) return;
+
+    this.clearCoupon();
+
+    const code = this.couponCode.trim().toUpperCase();
+
+    if (!code) {
+      this.couponError = 'Please enter a promo code.';
+      return;
+    }
+
+    if (this.cartItems.length === 0) {
+      this.couponError = 'Add products to your cart first.';
+      return;
+    }
+
+    this.applyingCoupon = true;
+
+    const subtotalAtStart = this.subtotal;
+
+    try {
+      const promo = await this.promoService.validatePromo(
+        code,
+        subtotalAtStart,
+      );
+      console.log('[CART] Validated promo:', promo);
+      console.log('[CART] Subtotal before:', subtotalAtStart);
+      console.log('[CART] Subtotal now:', this.subtotal);
+
+      if (this.subtotal !== subtotalAtStart) {
+        throw new Error('Your cart changed. Please apply the promo again.');
+      }
+
+      this.appliedPromo = promo;
+      this.discount = promo.discount;
+      this.couponCode = promo.code;
+
+      sessionStorage.setItem('oven2doorPromoCode', promo.code);
+
+      this.couponMessage = `${promo.code} applied! You saved ₱${promo.discount.toFixed(2)}.`;
+    } catch (error) {
+      console.error('[CART] Promo application failed:', error);
+      this.clearCoupon();
+
+      this.couponError =
+        error instanceof Error ? error.message : 'Unable to apply promo code.';
+    } finally {
+      this.applyingCoupon = false;
+      this.cdr.detectChanges();
+    }
+  }
+  clearCoupon(): void {
+    this.appliedPromo = null;
+    this.discount = 0;
+    this.couponMessage = '';
+    this.couponError = '';
+
+    sessionStorage.removeItem('oven2doorPromoCode');
+  }
+
+  onCouponCodeChanged(): void {
+    this.clearCoupon();
   }
 
   updateCart(): void {
@@ -160,9 +214,7 @@ export class CartPage implements OnInit, OnDestroy {
   }
 
   toppingNames(item: CartLine): string {
-    return item.toppings
-      .map(topping => topping.name)
-      .join(', ');
+    return item.toppings.map((topping) => topping.name).join(', ');
   }
 
   money(amount: number): string {

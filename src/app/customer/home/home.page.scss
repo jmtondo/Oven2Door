@@ -21,7 +21,6 @@ ion-content.hero-page {
   --color: #ffffff;
 }
 
-
 .announcement-bar {
   background-color: #d90429;
   color: #ffffff;
@@ -31,7 +30,6 @@ ion-content.hero-page {
   padding: 8px 16px;
   letter-spacing: 1px;
 }
-
 
 .main-header {
   background-color: #121212;
@@ -44,12 +42,10 @@ ion-content.hero-page {
   position: relative;
   z-index: 100;
 
-
   .logo-section {
     display: flex;
     align-items: center;
     gap: 12px;
-
 
     .mobile-menu-btn {
       display: none;
@@ -63,7 +59,6 @@ ion-content.hero-page {
       justify-content: center;
     }
 
-
     .logo-container {
       display: flex;
       align-items: center;
@@ -73,7 +68,6 @@ ion-content.hero-page {
       overflow: visible;
       position: relative;
       z-index: 10;
-
 
       .brand-logo-img {
         height: 140px;
@@ -85,13 +79,11 @@ ion-content.hero-page {
     }
   }
 
-
   .nav-links {
     display: flex;
     align-items: center;
     gap: 28px;
     height: 100%;
-
 
     .nav-item {
       color: #b0b0b0;
@@ -105,7 +97,6 @@ ion-content.hero-page {
       border-bottom: 3px solid transparent;
       transition: all 0.2s ease;
 
-
       &:hover,
       &.active {
         color: #ffffff;
@@ -114,12 +105,10 @@ ion-content.hero-page {
     }
   }
 
-
   .header-actions {
     display: flex;
     align-items: center;
     gap: 16px;
-
 
     .search-pill {
       display: flex;
@@ -132,13 +121,11 @@ ion-content.hero-page {
       width: 200px;
       height: 40px;
 
-
       .search-icon {
         color: #888888;
         font-size: 1.1rem;
         flex-shrink: 0;
       }
-
 
       input {
         background: transparent;
@@ -148,13 +135,11 @@ ion-content.hero-page {
         font-size: 0.85rem;
         width: 100%;
 
-
         &::placeholder {
           color: #777777;
         }
       }
     }
-
 
     .icon-btn {
       background: transparent;
@@ -168,7 +153,6 @@ ion-content.hero-page {
       padding: 0;
       height: 40px;
     }
-
 
     .cart-btn {
       background: transparent;
@@ -184,13 +168,11 @@ ion-content.hero-page {
       padding: 0;
       height: 40px;
 
-
       .cart-icon-orange {
         color: #ffb703;
         font-size: 1.25rem;
       }
     }
-
 
     .btn-order-now {
       background-color: #ffb703;
@@ -208,7 +190,6 @@ ion-content.hero-page {
       justify-content: center;
       transition: background-color 0.2s ease;
 
-
       &:hover {
         background-color: #e0a200;
       }
@@ -216,12 +197,10 @@ ion-content.hero-page {
   }
 }
 
-
 /* Base Link Reset */
 a {
   color: inherit;
   text-decoration: none;
-
 
   &:visited,
   &:hover,
@@ -230,7 +209,6 @@ a {
     text-decoration: none;
   }
 }
-
 
 /* Mobile Dropdown Navigation */
 .mobile-dropdown {
@@ -241,11 +219,9 @@ a {
   padding: 16px 24px;
   gap: 12px;
 
-
   &.open {
     display: flex;
   }
-
 
   .mobile-nav-item {
     color: #b0b0b0;
@@ -254,24 +230,20 @@ a {
     font-weight: 400;
     padding: 8px 0;
 
-
     &.active,
     &:hover {
       color: #ffb703;
     }
   }
 
-
   .mobile-action-wrapper {
     padding-top: 8px;
-
 
     .mobile-order-btn {
       width: 100%;
     }
   }
 }
-
 
 .hero-grid {
   padding: 60px 80px;
@@ -282,7 +254,6 @@ a {
     #101010 75%
   );
 
-
   .hero-left {
     .tagline {
       color: #ffb703;
@@ -291,12 +262,10 @@ a {
       letter-spacing: 2px;
       margin-bottom: 16px;
 
-
       .dash {
         margin-right: 6px;
       }
     }
-
 
     .hero-title {
       font-size: 3.8rem;
@@ -306,12 +275,10 @@ a {
       color: #ffffff;
       margin: 0 0 20px 0;
 
-
       .highlight-red {
         color: #e63946;
       }
     }
-
 
     .hero-desc {
       color: #a0a0a0;
@@ -321,11 +288,9 @@ a {
       line-height: 1.5;
     }
 
-
     .cta-buttons {
       display: flex;
       gap: 16px;
-
 
       .btn-primary {
         --background: #ffb703;
@@ -337,7 +302,6 @@ a {
         font-size: 0.85rem;
         height: 48px;
       }
-
 
       .btn-secondary {
         --border-color: #444444;
@@ -352,12 +316,10 @@ a {
     }
   }
 
-
   .hero-right {
     display: flex;
     justify-content: center;
     align-items: center;
-
 
     .pizza-circle-wrapper {
       width: 440px;
@@ -368,7 +330,6 @@ a {
       border: none;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 
-
       .pizza-photo {
         width: 100%;
         height: 100%;
@@ -378,25 +339,21 @@ a {
   }
 }
 
-
 /* HOT DEALS SECTION */
 .deals-section {
   background-color: #f4f4f4;
   padding: 60px 0 80px;
-
 
   .deals-container {
     width: min(1200px, 92%);
     margin: 0 auto;
   }
 
-
   .deals-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     margin-bottom: 30px;
-
 
     .header-left {
       .sub-title {
@@ -408,7 +365,6 @@ a {
         margin-bottom: 4px;
       }
 
-
       h2 {
         font-family: "Oswald", sans-serif;
         font-size: 42px;
@@ -417,13 +373,11 @@ a {
         color: #111111;
         letter-spacing: -0.5px;
 
-
         span {
           color: #d9271c;
         }
       }
     }
-
 
     .header-right {
       color: #666666;
@@ -432,13 +386,11 @@ a {
     }
   }
 
-
   .deals-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
-
 
   .deal-card {
     background: #0f0f0f;
@@ -448,14 +400,12 @@ a {
     height: 240px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 
-
     .deal-content {
       width: 48%;
       padding: 24px 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-
 
       .deal-tag {
         color: #ffb703;
@@ -464,7 +414,6 @@ a {
         letter-spacing: 1px;
         text-transform: uppercase;
       }
-
 
       h3 {
         font-family: "Oswald", sans-serif;
@@ -475,14 +424,12 @@ a {
         margin: 8px 0 4px;
       }
 
-
       p {
         color: #888888;
         font-size: 11px;
         line-height: 1.3;
         margin-bottom: 12px;
       }
-
 
       .deal-btn {
         background: #d9271c;
@@ -496,18 +443,15 @@ a {
         align-self: flex-start;
         transition: background 0.2s ease;
 
-
         &:hover {
           background: #a91d15;
         }
       }
     }
 
-
     .deal-image {
       width: 52%;
       height: 100%;
-
 
       img {
         width: 100%;
@@ -519,25 +463,21 @@ a {
   }
 }
 
-
 /* POPULAR PIZZAS SECTION */
 .popular-section {
   background-color: #ffffff;
   padding: 60px 0 80px;
-
 
   .popular-container {
     width: min(1200px, 92%);
     margin: 0 auto;
   }
 
-
   .popular-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
-
 
     h2 {
       font-family: "Oswald", sans-serif;
@@ -546,7 +486,6 @@ a {
       color: #111111;
       letter-spacing: -0.5px;
     }
-
 
     .view-all {
       color: #111111;
@@ -559,20 +498,17 @@ a {
       text-decoration: none;
       transition: color 0.2s ease;
 
-
       &:hover {
         color: #d9271c;
       }
     }
   }
 
-
   .pizza-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 16px;
   }
-
 
   .pizza-card {
     background: #ffffff;
@@ -582,14 +518,14 @@ a {
     flex-direction: column;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
     border: 1px solid #f0f0f0;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
 
     &:hover {
       transform: translateY(-4px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     }
-
 
     .pizza-img-wrap {
       position: relative;
@@ -598,7 +534,6 @@ a {
       background: #fdfdfd;
       overflow: hidden;
 
-
       img {
         width: 100%;
         height: 100%;
@@ -606,13 +541,11 @@ a {
       }
     }
 
-
     .pizza-info {
       padding: 12px 10px 14px;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-
 
       h3 {
         font-size: 13px;
@@ -621,7 +554,6 @@ a {
         margin-bottom: 4px;
         line-height: 1.2;
       }
-
 
       p {
         font-size: 10px;
@@ -632,7 +564,6 @@ a {
         overflow: hidden;
       }
 
-
       .pizza-price {
         font-weight: 800;
         font-size: 13px;
@@ -640,7 +571,6 @@ a {
         margin-bottom: 10px;
         margin-top: auto;
       }
-
 
       .add-to-cart-btn {
         width: 100%;
@@ -658,7 +588,6 @@ a {
         cursor: pointer;
         transition: background 0.2s ease;
 
-
         &:hover {
           background: #a91d15;
         }
@@ -667,13 +596,11 @@ a {
   }
 }
 
-
 /* FOOTER SECTION */
 footer {
   background: #111111;
   color: #ffffff;
   padding: 55px 0 0;
-
 
   .footer-container {
     width: min(1200px, 92%);
@@ -684,12 +611,10 @@ footer {
     padding-bottom: 40px;
   }
 
-
   .footer-brand {
     .logo img {
       width: 140px;
     }
-
 
     p {
       color: #888888;
@@ -699,11 +624,9 @@ footer {
       margin: 17px 0;
     }
 
-
     .social-links {
       display: flex;
       gap: 8px;
-
 
       a {
         width: 32px;
@@ -718,7 +641,6 @@ footer {
         text-decoration: none;
         transition: 0.2s ease;
 
-
         &:hover {
           background: #d9271c;
           color: #ffffff;
@@ -728,12 +650,10 @@ footer {
     }
   }
 
-
   .footer-column {
     display: flex;
     flex-direction: column;
     gap: 10px;
-
 
     h3 {
       color: #ffffff;
@@ -742,20 +662,17 @@ footer {
       margin-bottom: 5px;
     }
 
-
     a {
       color: #777777;
       font-size: 10px;
       text-decoration: none;
       transition: 0.2s ease;
 
-
       &:hover {
         color: #ffb703;
       }
     }
   }
-
 
   .contact-column {
     p {
@@ -766,7 +683,6 @@ footer {
       gap: 9px;
       line-height: 1.5;
 
-
       ion-icon {
         color: #ffb703;
         font-size: 14px;
@@ -774,13 +690,11 @@ footer {
     }
   }
 
-
   .footer-bottom {
     background: #0a0a0a;
     padding: 15px 0;
     text-align: center;
     border-top: 1px solid #222222;
-
 
     p {
       color: #666666;
@@ -789,19 +703,16 @@ footer {
   }
 }
 
-
 /* RESPONSIVE MEDIA QUERIES*/
 @media screen and (max-width: 820px) {
-.main-header {
+  .main-header {
     padding: 0 16px;
     height: 75px;
-
 
     .logo-section {
       .mobile-menu-btn {
         display: flex !important;
       }
-
 
       .logo-container {
         width: 120px !important;
@@ -811,46 +722,41 @@ footer {
       }
     }
 
-
     .desktop-only {
       display: none !important;
     }
-
 
     .header-actions {
       display: flex !important;
       align-items: center;
       gap: 10px !important;
 
-
       .search-pill {
         display: none !important;
       }
 
-
-      .icon-btn, .user-icon, ion-icon[name="person-outline"] {
+      .icon-btn,
+      .user-icon,
+      ion-icon[name="person-outline"] {
         display: flex !important;
         font-size: 1.2rem !important;
         color: #ffffff;
       }
 
-
       .cart-btn {
         display: flex !important;
         font-size: 0.8rem !important;
         gap: 4px;
-       
+
         .cart-icon-orange {
           font-size: 1.2rem !important;
           color: #ffb703;
         }
 
-
         span {
           display: inline;
         }
       }
-
 
       .btn-order-now {
         display: flex !important;
@@ -863,9 +769,6 @@ footer {
     }
   }
 
-
-
-
   /* Hero Section Mobile */
   .hero-grid {
     padding: 32px 20px;
@@ -876,18 +779,15 @@ footer {
       #101010 85%
     );
 
-
     .hero-left {
       .hero-title {
         font-size: 2.6rem;
       }
 
-
       .hero-desc {
         font-size: 0.85rem;
       }
     }
-
 
     .hero-right {
       .pizza-circle-wrapper {
@@ -898,67 +798,57 @@ footer {
     }
   }
 
-
   /* Hot Deals Mobile  */
-@media screen and (max-width: 820px) {
-  .deals-header {
-    flex-direction: column;
-    align-items: flex-start !important;
-    text-align: left !important;
-    padding-left: 20px;
-    gap: 6px;
-
-
-    .header-right {
-      font-size: 12px;
+  @media screen and (max-width: 820px) {
+    .deals-header {
+      flex-direction: column;
+      align-items: flex-start !important;
       text-align: left !important;
-    }
-  }
+      padding-left: 20px;
+      gap: 6px;
 
-
-  .deals-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px;
-    padding: 0 16px;
-  }
-
-
-  .deal-card {
-    height: auto !important;
-    min-height: 150px;
-    flex-direction: row;
-
-
-    .deal-content {
-      width: 58% !important;
-      padding: 16px !important;
-
-
-      h3 {
-        font-size: 20px !important;
-        margin: 4px 0 !important;
-      }
-
-
-      p {
-        font-size: 11px !important;
-        margin-bottom: 8px !important;
-      }
-
-
-      .deal-tag {
-        font-size: 9px !important;
+      .header-right {
+        font-size: 12px;
+        text-align: left !important;
       }
     }
 
+    .deals-grid {
+      grid-template-columns: 1fr !important;
+      gap: 16px;
+      padding: 0 16px;
+    }
 
-    .deal-image {
-      width: 42% !important;
-      height: 100%;
+    .deal-card {
+      height: auto !important;
+      min-height: 150px;
+      flex-direction: row;
+
+      .deal-content {
+        width: 58% !important;
+        padding: 16px !important;
+
+        h3 {
+          font-size: 20px !important;
+          margin: 4px 0 !important;
+        }
+
+        p {
+          font-size: 11px !important;
+          margin-bottom: 8px !important;
+        }
+
+        .deal-tag {
+          font-size: 9px !important;
+        }
+      }
+
+      .deal-image {
+        width: 42% !important;
+        height: 100%;
+      }
     }
   }
-}
-
 
   /* Popular Pizzas Mobile */
   .pizza-grid {
@@ -966,29 +856,24 @@ footer {
     gap: 12px !important;
   }
 
-
   .pizza-card {
     .pizza-info {
       padding: 10px 8px !important;
-
 
       h3 {
         font-size: 12px !important;
         word-break: break-word;
       }
 
-
       p {
         font-size: 10px !important;
         height: 26px !important;
       }
 
-
       .pizza-price {
         font-size: 13px !important;
         margin-bottom: 8px !important;
       }
-
 
       .add-to-cart-btn {
         padding: 8px 0 !important;
@@ -997,159 +882,356 @@ footer {
     }
   }
 
-
- /* Search Bar */
-@media screen and (max-width: 820px) {
- 
-  .mobile-search-row {
-    display: block !important;
-    width: 100%;
-    background-color: #121212;
-    padding: 10px 16px 14px 16px;
-    box-sizing: border-box;
-    border-top: 1px solid #1a1a1a;
-    border-bottom: 1px solid #222;
-
-
-    .search-pill {
-      display: flex !important;
-      align-items: center !important;
-      background-color: #1e1e1e !important;
-      border: 1px solid #333 !important;
-      border-radius: 30px !important;
-      padding: 8px 16px !important;
-      width: 100% !important;
+  /* Search Bar */
+  @media screen and (max-width: 820px) {
+    .mobile-search-row {
+      display: block !important;
+      width: 100%;
+      background-color: #121212;
+      padding: 10px 16px 14px 16px;
       box-sizing: border-box;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #222;
 
-
-      /*  Search Icon  */
-      ion-icon, .search-icon {
-        color: #888 !important;
-        font-size: 1.1rem !important;
-        margin-right: 10px !important;
-        display: inline-block !important;
-      }
-
-
-      input {
-        background: transparent !important;
-        border: none !important;
-        color: #fff !important;
-        font-size: 0.9rem !important;
+      .search-pill {
+        display: flex !important;
+        align-items: center !important;
+        background-color: #1e1e1e !important;
+        border: 1px solid #333 !important;
+        border-radius: 30px !important;
+        padding: 8px 16px !important;
         width: 100% !important;
-        outline: none !important;
-        padding: 0 !important;
+        box-sizing: border-box;
 
+        /*  Search Icon  */
+        ion-icon,
+        .search-icon {
+          color: #888 !important;
+          font-size: 1.1rem !important;
+          margin-right: 10px !important;
+          display: inline-block !important;
+        }
 
-        &::placeholder {
-          color: #777 !important;
+        input {
+          background: transparent !important;
+          border: none !important;
+          color: #fff !important;
+          font-size: 0.9rem !important;
+          width: 100% !important;
+          outline: none !important;
+          padding: 0 !important;
+
+          &::placeholder {
+            color: #777 !important;
+          }
         }
       }
     }
   }
-}
 
+  /* Footer Mobile Layout */
+  footer {
+    padding: 24px 16px 16px !important;
+    width: 100%;
 
-/* Footer Mobile Layout */
-footer {
-  padding: 24px 16px 16px !important;
-  width: 100%;
+    .footer-container {
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 16px 14px !important;
+      text-align: left;
 
+      .footer-brand {
+        grid-column: span 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 4px;
 
-  .footer-container {
-    max-width: 100% !important;
-    margin: 0 auto !important;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 16px 14px !important;
-    text-align: left;
-
-
-    .footer-brand {
-      grid-column: span 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      margin-bottom: 4px;
-
-
-     .logo img {
+        .logo img {
           height: 95px !important;
           width: auto !important;
           margin-bottom: 8px;
         }
 
+        p {
+          font-size: 0.75rem !important;
+          color: #b0b0b0;
+          margin-bottom: 8px;
+        }
 
-      p {
-        font-size: 0.75rem !important;
-        color: #b0b0b0;
-        margin-bottom: 8px;
+        .social-links {
+          justify-content: center;
+          gap: 8px;
+
+          a {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 0.85rem !important;
+          }
+        }
       }
 
+      // footer columns
+      .footer-column {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
 
-      .social-links {
-        justify-content: center;
-        gap: 8px;
-
+        h3 {
+          font-size: 0.78rem !important;
+          margin-bottom: 4px !important;
+          letter-spacing: 0.5px;
+        }
 
         a {
-          width: 28px !important;
-          height: 28px !important;
-          font-size: 0.85rem !important;
+          font-size: 0.72rem !important;
+          padding: 1px 0;
+        }
+
+        p {
+          font-size: 0.72rem !important;
+          justify-content: flex-start;
+          text-align: left;
+          gap: 4px;
+          margin: 0;
+
+          ion-icon {
+            font-size: 0.8rem !important;
+          }
         }
       }
     }
 
-
-    // footer columns
-    .footer-column {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-
-
-      h3 {
-        font-size: 0.78rem !important;
-        margin-bottom: 4px !important;
-        letter-spacing: 0.5px;
-      }
-
-
-      a {
-        font-size: 0.72rem !important;
-        padding: 1px 0;
-      }
-
+    .footer-bottom {
+      grid-column: span 2;
+      margin-top: 14px !important;
+      padding-top: 10px !important;
+      border-top: 1px solid #1a1a1a;
+      text-align: center;
 
       p {
-        font-size: 0.72rem !important;
-        justify-content: flex-start;
-        text-align: left;
-        gap: 4px;
-        margin: 0;
+        font-size: 0.65rem !important;
+        color: #666666;
+      }
+    }
+  }
+}
 
+/* POPULAR PIZZAS SECTION */
+.popular-section {
+  background-color: #ffffff;
+  padding: 60px 0 80px;
 
-        ion-icon {
-          font-size: 0.8rem !important;
-        }
+  .popular-container {
+    width: min(1200px, 92%);
+    margin: 0 auto;
+  }
+
+  .popular-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+
+    h2 {
+      font-family: "Oswald", sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #111111;
+      letter-spacing: -0.5px;
+    }
+
+    .view-all {
+      color: #111111;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #d9271c;
       }
     }
   }
 
+  .pizza-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
 
-  .footer-bottom {
-    grid-column: span 2;
-    margin-top: 14px !important;
-    padding-top: 10px !important;
-    border-top: 1px solid #1a1a1a;
-    text-align: center;
-   
-    p {
-      font-size: 0.65rem !important;
-      color: #666666;
+  .pizza-card {
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .pizza-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #fdfdfd;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .pizza-info {
+      padding: 12px 10px 14px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+
+      h3 {
+        font-size: 13px;
+        font-weight: 700;
+        color: #111111;
+        margin-bottom: 4px;
+        line-height: 1.2;
+      }
+
+      p {
+        font-size: 10px;
+        color: #777777;
+        line-height: 1.3;
+        margin-bottom: 10px;
+        height: 26px;
+        overflow: hidden;
+      }
+
+      .pizza-price {
+        font-weight: 800;
+        font-size: 13px;
+        color: #111111;
+        margin-bottom: 10px;
+        margin-top: auto;
+      }
+
+      .add-to-cart-btn {
+        width: 100%;
+        background: #d9271c;
+        color: #ffffff;
+        border: none;
+        padding: 8px 0;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: #a91d15;
+        }
+      }
     }
   }
 }
-}
 
+/* PROMO BANNER SECTION */
+.promo-banner-section {
+  background: #ffffff;
+  padding: 40px 20px;
+
+  .promo-banner-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .promo-card-modern {
+    border-radius: 18px;
+    padding: 24px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+
+    &.welcome-card {
+      background: #fff8eb;
+    }
+
+    &.crew-card {
+      background: #fff0ef;
+    }
+
+    &.b11-card {
+      background: #fff4ec;
+    }
+
+    &.drink-card {
+      background: #f0f7ff;
+    }
+
+    &.crust-card {
+      background: #f8f0fc;
+    }
+
+    /* Hover Effect */
+    &:hover {
+      transform: translateY(-5px);
+      border-color: rgba(217, 39, 28, 0.3);
+      box-shadow: 0 10px 25px rgba(217, 39, 28, 0.12);
+    }
+
+    .promo-badge-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333333;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .promo-text {
+      h3 {
+        font-family: "Oswald", sans-serif;
+        font-size: 19px;
+        font-weight: 700;
+        color: #111111;
+        margin: 0 0 6px 0;
+      }
+
+      p {
+        font-size: 13px;
+        color: #555555;
+        margin: 0;
+        line-height: 1.4;
+
+        strong {
+          color: #d9271c;
+          font-weight: 800;
+        }
+      }
+    }
+  }
+}

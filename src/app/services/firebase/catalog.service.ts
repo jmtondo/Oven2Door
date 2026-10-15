@@ -3,18 +3,17 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs
+  getDocs,
+  onSnapshot,
+  Unsubscribe,
 } from 'firebase/firestore';
 
 import { db } from '../../firebase.config';
 
-import {
-  CatalogProduct,
-  ProductOption
-} from '../../models/storefront.models';
+import { CatalogProduct, ProductOption } from '../../models/storefront.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CatalogService {
   private readonly productsCollection = collection(db, 'products');
@@ -48,6 +47,43 @@ export class CatalogService {
   }
 
   /**
+   * Listen for real-time changes to available products.
+   */
+  listenToProducts(
+    callback: (products: CatalogProduct[]) => void,
+    onError?: (error: Error) => void,
+  ): Unsubscribe {
+    return onSnapshot(
+      this.productsCollection,
+      (snapshot) => {
+        const products: CatalogProduct[] = [];
+
+        snapshot.forEach((document) => {
+          const data = document.data();
+
+          const status = String(data['status'] ?? 'available');
+
+          // Show available products only
+          if (status !== 'available') {
+            return;
+          }
+
+          products.push(this.mapProduct(document.id, data));
+        });
+
+        // Preserve existing catalog ordering
+        products.sort((a, b) => a.id - b.id);
+
+        callback(products);
+      },
+      (error) => {
+        console.error('Catalog listener error:', error);
+        onError?.(error);
+      },
+    );
+  }
+
+  /**
    * Get one product by its Firestore document ID.
    */
   async getProduct(productId: string): Promise<CatalogProduct | null> {
@@ -77,7 +113,7 @@ export class CatalogService {
 
     return snapshot.docs.map((document) => ({
       id: document.id,
-      ...document.data()
+      ...document.data(),
     }));
   }
 
@@ -87,12 +123,10 @@ export class CatalogService {
    */
   private mapProduct(
     documentId: string,
-    data: Record<string, any>
+    data: Record<string, any>,
   ): CatalogProduct {
     const productId = Number(
-      data['productId'] ??
-      data['product_id'] ??
-      documentId
+      data['productId'] ?? data['product_id'] ?? documentId,
     );
 
     const sizes = this.mapOptions(data['sizes']);
@@ -106,21 +140,16 @@ export class CatalogService {
 
       category: String(
         data['categoryName'] ??
-        data['category_name'] ??
-        data['category'] ??
-        'Pizza'
+          data['category_name'] ??
+          data['category'] ??
+          'Pizza',
       ),
 
       name: String(
-        data['productName'] ??
-        data['product_name'] ??
-        data['name'] ??
-        ''
+        data['productName'] ?? data['product_name'] ?? data['name'] ?? '',
       ),
 
-      description: String(
-        data['description'] ?? ''
-      ),
+      description: String(data['description'] ?? ''),
 
       /*
        * Images remain inside the Ionic application.
@@ -129,25 +158,18 @@ export class CatalogService {
        * assets/images/pizzapics/Pepperonithincrust.png
        */
       imagePath: String(
-        data['imagePath'] ??
-        data['image_path'] ??
-        data['imageUrl'] ??
-        ''
+        data['imagePath'] ?? data['image_path'] ?? data['imageUrl'] ?? '',
       ),
 
       /*
        * The old MySQL API used the lowest available size price
        * as the product's base price.
        */
-      price: Number(
-        data['price'] ??
-        sizes[0]?.price ??
-        0
-      ),
+      price: Number(data['price'] ?? sizes[0]?.price ?? 0),
 
       sizes,
       crusts,
-      toppings
+      toppings,
     };
   }
 
@@ -162,32 +184,29 @@ export class CatalogService {
     return value.map((item: any) => ({
       id: Number(
         item?.id ??
-        item?.sizeId ??
-        item?.size_id ??
-        item?.crustId ??
-        item?.crust_id ??
-        item?.toppingId ??
-        item?.topping_id ??
-        0
+          item?.sizeId ??
+          item?.size_id ??
+          item?.crustId ??
+          item?.crust_id ??
+          item?.toppingId ??
+          item?.topping_id ??
+          0,
       ),
 
       name: String(
         item?.name ??
-        item?.sizeName ??
-        item?.size_name ??
-        item?.crustName ??
-        item?.crust_name ??
-        item?.toppingName ??
-        item?.topping_name ??
-        ''
+          item?.sizeName ??
+          item?.size_name ??
+          item?.crustName ??
+          item?.crust_name ??
+          item?.toppingName ??
+          item?.topping_name ??
+          '',
       ),
 
       price: Number(
-        item?.price ??
-        item?.additionalPrice ??
-        item?.additional_price ??
-        0
-      )
+        item?.price ?? item?.additionalPrice ?? item?.additional_price ?? 0,
+      ),
     }));
   }
 }

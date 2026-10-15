@@ -79,13 +79,13 @@
 
           <ion-range
             [min]="0"
-            [max]="500"
+            [max]="catalogMaxPrice"
             [step]="10"
             [dualKnobs]="true"
             [value]="{
-              lower: minPrice,
-              upper: maxPrice
-            }"
+    lower: minPrice,
+    upper: maxPrice
+  }"
             (ionChange)="onPriceChange($event)"
           ></ion-range>
         </div>

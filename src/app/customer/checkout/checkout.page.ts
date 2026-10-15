@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { PromoService } from '../../services/promo.service';
 
 import {
   IonContent,
@@ -68,6 +69,29 @@ interface CheckoutAddress {
   ],
 })
 export class CheckoutPage implements OnInit {
+  async loadAppliedPromo(): Promise<void> {
+    this.discount = 0;
+
+    if (!this.promoCode) return;
+
+    try {
+      const promo = await this.promoService.validatePromo(
+        this.promoCode,
+        this.subtotal,
+      );
+
+      this.discount = promo.discount;
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Promo validation failed:', error);
+
+      this.promoCode = null;
+      this.discount = 0;
+      sessionStorage.removeItem('oven2doorPromoCode');
+
+      this.cdr.detectChanges();
+    }
+  }
   savedAddresses: CheckoutAddress[] = [];
   selectedAddressId = 'manual';
   addressesLoading = false;
@@ -104,10 +128,12 @@ export class CheckoutPage implements OnInit {
   paymentMethod = 'cod';
 
   discount = 0;
+  promoCode: string | null = null;
 
   isPlacingOrder = false;
 
   constructor(
+    private promoService: PromoService,
     public storefront: StorefrontService,
     private router: Router,
     private orderService: OrderService,
@@ -142,6 +168,10 @@ export class CheckoutPage implements OnInit {
       return;
     }
 
+    this.promoCode = sessionStorage.getItem('oven2doorPromoCode');
+    void this.loadAppliedPromo();
+
+    console.log('Applied promo code:', this.promoCode);
     // Get currently logged-in Firebase user
     const user = auth.currentUser;
 
@@ -592,6 +622,7 @@ export class CheckoutPage implements OnInit {
       // ========================================
 
       const createdOrder = await this.orderService.createOrder({
+        promoCode: this.promoCode,
         userId: user.uid,
 
         firstName: this.firstName,
@@ -707,6 +738,9 @@ export class CheckoutPage implements OnInit {
 
         // CLEAR CART
         this.storefront.clearCart();
+        sessionStorage.removeItem('oven2doorPromoCode');
+        this.promoCode = null;
+        this.discount = 0;
 
         alert('Your order has been placed successfully!');
 

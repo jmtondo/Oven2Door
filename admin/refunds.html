@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Returns & Refunds - Oven2Door Admin</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Oswald:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="refunds.css" />
+  </head>
+
+  <body>
+    <div class="app-container">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">
+            <img src="pizzapics/oven2doorlogo.png" alt="Oven2Door Logo" />
+          </div>
+
+          <div>
+            <h1>Oven2Door</h1>
+            <span>Admin Panel</span>
+          </div>
+        </div>
+
+        <div class="sidebar-nav">
+          <a href="index.html">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <a href="order.html">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Orders</span>
+          </a>
+
+          <a href="refunds.html" data-admin-only class="active">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Returns &amp; Refunds</span>
+          </a>
+
+          <a href="product.html" data-admin-only>
+            <i class="fa-solid fa-box"></i>
+            <span>Products</span>
+          </a>
+
+          <a href="inventory.html">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Inventory</span>
+          </a>
+
+          <a href="customers.html" data-admin-only>
+            <i class="fa-solid fa-users"></i>
+            <span>Customers</span>
+          </a>
+
+          <a href="accounts.html" data-admin-only>
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Account Management</span>
+          </a>
+          <a href="promos.html" data-admin-only>
+            <i class="fas fa-tags"></i>
+            Promos
+          </a>
+
+          <a href="sales.html" data-admin-only>
+            <i class="fa-solid fa-chart-column"></i>
+            <span>Sales Reports</span>
+          </a>
+        </div>
+
+        <div class="sidebar-bottom">
+          <a href="#" data-logout>
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log Out</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content" style="visibility: hidden">
+        <div class="page-header">
+          <div>
+            <span class="page-label"> CUSTOMER SERVICE MANAGEMENT </span>
+            <h1>Returns & Refunds</h1>
+            <p>Review and manage customer order issues and refund requests.</p>
+          </div>
+        </div>
+
+        <!-- SUMMARY CARDS -->
+        <section class="refund-stats">
+          <article class="stat-card">
+            <div class="stat-icon total-icon">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <span>Total Requests</span>
+            <strong id="totalRequests">0</strong>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-icon pending-icon">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <span>Pending Review</span>
+            <strong id="pendingRequests">0</strong>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-icon approved-icon">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <span>Approved</span>
+            <strong id="approvedRequests">0</strong>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-icon rejected-icon">
+              <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+            <span>Rejected</span>
+            <strong id="rejectedRequests">0</strong>
+          </article>
+        </section>
+
+        <!-- SEARCH AND FILTER -->
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              type="search"
+              id="refundSearchInput"
+              placeholder="Search order number, customer or issue..."
+              autocomplete="off"
+            />
+          </div>
+
+          <select id="refundStatusFilter" aria-label="Filter refund requests">
+            <option value="all">All Requests</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        <!-- REQUESTS TABLE -->
+        <div class="table-wrapper">
+          <table id="refundsTable">
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Customer</th>
+                <th>Issue</th>
+                <th>Resolution</th>
+                <th>Date Submitted</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody id="refundTableBody">
+              <tr>
+                <td colspan="7" class="loading-cell">
+                  Loading refund requests...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div id="refundEmptyState" class="empty-state" hidden>
+            <i class="fa-solid fa-inbox"></i>
+            <h3>No requests found</h3>
+            <p>There are no refund requests matching your selected filters.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- REVIEW DIALOG -->
+    <dialog id="refundReviewDialog" class="review-dialog">
+      <div class="dialog-header">
+        <div>
+          <span class="page-label">REQUEST DETAILS</span>
+          <h2 id="reviewOrderNumber">Order Request</h2>
+        </div>
+
+        <button
+          type="button"
+          id="closeReviewDialog"
+          class="icon-button"
+          aria-label="Close dialog"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="dialog-body">
+        <div class="review-details">
+          <div>
+            <span>Customer</span>
+            <strong id="reviewCustomer">—</strong>
+          </div>
+
+          <div>
+            <span>Order Total</span>
+            <strong id="reviewOrderTotal">—</strong>
+          </div>
+
+          <div>
+            <span>Payment Method</span>
+            <strong id="reviewPaymentMethod">—</strong>
+          </div>
+
+          <div>
+            <span>Requested Resolution</span>
+            <strong id="reviewResolution">—</strong>
+          </div>
+
+          <div>
+            <span>Issue Category</span>
+            <strong id="reviewReason">—</strong>
+          </div>
+
+          <div>
+            <span>Current Status</span>
+            <strong id="reviewStatus">—</strong>
+          </div>
+        </div>
+
+        <div class="review-description">
+          <h3>Customer Description</h3>
+          <p id="reviewDescription"></p>
+        </div>
+
+        <!-- ==========================================
+     AFFECTED ORDER ITEMS
+========================================== -->
+
+        <section
+          id="affectedItemsSection"
+          class="affected-items-section"
+          hidden
+        >
+          <div class="affected-items-header">
+            <span class="page-label">REFUND CALCULATION</span>
+            <h3>Select Affected Order Items</h3>
+            <p>
+              Select the products affected by the customer's issue. The refund
+              amount will be calculated using the original order prices.
+            </p>
+          </div>
+
+          <!-- Order items loaded from Firestore -->
+          <div id="affectedItemsList" class="affected-items-list">
+            <p>Loading order items...</p>
+          </div>
+
+          <!-- Calculated refund -->
+          <div class="calculated-refund">
+            <div>
+              <span>Calculated Refund Amount</span>
+              <small>Based on selected products and quantities</small>
+            </div>
+
+            <strong id="calculatedRefundAmount">₱0.00</strong>
+          </div>
+
+          <p
+            id="affectedItemsMessage"
+            class="review-message"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </section>
+
+        <div class="review-note">
+          <label for="adminReviewNote"> Administrator Notes </label>
+          <textarea
+            id="adminReviewNote"
+            rows="4"
+            maxlength="2000"
+            placeholder="Enter the reason for your decision..."
+          ></textarea>
+        </div>
+
+        <!-- ==========================================
+     REFUND FULFILLMENT
+========================================== -->
+
+        <section
+          id="refundFulfillmentSection"
+          class="refund-fulfillment-section"
+          hidden
+        >
+          <div class="fulfillment-heading">
+            <div>
+              <span class="page-label">PAYMENT FULFILLMENT</span>
+              <h3>Refund Processing</h3>
+              <p>
+                Record and track the actual return of funds after a refund
+                request has been approved.
+              </p>
+            </div>
+
+            <span id="refundFulfillmentBadge" class="refund-status pending">
+              Not Processed
+            </span>
+          </div>
+
+          <div class="fulfillment-fields">
+            <div class="issue-field">
+              <label>Exact Amount to Return</label>
+
+              <div class="fixed-refund-amount">
+                <strong id="fixedRefundAmount">₱0.00</strong>
+                <span>
+                  <i class="fa-solid fa-lock"></i>
+                  System-calculated amount — cannot be edited
+                </span>
+              </div>
+            </div>
+
+            <div class="issue-field">
+              <label for="refundMethod"> Refund Method </label>
+
+              <select id="refundMethod">
+                <option value="">Select refund method</option>
+                <option value="cash">Cash</option>
+                <option value="gcash">GCash</option>
+                <option value="maya">Maya</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="issue-field">
+              <label for="refundReference">
+                Transaction / Reference Number
+              </label>
+
+              <input
+                type="text"
+                id="refundReference"
+                maxlength="150"
+                placeholder="Enter payment reference (if available)"
+              />
+            </div>
+          </div>
+
+          <p class="fulfillment-notice">
+            Approval does not automatically issue a refund. Only mark a refund
+            as completed after confirming that the customer has received the
+            funds.
+          </p>
+
+          <p
+            id="refundFulfillmentMessage"
+            class="review-message"
+            role="status"
+            aria-live="polite"
+          ></p>
+
+          <div class="fulfillment-actions">
+            <button
+              type="button"
+              id="startRefundProcessingBtn"
+              class="btn-secondary"
+            >
+              <i class="fa-solid fa-clock"></i>
+              Mark as Processing
+            </button>
+
+            <button type="button" id="completeRefundBtn" class="btn-approve">
+              <i class="fa-solid fa-check-double"></i>
+              Mark as Completed
+            </button>
+          </div>
+        </section>
+
+        <p
+          id="reviewMessage"
+          class="review-message"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" id="cancelReviewBtn" class="btn-secondary">
+          Close
+        </button>
+
+        <button type="button" id="rejectRefundBtn" class="btn-reject">
+          <i class="fa-solid fa-xmark"></i>
+          Reject
+        </button>
+
+        <button type="button" id="approveRefundBtn" class="btn-approve">
+          <i class="fa-solid fa-check"></i>
+          Approve
+        </button>
+      </div>
+    </dialog>
+
+    <script type="module" src="refunds.js"></script>
+  </body>
+</html>
