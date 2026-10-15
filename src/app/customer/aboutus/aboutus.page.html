@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true" class="hero-page">
-<div class="announcement-bar">
+  <div class="announcement-bar">
     <span>🔥 20% OVEN 2 DOOR</span>
   </div>
 
@@ -7,20 +7,58 @@
   <div class="mobile-search-row" *ngIf="isSearchOpen">
     <div class="search-pill">
       <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <input type="text" placeholder="Search pizza, pasta, drinks..." aria-label="Search" />
+      <input
+        type="text"
+        placeholder="Search pizza, pasta, drinks..."
+        aria-label="Search"
+      />
     </div>
   </div>
 
-
   <!-- MOBILE DROPDOWN -->
   <div class="mobile-dropdown" [class.open]="isMobileMenuOpen">
-    <a class="mobile-nav-item" routerLink="/home" routerLinkActive="active" (click)="toggleMobileMenu()">Home</a>
-    <a class="mobile-nav-item" routerLink="/menu" routerLinkActive="active" (click)="toggleMobileMenu()">Menu</a>
-    <a class="mobile-nav-item" routerLink="/order-tracking" routerLinkActive="active" (click)="toggleMobileMenu()">Order Tracking</a>
-    <a class="mobile-nav-item active" routerLink="/about-us" routerLinkActive="active" (click)="toggleMobileMenu()">About Us</a>
-    <a class="mobile-nav-item" routerLink="/faqs" routerLinkActive="active" (click)="toggleMobileMenu()">FAQs</a>
+    <a
+      class="mobile-nav-item"
+      routerLink="/home"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()"
+      >Home</a
+    >
+    <a
+      class="mobile-nav-item"
+      routerLink="/menu"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()"
+      >Menu</a
+    >
+    <a
+      class="mobile-nav-item"
+      routerLink="/order-tracking"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()"
+      >Order Tracking</a
+    >
+    <a
+      class="mobile-nav-item active"
+      routerLink="/about-us"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()"
+      >About Us</a
+    >
+    <a
+      class="mobile-nav-item"
+      routerLink="/faqs"
+      routerLinkActive="active"
+      (click)="toggleMobileMenu()"
+      >FAQs</a
+    >
     <div class="mobile-action-wrapper">
-      <a routerLink="/menu" class="btn-order-now mobile-order-btn" (click)="toggleMobileMenu()">ORDER NOW</a>
+      <a
+        routerLink="/menu"
+        class="btn-order-now mobile-order-btn"
+        (click)="toggleMobileMenu()"
+        >ORDER NOW</a
+      >
     </div>
   </div>
   <!-- HERO  -->
@@ -31,18 +69,13 @@
       <span class="hero-small">WELCOME TO OVEN2DOOR</span>
       <h1>About <span>Us</span></h1>
       <p>Freshly baked. Lovingly made. Delivered straight to your door.</p>
-     
-    <button
-      type="button"
-      class="hero-btn"
-      (click)="scrollToOurStory()"
-    >
-      Discover Our Story
-      <ion-icon name="arrow-down-outline"></ion-icon>
-    </button>
+
+      <button type="button" class="hero-btn" (click)="scrollToOurStory()">
+        Discover Our Story
+        <ion-icon name="arrow-down-outline"></ion-icon>
+      </button>
     </div>
   </section>
-
 
   <!-- ABOUT US  -->
   <section class="about-section" id="our-story">
@@ -50,7 +83,10 @@
     <div class="container about-container">
       <div class="about-image">
         <div class="image-frame">
-          <img src="assets/images/pizzapics/PIZZAPIC.jpg" alt="Freshly baked pizza" />
+          <img
+            src="assets/images/pizzapics/PIZZAPIC.jpg"
+            alt="Freshly baked pizza"
+          />
         </div>
         <div class="experience-badge">
           <strong>100%</strong>
@@ -62,13 +98,19 @@
         <h2>Bringing People Together, <span>One Pizza at a Time.</span></h2>
         <div class="red-line"></div>
         <p>
-          At <strong>Oven2Door</strong>, we believe that great pizza brings people together. From family dinners to late-night cravings, every pizza we create is made to bring a little more happiness to your day.
+          At <strong>Oven2Door</strong>, we believe that great pizza brings
+          people together. From family dinners to late-night cravings, every
+          pizza we create is made to bring a little more happiness to your day.
         </p>
         <p>
-          We serve freshly baked pizzas using quality ingredients, flavorful toppings, and perfectly baked crusts. Whether you're craving a classic favorite or a loaded specialty pizza, we're here to satisfy your cravings.
+          We serve freshly baked pizzas using quality ingredients, flavorful
+          toppings, and perfectly baked crusts. Whether you're craving a classic
+          favorite or a loaded specialty pizza, we're here to satisfy your
+          cravings.
         </p>
         <p>
-          Our goal is simple — make ordering delicious pizza easy, convenient, and enjoyable from our oven straight to your door.
+          Our goal is simple — make ordering delicious pizza easy, convenient,
+          and enjoyable from our oven straight to your door.
         </p>
         <div class="about-features">
           <div class="feature">
@@ -97,35 +139,47 @@
     </div>
   </section>
 
-
   <!-- VALUES SECTION -->
   <section class="values-section">
     <div class="container">
       <div class="section-heading">
         <span class="section-tag">WHY OVEN2DOOR?</span>
         <h2>More Than Just <span>Pizza</span></h2>
-        <p>We're committed to making every order delicious, convenient, and memorable.</p>
+        <p>
+          We're committed to making every order delicious, convenient, and
+          memorable.
+        </p>
       </div>
       <div class="values-grid">
         <div class="value-card">
-          <div class="value-icon"><ion-icon name="leaf-outline"></ion-icon></div>
+          <div class="value-icon">
+            <ion-icon name="leaf-outline"></ion-icon>
+          </div>
           <h3>Quality Ingredients</h3>
-          <p>We carefully choose ingredients to make every bite flavorful and satisfying.</p>
+          <p>
+            We carefully choose ingredients to make every bite flavorful and
+            satisfying.
+          </p>
         </div>
         <div class="value-card">
-          <div class="value-icon"><ion-icon name="flame-outline"></ion-icon></div>
+          <div class="value-icon">
+            <ion-icon name="flame-outline"></ion-icon>
+          </div>
           <h3>Fresh From the Oven</h3>
-          <p>Our pizzas are baked fresh so you can enjoy them hot and delicious.</p>
+          <p>
+            Our pizzas are baked fresh so you can enjoy them hot and delicious.
+          </p>
         </div>
         <div class="value-card">
-          <div class="value-icon"><ion-icon name="happy-outline"></ion-icon></div>
+          <div class="value-icon">
+            <ion-icon name="happy-outline"></ion-icon>
+          </div>
           <h3>Customer First</h3>
           <p>Your satisfaction is at the heart of everything we do.</p>
         </div>
       </div>
     </div>
   </section>
-
 
   <!-- STATS SECTION -->
   <section class="stats-section">
@@ -153,7 +207,6 @@
     </div>
   </section>
 
-
   <!-- DEVELOPERS -->
   <section class="team-section" id="team">
     <div class="container">
@@ -161,14 +214,24 @@
         <span class="section-tag">THE PEOPLE BEHIND OVEN2DOOR</span>
         <h2>Meet Our <span>Developers</span></h2>
         <div class="red-line center"></div>
-        <p>Meet the team behind Oven2Door. Together, we design, develop, and improve our online pizza ordering experience.</p>
+        <p>
+          Meet the team behind Oven2Door. Together, we design, develop, and
+          improve our online pizza ordering experience.
+        </p>
       </div>
       <div class="team-grid">
         <div class="team-card">
           <div class="member-image">
-            <img src="assets/images/pizzapics/sarmiento.jpg" alt="Trixie Sarmiento" />
+            <img
+              src="assets/images/pizzapics/sarmiento.jpg"
+              alt="Trixie Sarmiento"
+            />
             <div class="member-overlay">
-              <a href="https://www.facebook.com/trixieanne.sarmiento.1" target="_blank"><ion-icon name="logo-facebook"></ion-icon></a>
+              <a
+                href="https://www.facebook.com/trixieanne.sarmiento.1"
+                target="_blank"
+                ><ion-icon name="logo-facebook"></ion-icon
+              ></a>
               <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
               <a href="#"><ion-icon name="logo-linkedin"></ion-icon></a>
             </div>
@@ -179,12 +242,18 @@
           </div>
         </div>
 
-
         <div class="team-card">
           <div class="member-image">
-            <img src="assets/images/pizzapics/samonte.jpg" alt="Joanna Samonte" />
+            <img
+              src="assets/images/pizzapics/samonte.jpg"
+              alt="Joanna Samonte"
+            />
             <div class="member-overlay">
-              <a href="https://www.facebook.com/joanna.samonte.75" target="_blank"><ion-icon name="logo-facebook"></ion-icon></a>
+              <a
+                href="https://www.facebook.com/joanna.samonte.75"
+                target="_blank"
+                ><ion-icon name="logo-facebook"></ion-icon
+              ></a>
               <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
               <a href="#"><ion-icon name="logo-linkedin"></ion-icon></a>
             </div>
@@ -195,12 +264,15 @@
           </div>
         </div>
 
-
         <div class="team-card">
           <div class="member-image">
             <img src="assets/images/pizzapics/sibal.jpg" alt="Shaina Sibal" />
             <div class="member-overlay">
-              <a href="https://www.facebook.com/sibalshainagarcia/" target="_blank"><ion-icon name="logo-facebook"></ion-icon></a>
+              <a
+                href="https://www.facebook.com/sibalshainagarcia/"
+                target="_blank"
+                ><ion-icon name="logo-facebook"></ion-icon
+              ></a>
               <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
               <a href="#"><ion-icon name="logo-linkedin"></ion-icon></a>
             </div>
@@ -211,12 +283,18 @@
           </div>
         </div>
 
-
         <div class="team-card">
           <div class="member-image">
-            <img src="assets/images/pizzapics/tondo.jpg" alt="John Martin Tondo" />
+            <img
+              src="assets/images/pizzapics/tondo.jpg"
+              alt="John Martin Tondo"
+            />
             <div class="member-overlay">
-              <a href="https://www.facebook.com/TondoaJohnMartin" target="_blank"><ion-icon name="logo-facebook"></ion-icon></a>
+              <a
+                href="https://www.facebook.com/TondoaJohnMartin"
+                target="_blank"
+                ><ion-icon name="logo-facebook"></ion-icon
+              ></a>
               <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
               <a href="#"><ion-icon name="logo-linkedin"></ion-icon></a>
             </div>
@@ -227,12 +305,16 @@
           </div>
         </div>
 
-
         <div class="team-card">
           <div class="member-image">
-            <img src="assets/images/pizzapics/beltran.jpg" alt="Dianna Beltran" />
+            <img
+              src="assets/images/pizzapics/beltran.jpg"
+              alt="Dianna Beltran"
+            />
             <div class="member-overlay">
-              <a href="https://www.facebook.com/diannuhhh" target="_blank"><ion-icon name="logo-facebook"></ion-icon></a>
+              <a href="https://www.facebook.com/diannuhhh" target="_blank"
+                ><ion-icon name="logo-facebook"></ion-icon
+              ></a>
               <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
               <a href="#"><ion-icon name="logo-linkedin"></ion-icon></a>
             </div>
@@ -246,19 +328,36 @@
     </div>
   </section>
 
-
   <!-- FOOTER -->
   <footer id="contact">
     <div class="footer-container">
       <div class="footer-brand">
         <div class="logo">
-          <img src="assets/pizzapics/oven2doorlogo.png" alt="Oven2Door Logo" />
+          <img
+            src="assets/images/pizzapics/oven2doorlogo.png"
+            alt="Oven2Door Logo"
+          />
         </div>
         <p>Fresh pizza. Big flavors. Delivered right to your door.</p>
         <div class="social-links">
-          <a href="https://www.facebook.com/trixieanne.sarmiento.1" target="_blank" aria-label="Facebook"><ion-icon name="logo-facebook"></ion-icon></a>
-          <a href="https://www.instagram.com/_tondor/?hl=en" target="_blank" aria-label="Instagram"><ion-icon name="logo-instagram"></ion-icon></a>
-          <a href="https://www.tiktok.com/@matchafreyp_?lang=en" target="_blank" aria-label="TikTok"><ion-icon name="logo-tiktok"></ion-icon></a>
+          <a
+            href="https://www.facebook.com/trixieanne.sarmiento.1"
+            target="_blank"
+            aria-label="Facebook"
+            ><ion-icon name="logo-facebook"></ion-icon
+          ></a>
+          <a
+            href="https://www.instagram.com/_tondor/?hl=en"
+            target="_blank"
+            aria-label="Instagram"
+            ><ion-icon name="logo-instagram"></ion-icon
+          ></a>
+          <a
+            href="https://www.tiktok.com/@matchafreyp_?lang=en"
+            target="_blank"
+            aria-label="TikTok"
+            ><ion-icon name="logo-tiktok"></ion-icon
+          ></a>
         </div>
       </div>
       <div class="footer-column">
@@ -281,7 +380,10 @@
       </div>
       <div class="footer-column contact-column">
         <h3>CONTACT US</h3>
-        <p><ion-icon name="location-outline"></ion-icon> Metro Manila, Philippines</p>
+        <p>
+          <ion-icon name="location-outline"></ion-icon> Metro Manila,
+          Philippines
+        </p>
         <p><ion-icon name="call-outline"></ion-icon> +63 912 345 6789</p>
         <p><ion-icon name="mail-outline"></ion-icon> oven2door@gmail.com</p>
       </div>
