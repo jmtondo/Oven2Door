@@ -1,33 +1,20 @@
-```html
 <ion-content class="signup-content">
-
   <div class="signup-wrapper">
-
     <div class="signup-card">
-
       <!-- Logo -->
       <div class="logo-container">
-        <img
-          src="assets/oven2doorlogo.png"
-          alt="Oven2Door Logo">
+        <img src="assets/oven2doorlogo.png" alt="Oven2Door Logo" />
       </div>
 
       <!-- Title -->
       <h1>Create Account</h1>
 
-      <form
-        (ngSubmit)="submit()"
-        #signupForm="ngForm">
-
+      <form (ngSubmit)="submit()" #signupForm="ngForm">
         <!-- First Name -->
         <div class="input-group">
-
-          <label for="firstName">
-            First Name
-          </label>
+          <label for="firstName"> First Name </label>
 
           <div class="input-wrapper">
-
             <ion-input
               id="firstName"
               name="firstName"
@@ -35,30 +22,24 @@
               placeholder="Enter first name"
               [(ngModel)]="firstName"
               required
-              #firstNameInput="ngModel">
+              #firstNameInput="ngModel"
+            >
             </ion-input>
-
           </div>
 
           <div
             class="error-message"
-            *ngIf="firstNameInput.invalid && firstNameInput.touched">
-
+            *ngIf="firstNameInput.invalid && firstNameInput.touched"
+          >
             Enter first name
-
           </div>
-
         </div>
 
         <!-- Last Name -->
         <div class="input-group">
-
-          <label for="lastName">
-            Last Name
-          </label>
+          <label for="lastName"> Last Name </label>
 
           <div class="input-wrapper">
-
             <ion-input
               id="lastName"
               name="lastName"
@@ -66,30 +47,24 @@
               placeholder="Enter last name"
               [(ngModel)]="lastName"
               required
-              #lastNameInput="ngModel">
+              #lastNameInput="ngModel"
+            >
             </ion-input>
-
           </div>
 
           <div
             class="error-message"
-            *ngIf="lastNameInput.invalid && lastNameInput.touched">
-
+            *ngIf="lastNameInput.invalid && lastNameInput.touched"
+          >
             Enter last name
-
           </div>
-
         </div>
 
         <!-- Email -->
         <div class="input-group">
-
-          <label for="email">
-            Email Address
-          </label>
+          <label for="email"> Email Address </label>
 
           <div class="input-wrapper">
-
             <ion-icon name="mail-outline"></ion-icon>
 
             <ion-input
@@ -100,36 +75,28 @@
               [(ngModel)]="email"
               required
               email
-              #emailInput="ngModel">
+              #emailInput="ngModel"
+            >
             </ion-input>
-
           </div>
 
           <div
             class="error-message"
-            *ngIf="emailInput.invalid && emailInput.touched">
-
-            <span *ngIf="emailInput.errors?.['required']">
-              Enter email
-            </span>
+            *ngIf="emailInput.invalid && emailInput.touched"
+          >
+            <span *ngIf="emailInput.errors?.['required']"> Enter email </span>
 
             <span *ngIf="emailInput.errors?.['email']">
               Enter a valid email
             </span>
-
           </div>
-
         </div>
 
         <!-- Mobile -->
         <div class="input-group">
-
-          <label for="mobile">
-            Mobile Number
-          </label>
+          <label for="mobile"> Mobile Number </label>
 
           <div class="input-wrapper">
-
             <ion-input
               id="mobile"
               name="mobile"
@@ -137,30 +104,24 @@
               placeholder="Enter mobile number"
               [(ngModel)]="mobile"
               required
-              #mobileInput="ngModel">
+              #mobileInput="ngModel"
+            >
             </ion-input>
-
           </div>
 
           <div
             class="error-message"
-            *ngIf="mobileInput.invalid && mobileInput.touched">
-
+            *ngIf="mobileInput.invalid && mobileInput.touched"
+          >
             Enter mobile number
-
           </div>
-
         </div>
 
         <!-- Password -->
         <div class="input-group">
-
-          <label for="password">
-            Password
-          </label>
+          <label for="password"> Password </label>
 
           <div class="input-wrapper">
-
             <ion-input
               id="password"
               name="password"
@@ -169,26 +130,26 @@
               [(ngModel)]="password"
               required
               minlength="6"
-              #passwordInput="ngModel">
+              #passwordInput="ngModel"
+            >
             </ion-input>
 
             <button
               type="button"
               class="visibility-button"
-              (click)="togglePassword()">
-
+              (click)="togglePassword()"
+            >
               <ion-icon
-                [name]="obscurePassword ? 'eye-outline' : 'eye-off-outline'">
+                [name]="obscurePassword ? 'eye-outline' : 'eye-off-outline'"
+              >
               </ion-icon>
-
             </button>
-
           </div>
 
           <div
             class="error-message"
-            *ngIf="passwordInput.invalid && passwordInput.touched">
-
+            *ngIf="passwordInput.invalid && passwordInput.touched"
+          >
             <span *ngIf="passwordInput.errors?.['required']">
               Enter password
             </span>
@@ -196,20 +157,14 @@
             <span *ngIf="passwordInput.errors?.['minlength']">
               Password must be at least 6 characters
             </span>
-
           </div>
-
         </div>
 
         <!-- Confirm Password -->
         <div class="input-group">
-
-          <label for="confirmPassword">
-            Confirm Password
-          </label>
+          <label for="confirmPassword"> Confirm Password </label>
 
           <div class="input-wrapper">
-
             <ion-input
               id="confirmPassword"
               name="confirmPassword"
@@ -217,20 +172,20 @@
               placeholder="Confirm password"
               [(ngModel)]="confirmPassword"
               required
-              #confirmPasswordInput="ngModel">
+              #confirmPasswordInput="ngModel"
+            >
             </ion-input>
 
             <button
               type="button"
               class="visibility-button"
-              (click)="toggleConfirmPassword()">
-
+              (click)="toggleConfirmPassword()"
+            >
               <ion-icon
-                [name]="obscureConfirmPassword ? 'eye-outline' : 'eye-off-outline'">
+                [name]="obscureConfirmPassword ? 'eye-outline' : 'eye-off-outline'"
+              >
               </ion-icon>
-
             </button>
-
           </div>
 
           <div
@@ -238,32 +193,21 @@
             *ngIf="
               confirmPasswordInput.touched &&
               confirmPassword !== password
-            ">
-
+            "
+          >
             Passwords do not match
-
           </div>
-
         </div>
 
         <!-- Terms -->
         <div class="terms-row">
-
           <label class="terms-container">
-
-            <input
-              type="checkbox"
-              name="agree"
-              [(ngModel)]="agree">
+            <input type="checkbox" name="agree" [(ngModel)]="agree" />
 
             <span class="custom-checkbox"></span>
 
-            <span>
-              I agree to the Terms & Privacy Policy
-            </span>
-
+            <span> I agree to the Terms & Privacy Policy </span>
           </label>
-
         </div>
 
         <!-- Create Account -->
@@ -271,42 +215,23 @@
           expand="block"
           type="submit"
           class="create-button"
-          [disabled]="loading">
+          [disabled]="loading"
+        >
+          <ion-spinner *ngIf="loading" name="crescent"> </ion-spinner>
 
-          <ion-spinner
-            *ngIf="loading"
-            name="crescent">
-          </ion-spinner>
-
-          <span *ngIf="!loading">
-            Create Account
-          </span>
-
+          <span *ngIf="!loading"> Create Account </span>
         </ion-button>
 
         <!-- Login -->
         <div class="login-row">
+          <span> Already have an account? </span>
 
-          <span>
-            Already have an account?
-          </span>
-
-          <button
-            type="button"
-            class="login-link"
-            (click)="goToLogin()">
-
+          <button type="button" class="login-link" (click)="goToLogin()">
             Log In
-
           </button>
-
         </div>
-
       </form>
-
     </div>
-
   </div>
-
 </ion-content>
 ```
