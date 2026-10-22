@@ -185,9 +185,12 @@ export class OrderService {
         toppingIds: item.toppings.map((topping) => topping.id),
       })),
     };
-
+    console.log('[ORDER DEBUG] Promo code:', payload.promoCode);
+    console.log('[ORDER DEBUG] Payment method:', payload.paymentMethod);
+    console.log('[ORDER DEBUG] Request ID:', payload.requestId);
     const response = await fetch(
       'https://oven2door-backend.vercel.app/api/createOrder',
+
       {
         method: 'POST',
         headers: {

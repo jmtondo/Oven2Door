@@ -70,25 +70,37 @@ interface CheckoutAddress {
 })
 export class CheckoutPage implements OnInit {
   async loadAppliedPromo(): Promise<void> {
+    this.promoLoading = true;
+    this.promoError = '';
     this.discount = 0;
 
-    if (!this.promoCode) return;
-
     try {
+      if (!this.promoCode) return;
+
       const promo = await this.promoService.validatePromo(
         this.promoCode,
         this.subtotal,
       );
 
       this.discount = promo.discount;
-      this.cdr.detectChanges();
+
+      console.log('[CHECKOUT] Promo validated:', {
+        code: promo.code,
+        discount: promo.discount,
+        total: this.total,
+      });
     } catch (error) {
-      console.error('Promo validation failed:', error);
+      console.error('[CHECKOUT] Promo validation failed:', error);
 
-      this.promoCode = null;
+      this.promoError =
+        error instanceof Error
+          ? error.message
+          : 'Unable to validate your promo code.';
+
+      // Keep the promo code so the customer can retry.
       this.discount = 0;
-      sessionStorage.removeItem('oven2doorPromoCode');
-
+    } finally {
+      this.promoLoading = false;
       this.cdr.detectChanges();
     }
   }
@@ -127,9 +139,15 @@ export class CheckoutPage implements OnInit {
   // 'card' = Maya Online Payment
   paymentMethod = 'cod';
 
+  // PROMO CODE
   discount = 0;
   promoCode: string | null = null;
 
+  // PROMO VALIDATION STATUS
+  promoLoading = false;
+  promoError = '';
+
+  // ORDER PROCESSING
   isPlacingOrder = false;
 
   constructor(
@@ -500,6 +518,19 @@ export class CheckoutPage implements OnInit {
     if (this.isPlacingOrder) {
       return;
     }
+    // Validate promo before creating the order
+    if (this.promoCode) {
+      await this.loadAppliedPromo();
+
+      if (this.promoError) {
+        alert(
+          'Your promo could not be validated: ' +
+            this.promoError +
+            '\nPlease try again before placing your order.',
+        );
+        return;
+      }
+    }
 
     // ------------------------------------------
     // Check Firebase login
@@ -620,7 +651,9 @@ export class CheckoutPage implements OnInit {
       // ========================================
       // CREATE FIRESTORE ORDER
       // ========================================
-
+      console.log('[CHECKOUT DEBUG] Promo:', this.promoCode);
+      console.log('[CHECKOUT DEBUG] Discount:', this.discount);
+      console.log('[CHECKOUT DEBUG] Total:', this.total);
       const createdOrder = await this.orderService.createOrder({
         promoCode: this.promoCode,
         userId: user.uid,

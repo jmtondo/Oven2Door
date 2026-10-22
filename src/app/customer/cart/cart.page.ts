@@ -183,7 +183,7 @@ export class CartPage implements OnInit, OnDestroy {
       console.log('[CART] Subtotal before:', subtotalAtStart);
       console.log('[CART] Subtotal now:', this.subtotal);
 
-      if (this.subtotal !== subtotalAtStart) {
+      if (this.subtotal !== subtotalAtStart || this.cartItems.length === 0) {
         throw new Error('Your cart changed. Please apply the promo again.');
       }
 

@@ -1,0 +1,17 @@
+{
+  "name": "Oven2Door",
+  "short_name": "Oven2Door",
+  "description": "Freshly baked favorites delivered to your door.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/assets/icon/favicon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
