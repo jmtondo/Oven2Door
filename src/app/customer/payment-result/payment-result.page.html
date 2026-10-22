@@ -85,11 +85,13 @@
 
     <!-- Return to checkout -->
     <ion-button
-      *ngIf="status === 'failed' || status === 'cancelled'"
+      *ngIf="status === 'pending' || status === 'failed' || status === 'cancelled'"
       expand="block"
+      fill="outline"
       (click)="goToCheckout()"
     >
-      Return to Checkout
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      Start New Checkout
     </ion-button>
 
     <!-- Back to home -->

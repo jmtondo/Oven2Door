@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-
+import { refreshOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -190,12 +190,34 @@ export class PaymentResultPage implements OnInit {
         return;
       }
 
+      // Payment was confirmed as failed by the backend
+      if (data?.status === 'failed') {
+        this.status = 'failed';
+
+        this.message =
+          data?.message ||
+          'Your Maya payment was unsuccessful. ' +
+            'Your order has not been paid.';
+
+        return;
+      }
+
+      // Payment was confirmed as cancelled by the backend
+      if (data?.status === 'cancelled') {
+        this.status = 'cancelled';
+
+        this.message = data?.message || 'Your Maya payment was cancelled.';
+
+        return;
+      }
+
+      // Payment is still pending or its outcome is unknown
       this.status = 'pending';
 
       this.message =
         data?.message ||
         'Your payment has not been confirmed yet. ' +
-          'Please check your order history before attempting another payment.';
+          'Please check again before attempting another payment.';
     } catch (error) {
       console.error('Maya payment verification failed:', error);
 
