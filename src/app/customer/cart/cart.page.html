@@ -168,7 +168,22 @@
 
             <!-- PRICE -->
             <div class="item-price">
-              ₱{{ item.product.price | number:'1.2-2' }}
+              <strong> ₱{{ itemUnitPrice(item) | number:'1.2-2' }} </strong>
+
+              <div class="price-breakdown">
+                <small *ngIf="item.size">
+                  {{ item.size.name }}: ₱{{ item.size.price | number:'1.2-2' }}
+                </small>
+
+                <small *ngIf="item.crust && item.crust.price > 0">
+                  {{ item.crust.name }}: +₱{{ item.crust.price | number:'1.2-2'
+                  }}
+                </small>
+
+                <small *ngFor="let topping of item.toppings">
+                  {{ topping.name }}: +₱{{ topping.price | number:'1.2-2' }}
+                </small>
+              </div>
             </div>
 
             <!-- QUANTITY -->
@@ -269,22 +284,23 @@
 
         <aside class="cart-summary">
           <div class="summary-top">
-            <span class="small-label"> ORDER SUMMARY </span>
-
+            <span class="small-label">ORDER SUMMARY</span>
             <h2>CART TOTAL</h2>
-
-            <h6>(Excluding Delivery Fee)</h6>
+            <h6>Including Delivery Fee</h6>
           </div>
 
           <div class="summary-row">
-            <span> Subtotal </span>
-
-            <strong> ₱{{ subtotal | number:'1.2-2' }} </strong>
+            <span>Subtotal</span>
+            <strong>₱{{ subtotal | number:'1.2-2' }}</strong>
           </div>
 
           <div class="summary-row">
-            <span> Discount </span>
+            <span>Delivery Fee</span>
+            <strong>₱{{ deliveryFee | number:'1.2-2' }}</strong>
+          </div>
 
+          <div class="summary-row">
+            <span>Discount</span>
             <strong class="discount">
               − ₱{{ discount | number:'1.2-2' }}
             </strong>
@@ -293,21 +309,18 @@
           <div class="summary-divider"></div>
 
           <div class="summary-total">
-            <span> Total </span>
-
-            <strong> ₱{{ total | number:'1.2-2' }} </strong>
+            <span>Total</span>
+            <strong>₱{{ total | number:'1.2-2' }}</strong>
           </div>
 
           <button type="button" class="checkout-btn" routerLink="/checkout">
             PROCEED TO CHECKOUT
-
             <ion-icon name="arrow-forward-outline"></ion-icon>
           </button>
 
           <div class="secure-payment">
             <ion-icon name="shield-checkmark-outline"></ion-icon>
-
-            <span> Secure checkout & fast delivery </span>
+            <span>Secure checkout & fast delivery</span>
           </div>
         </aside>
       </div>

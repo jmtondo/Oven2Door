@@ -31,7 +31,12 @@ import {
 
 import { StorefrontService } from '../../services/storefront.service';
 
-import { CartLine, money, lineSubtotal } from '../../models/storefront.models';
+import {
+  CartLine,
+  money,
+  lineSubtotal,
+  unitPrice,
+} from '../../models/storefront.models';
 
 @Component({
   selector: 'app-cart',
@@ -79,6 +84,10 @@ export class CartPage implements OnInit, OnDestroy {
       callOutline,
       mailOutline,
     });
+  }
+
+  itemUnitPrice(item: CartLine): number {
+    return unitPrice(item);
   }
 
   ngOnInit(): void {
