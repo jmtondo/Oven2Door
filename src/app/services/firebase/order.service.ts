@@ -201,10 +201,32 @@ export class OrderService {
       },
     );
 
-    const result = await response.json();
+    const responseText = await response.text();
+
+    console.log('[CREATE ORDER] HTTP Status:', response.status);
+    console.log('[CREATE ORDER] Response URL:', response.url);
+    console.log('[CREATE ORDER] Response Body:', responseText);
+
+    let result: any;
+
+    try {
+      result = responseText ? JSON.parse(responseText) : null;
+    } catch {
+      throw new Error(
+        `Create Order API returned invalid JSON (HTTP ${response.status}).`,
+      );
+    }
 
     if (!response.ok) {
-      throw new Error(result?.error || 'Unable to place your order.');
+      throw new Error(
+        result?.error || `Create Order failed (HTTP ${response.status}).`,
+      );
+    }
+
+    if (!result?.orderId || !result?.orderNumber) {
+      throw new Error(
+        'Create Order API did not return valid order information.',
+      );
     }
 
     return {

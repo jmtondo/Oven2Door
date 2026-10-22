@@ -511,6 +511,9 @@ export class CheckoutPage implements OnInit {
   // ==========================================
 
   async placeOrder(): Promise<void> {
+    console.log('[CHECKOUT] Place Order clicked');
+    console.log('[CHECKOUT] Payment:', this.paymentMethod);
+    console.log('[CHECKOUT] Promo:', this.promoCode);
     // ------------------------------------------
     // Prevent duplicate clicks
     // ------------------------------------------
@@ -626,6 +629,9 @@ export class CheckoutPage implements OnInit {
 
     try {
       this.isPlacingOrder = true;
+      console.log('[CHECKOUT DEBUG] Validation completed');
+      console.log('[CHECKOUT DEBUG] Payment method:', this.paymentMethod);
+      console.log('[CHECKOUT DEBUG] Promo code:', this.promoCode);
 
       console.log('Creating Firebase order...');
 
@@ -654,6 +660,7 @@ export class CheckoutPage implements OnInit {
       console.log('[CHECKOUT DEBUG] Promo:', this.promoCode);
       console.log('[CHECKOUT DEBUG] Discount:', this.discount);
       console.log('[CHECKOUT DEBUG] Total:', this.total);
+      console.log('[CHECKOUT] Starting createOrder API request');
       const createdOrder = await this.orderService.createOrder({
         promoCode: this.promoCode,
         userId: user.uid,
