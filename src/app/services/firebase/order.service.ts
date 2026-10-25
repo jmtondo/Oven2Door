@@ -198,7 +198,7 @@ export class OrderService {
           Authorization: `Bearer ${idToken}`,
         },
         body: JSON.stringify(payload),
-      },
+      }
     );
 
     const responseText = await response.text();
@@ -213,19 +213,19 @@ export class OrderService {
       result = responseText ? JSON.parse(responseText) : null;
     } catch {
       throw new Error(
-        `Create Order API returned invalid JSON (HTTP ${response.status}).`,
+        `Create Order API returned invalid JSON (HTTP ${response.status}).`
       );
     }
 
     if (!response.ok) {
       throw new Error(
-        result?.error || `Create Order failed (HTTP ${response.status}).`,
+        result?.error || `Create Order failed (HTTP ${response.status}).`
       );
     }
 
     if (!result?.orderId || !result?.orderNumber) {
       throw new Error(
-        'Create Order API did not return valid order information.',
+        'Create Order API did not return valid order information.'
       );
     }
 
@@ -242,7 +242,7 @@ export class OrderService {
   observeOrder(
     orderId: string,
     next: (order: TrackedOrder | undefined) => void,
-    error: (reason: Error) => void,
+    error: (reason: Error) => void
   ): Unsubscribe {
     if (!orderId.trim()) {
       error(new Error('Invalid order ID.'));
@@ -265,7 +265,7 @@ export class OrderService {
         console.error('Failed to observe order:', firebaseError);
 
         error(firebaseError);
-      },
+      }
     );
   }
 
@@ -276,20 +276,18 @@ export class OrderService {
   observeCustomerOrders(
     userId: string,
     next: (orders: TrackedOrder[]) => void,
-    error: (reason: Error) => void,
+    error: (reason: Error) => void
   ): Unsubscribe {
     return onSnapshot(
       query(
         collection(db, 'orders'),
         where('userId', '==', userId),
-        orderBy('createdAt', 'desc'),
+        orderBy('createdAt', 'desc')
       ),
 
       (snapshot) => {
         next(
-          snapshot.docs.map((item) =>
-            this.toTrackedOrder(item.id, item.data()),
-          ),
+          snapshot.docs.map((item) => this.toTrackedOrder(item.id, item.data()))
         );
       },
 
@@ -297,7 +295,7 @@ export class OrderService {
         console.error('Failed to observe customer orders:', firebaseError);
 
         error(firebaseError);
-      },
+      }
     );
   }
 
@@ -308,20 +306,18 @@ export class OrderService {
   observeAssignedOrders(
     riderId: string,
     next: (orders: TrackedOrder[]) => void,
-    error: (reason: Error) => void,
+    error: (reason: Error) => void
   ): Unsubscribe {
     return onSnapshot(
       query(
         collection(db, 'orders'),
         where('assignedRiderId', '==', riderId),
-        orderBy('updatedAt', 'desc'),
+        orderBy('updatedAt', 'desc')
       ),
 
       (snapshot) => {
         next(
-          snapshot.docs.map((item) =>
-            this.toTrackedOrder(item.id, item.data()),
-          ),
+          snapshot.docs.map((item) => this.toTrackedOrder(item.id, item.data()))
         );
       },
 
@@ -329,7 +325,7 @@ export class OrderService {
         console.error('Failed to observe rider orders:', firebaseError);
 
         error(firebaseError);
-      },
+      }
     );
   }
 
@@ -339,16 +335,14 @@ export class OrderService {
 
   observeAllOrders(
     next: (orders: TrackedOrder[]) => void,
-    error: (reason: Error) => void,
+    error: (reason: Error) => void
   ): Unsubscribe {
     return onSnapshot(
       query(collection(db, 'orders'), orderBy('updatedAt', 'desc')),
 
       (snapshot) => {
         next(
-          snapshot.docs.map((item) =>
-            this.toTrackedOrder(item.id, item.data()),
-          ),
+          snapshot.docs.map((item) => this.toTrackedOrder(item.id, item.data()))
         );
       },
 
@@ -356,7 +350,7 @@ export class OrderService {
         console.error('Failed to observe all orders:', firebaseError);
 
         error(firebaseError);
-      },
+      }
     );
   }
 
@@ -374,13 +368,66 @@ export class OrderService {
       : 'customer';
   }
 
+  canCancelOrder(order: TrackedOrder): boolean {
+    if (order.orderStatus !== 'placed') {
+      return false;
+    }
+
+    const method = order.paymentMethod.trim().toLowerCase();
+
+    // First phase: COD only.
+    // Maya requires server-side payment verification.
+    return (
+      method === 'cod' && order.paymentStatus.trim().toLowerCase() !== 'paid'
+    );
+  }
+
+  async cancelOrder(orderId: string, reason: string): Promise<void> {
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error('Please sign in to cancel your order.');
+    }
+
+    const cleanReason = reason.trim();
+
+    if (cleanReason.length < 5 || cleanReason.length > 500) {
+      throw new Error(
+        'Please provide a cancellation reason (5–500 characters).'
+      );
+    }
+
+    const token = await user.getIdToken();
+
+    const response = await fetch(
+      'https://oven2door-backend.vercel.app/api/cancelOrder',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          orderId,
+          reason: cleanReason,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result?.error || 'Unable to cancel your order.');
+    }
+  }
+
   // ==========================================
   // RIDER STATUS UPDATE
   // ==========================================
 
   async updateRiderStatus(
     orderId: string,
-    status: Extract<OrderStatus, 'picked_up' | 'on_the_way' | 'delivered'>,
+    status: Extract<OrderStatus, 'picked_up' | 'on_the_way' | 'delivered'>
   ): Promise<void> {
     await this.updateOrder(orderId, status);
   }
@@ -393,13 +440,13 @@ export class OrderService {
     orderId: string,
     status: OrderStatus,
     riderId?: string,
-    riderName?: string,
+    riderName?: string
   ): Promise<void> {
     // Cancellation must use a secure backend transaction.
     // Do not allow direct Firestore cancellation.
     if (status === 'cancelled') {
       throw new Error(
-        'Order cancellation must be processed through the secure cancellation API.',
+        'Order cancellation must be processed through the secure cancellation API.'
       );
     }
 
@@ -423,7 +470,7 @@ export class OrderService {
 
   startBrowserLocationTracking(
     orderId: string,
-    onError: (message: string) => void,
+    onError: (message: string) => void
   ): number | null {
     if (!navigator.geolocation) {
       onError('This browser does not support location sharing.');
@@ -452,7 +499,7 @@ export class OrderService {
           onError(
             error instanceof Error
               ? error.message
-              : 'Unable to update your location.',
+              : 'Unable to update your location.'
           );
         }
       },
@@ -461,7 +508,7 @@ export class OrderService {
         console.error('Geolocation error:', positionError);
 
         onError(
-          positionError.message || 'Location permission was not granted.',
+          positionError.message || 'Location permission was not granted.'
         );
       },
 
@@ -469,7 +516,7 @@ export class OrderService {
         enableHighAccuracy: true,
         maximumAge: 10_000,
         timeout: 15_000,
-      },
+      }
     );
   }
 
@@ -490,7 +537,7 @@ export class OrderService {
   private async updateOrder(
     orderId: string,
     status: OrderStatus,
-    extra: Record<string, unknown> = {},
+    extra: Record<string, unknown> = {}
   ): Promise<void> {
     await updateDoc(doc(db, 'orders', orderId), {
       ...extra,
@@ -512,12 +559,12 @@ export class OrderService {
 
   private toTrackedOrder(
     id: string,
-    data: Record<string, unknown>,
+    data: Record<string, unknown>
   ): TrackedOrder {
     const rawStatus = data['orderStatus'];
 
     const orderStatus: OrderStatus = ORDER_STATUSES.includes(
-      rawStatus as OrderStatus,
+      rawStatus as OrderStatus
     )
       ? (rawStatus as OrderStatus)
       : 'placed';
@@ -528,11 +575,11 @@ export class OrderService {
 
     const customer: TrackedOrder['customer'] = {
       firstName: String(
-        (customerData as Record<string, unknown>)?.['firstName'] ?? '',
+        (customerData as Record<string, unknown>)?.['firstName'] ?? ''
       ),
 
       lastName: String(
-        (customerData as Record<string, unknown>)?.['lastName'] ?? '',
+        (customerData as Record<string, unknown>)?.['lastName'] ?? ''
       ),
 
       email: String((customerData as Record<string, unknown>)?.['email'] ?? ''),
@@ -542,21 +589,21 @@ export class OrderService {
 
     const deliveryAddress: TrackedOrder['deliveryAddress'] = {
       address: String(
-        (addressData as Record<string, unknown>)?.['address'] ?? '',
+        (addressData as Record<string, unknown>)?.['address'] ?? ''
       ),
 
       barangay: String(
-        (addressData as Record<string, unknown>)?.['barangay'] ?? '',
+        (addressData as Record<string, unknown>)?.['barangay'] ?? ''
       ),
 
       city: String((addressData as Record<string, unknown>)?.['city'] ?? ''),
 
       province: String(
-        (addressData as Record<string, unknown>)?.['province'] ?? '',
+        (addressData as Record<string, unknown>)?.['province'] ?? ''
       ),
 
       postalCode: String(
-        (addressData as Record<string, unknown>)?.['postalCode'] ?? '',
+        (addressData as Record<string, unknown>)?.['postalCode'] ?? ''
       ),
     };
 
@@ -726,7 +773,7 @@ export class OrderService {
           Authorization: `Bearer ${idToken}`,
         },
         body: JSON.stringify({ orderId }),
-      },
+      }
     );
 
     const result = await response.json();
@@ -737,7 +784,7 @@ export class OrderService {
       console.error('Order confirmation email error:', result);
 
       throw new Error(
-        result?.error || 'Failed to send order confirmation email.',
+        result?.error || 'Failed to send order confirmation email.'
       );
     }
 

@@ -300,10 +300,7 @@
 
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.025);
 
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
   &:hover {
     border-color: #e9a5a0;
@@ -482,6 +479,93 @@
   &.cancelled {
     background: #fee2e2;
     color: #b91c1c;
+  }
+}
+
+/* CUSTOMER ORDER CANCELLATION */
+
+.order-cancellation {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin-top: 20px;
+  padding: 18px;
+
+  background: #fff8f7;
+  border: 1px solid #f2d9d6;
+  border-radius: 12px;
+}
+
+.cancellation-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  ion-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: #c9211b;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0;
+    color: #666666;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+
+.cancel-order-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 11px 18px;
+
+  background: #ffffff;
+  border: 1px solid #c9211b;
+  border-radius: 10px;
+
+  color: #c9211b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  ion-icon {
+    font-size: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #c9211b;
+    color: #ffffff;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #f2a6a0;
+    outline-offset: 3px;
+  }
+}
+
+@media (max-width: 600px) {
+  .order-cancellation {
+    padding: 15px;
+  }
+
+  .cancel-order-btn {
+    width: 100%;
   }
 }
 
@@ -1027,9 +1111,7 @@
     outline: none;
     box-shadow: none;
 
-    transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     &:focus {
       border-color: #d9251d;

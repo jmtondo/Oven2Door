@@ -150,6 +150,33 @@
           </span>
         </div>
 
+        <!-- CUSTOMER ORDER CANCELLATION -->
+        <div class="order-cancellation" *ngIf="canCancelOrder(selectedOrder)">
+          <div class="cancellation-info">
+            <ion-icon name="information-circle-outline"></ion-icon>
+
+            <p>
+              Need to change your order? You can cancel before preparation
+              begins.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="cancel-order-btn"
+            [disabled]="cancellingOrder"
+            (click)="confirmCancelOrder()"
+          >
+            <ion-icon name="close-circle-outline"></ion-icon>
+            {{ cancellingOrder ? 'Cancelling...' : 'Cancel Order' }}
+          </button>
+        </div>
+
+        <div *ngIf="cancellationError" class="issue-error" role="alert">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          {{ cancellationError }}
+        </div>
+
         <!-- CANCELLED ORDER -->
         <div
           *ngIf="selectedOrder.orderStatus === 'cancelled'"

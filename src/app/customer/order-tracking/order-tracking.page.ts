@@ -17,7 +17,7 @@ import {
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { IonContent, IonIcon } from '@ionic/angular';
+import { AlertController, IonContent, IonIcon } from '@ionic/angular';
 
 import { addIcons } from 'ionicons';
 import {
@@ -34,6 +34,8 @@ import {
   locationOutline,
   receiptOutline,
   timeOutline,
+  closeCircleOutline,
+  informationCircleOutline,
 } from 'ionicons/icons';
 
 import * as L from 'leaflet';
@@ -101,7 +103,7 @@ export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
 
           console.error(error);
           this.cdr.detectChanges();
-        },
+        }
       );
     } catch (error) {
       this.refundLoading = false;
@@ -238,6 +240,92 @@ export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
 
   error = '';
 
+  cancellingOrder = false;
+  cancellationError = '';
+
+  canCancelOrder(order?: TrackedOrder): boolean {
+    return (
+      !!order &&
+      order.orderStatus === 'placed' &&
+      order.paymentMethod === 'cod' &&
+      order.paymentStatus === 'pending'
+    );
+  }
+
+  async confirmCancelOrder(): Promise<void> {
+    const order = this.selectedOrder;
+
+    if (!order || !this.canCancelOrder(order) || this.cancellingOrder) {
+      return;
+    }
+
+    this.cancellationError = '';
+
+    const alert = await this.alertController.create({
+      header: 'Cancel Order',
+      message:
+        `Are you sure you want to cancel order ${order.orderNumber}? ` +
+        'Cancellation is only available before preparation begins.',
+      inputs: [
+        {
+          name: 'reason',
+          type: 'textarea',
+          placeholder: 'Reason for cancellation (5–500 characters)',
+          attributes: {
+            maxlength: 500,
+          },
+        },
+      ],
+      buttons: [
+        {
+          text: 'Keep Order',
+          role: 'cancel',
+        },
+        {
+          text: 'Cancel Order',
+          role: 'destructive',
+          handler: (data) => {
+            const reason = String(data?.reason ?? '').trim();
+
+            if (reason.length < 5 || reason.length > 500) {
+              this.cancellationError =
+                'Please provide a cancellation reason (5–500 characters).';
+              this.cdr.detectChanges();
+              return false;
+            }
+
+            void this.submitCancellation(order.id, reason);
+            return true;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  private async submitCancellation(
+    orderId: string,
+    reason: string
+  ): Promise<void> {
+    if (this.cancellingOrder) return;
+
+    this.cancellingOrder = true;
+    this.cancellationError = '';
+
+    try {
+      await this.ordersService.cancelOrder(orderId, reason);
+    } catch (error) {
+      this.cancellationError =
+        error instanceof Error
+          ? error.message
+          : 'Unable to cancel your order. Please try again.';
+    } finally {
+      this.cancellingOrder = false;
+      this.cdr.detectChanges();
+    }
+  }
+
   private unsubscribe?: Unsubscribe;
 
   private authUnsubscribe?: Unsubscribe;
@@ -256,6 +344,7 @@ export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
     private readonly refundRequestService: RefundRequestService,
     private readonly route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef,
+    private readonly alertController: AlertController
   ) {
     addIcons({
       alertCircleOutline,
@@ -347,7 +436,7 @@ export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
             'Unable to load your orders. Check Firestore permissions or indexes.';
 
           this.cdr.detectChanges();
-        },
+        }
       );
     });
   }
@@ -408,7 +497,7 @@ export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     const currentIndex = this.steps.findIndex(
-      (item) => item.status === this.selectedOrder?.orderStatus,
+      (item) => item.status === this.selectedOrder?.orderStatus
     );
 
     const stepIndex = this.steps.findIndex((item) => item.status === step);
@@ -425,7 +514,7 @@ export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   asDate(
-    value: { toDate?: () => Date } | Date | null | undefined,
+    value: { toDate?: () => Date } | Date | null | undefined
   ): Date | undefined {
     if (!value) {
       return undefined;
@@ -487,7 +576,7 @@ export class OrderTrackingPage implements OnInit, AfterViewChecked, OnDestroy {
 
       const coordinates = data.routes[0].geometry.coordinates.map(
         (coordinate: [number, number]) =>
-          [coordinate[1], coordinate[0]] as L.LatLngExpression,
+          [coordinate[1], coordinate[0]] as L.LatLngExpression
       );
 
       if (this.routeLine) {
