@@ -399,26 +399,65 @@ export class OrderService {
 
     const token = await user.getIdToken();
 
-    const response = await fetch(
-      'https://oven2door-backend.vercel.app/api/cancelOrder',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          orderId,
-          reason: cleanReason,
-        }),
-      }
-    );
+    let response: Response;
 
-    const result = await response.json();
+    try {
+      response = await fetch(
+        'https://oven2door-backend.vercel.app/api/cancelOrder',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            orderId,
+            reason: cleanReason,
+          }),
+        }
+      );
+    } catch (error) {
+      console.error('Cancellation network error:', error);
+
+      throw new Error(
+        'Cannot connect to the cancellation server. Check your internet connection or server configuration.'
+      );
+    }
+
+    console.log('Cancellation HTTP status:', response.status);
+    console.log('Cancellation response OK:', response.ok);
+
+    const rawResponse = await response.text();
+
+    console.log('Cancellation response body:', rawResponse.substring(0, 1000));
+
+    let result: { error?: string; message?: string } = {};
+
+    if (rawResponse.trim()) {
+      try {
+        result = JSON.parse(rawResponse);
+      } catch {
+        throw new Error(
+          `Cancellation server returned invalid JSON (HTTP ${response.status}).`
+        );
+      }
+    }
 
     if (!response.ok) {
-      throw new Error(result?.error || 'Unable to cancel your order.');
+      throw new Error(
+        result?.error ||
+          result?.message ||
+          `Unable to cancel your order (HTTP ${response.status}).`
+      );
     }
+
+    if (!rawResponse.trim()) {
+      throw new Error(
+        `Cancellation server returned an empty response (HTTP ${response.status}).`
+      );
+    }
+
+    console.log('Order cancellation request succeeded.');
   }
 
   // ==========================================
