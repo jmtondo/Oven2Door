@@ -391,33 +391,111 @@
               </div>
             </div>
 
-            <!-- STATUS MESSAGE -->
-            <div class="refund-tracking-message" [ngClass]="request.status">
-              <ng-container [ngSwitch]="request.status">
-                <div *ngSwitchCase="'pending'">
-                  <strong>Request under review</strong>
+            <!-- REFUND / REQUEST STATUS MESSAGE -->
+            <div
+              class="refund-tracking-message"
+              [ngClass]="request.refundStatus || request.status"
+            >
+              <ng-container
+                *ngIf="
+      request.status === 'approved' &&
+        request.requestedResolution === 'refund';
+      else generalRequestStatus
+    "
+              >
+                <div *ngIf="request.refundStatus === 'completed'">
+                  <strong>Refund Completed</strong>
                   <p>
-                    Your issue has been submitted successfully. Our team is
-                    currently reviewing your request.
+                    Your refund has been marked as completed by Oven2Door.
+                    Please refer to the transaction details below.
                   </p>
                 </div>
 
-                <div *ngSwitchCase="'approved'">
-                  <strong>Request approved</strong>
+                <div *ngIf="request.refundStatus === 'processing'">
+                  <strong>Refund Processing</strong>
                   <p>
-                    Your request has been approved by the Oven2Door team. Please
-                    review the response below for the next steps.
+                    Your refund has been approved and is currently being
+                    processed.
                   </p>
                 </div>
 
-                <div *ngSwitchCase="'rejected'">
-                  <strong>Request rejected</strong>
+                <div
+                  *ngIf="
+        !request.refundStatus ||
+        request.refundStatus === 'not_processed'
+      "
+                >
+                  <strong>Refund Approved</strong>
                   <p>
-                    Your request was not approved. Please review the
-                    administrator's explanation.
+                    Your refund request has been approved. Our team will begin
+                    processing your refund.
                   </p>
                 </div>
               </ng-container>
+
+              <ng-template #generalRequestStatus>
+                <ng-container [ngSwitch]="request.status">
+                  <div *ngSwitchCase="'pending'">
+                    <strong>Request Under Review</strong>
+                    <p>Our team is reviewing your request.</p>
+                  </div>
+
+                  <div *ngSwitchCase="'approved'">
+                    <strong>Request Approved</strong>
+                    <p>Your request has been approved by Oven2Door.</p>
+                  </div>
+
+                  <div *ngSwitchCase="'rejected'">
+                    <strong>Request Rejected</strong>
+                    <p>Please review the administrator's explanation below.</p>
+                  </div>
+                </ng-container>
+              </ng-template>
+            </div>
+
+            <!-- REFUND DETAILS -->
+            <div
+              class="refund-tracking-details"
+              *ngIf="
+    request.status === 'approved' &&
+    request.requestedResolution === 'refund'
+  "
+            >
+              <div *ngIf="request.refundAmount != null">
+                <span>Approved Refund Amount</span>
+                <strong>
+                  {{ request.refundAmount |
+                  currency:'PHP':'symbol-narrow':'1.2-2' }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Refund Status</span>
+                <strong>
+                  {{ request.refundStatus === 'completed' ? 'Completed' :
+                  request.refundStatus === 'processing' ? 'Processing' :
+                  'Awaiting Processing' }}
+                </strong>
+              </div>
+
+              <div *ngIf="request.refundMethod">
+                <span>Refund Method</span>
+                <strong>
+                  {{ request.refundMethod.replaceAll('_', ' ') | titlecase }}
+                </strong>
+              </div>
+
+              <div *ngIf="request.refundReference">
+                <span>Transaction Reference</span>
+                <strong>{{ request.refundReference }}</strong>
+              </div>
+
+              <div *ngIf="request.refundCompletedAt">
+                <span>Date Completed</span>
+                <strong>
+                  {{ asDate(request.refundCompletedAt) | date:'medium' }}
+                </strong>
+              </div>
             </div>
 
             <!-- CUSTOMER'S ORIGINAL REPORT -->

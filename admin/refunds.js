@@ -19,6 +19,7 @@ import {
 // ==========================================
 // DOM ELEMENTS
 // ==========================================
+const REFUND_API_BASE_URL = "https://oven2door-backend.vercel.app";
 
 const mainContent = document.querySelector(".main-content");
 
@@ -64,7 +65,7 @@ const affectedItemsSection = document.getElementById("affectedItemsSection");
 const affectedItemsList = document.getElementById("affectedItemsList");
 
 const calculatedRefundAmount = document.getElementById(
-  "calculatedRefundAmount",
+  "calculatedRefundAmount"
 );
 
 const affectedItemsMessage = document.getElementById("affectedItemsMessage");
@@ -160,7 +161,7 @@ function getFixedRefundAmount(request) {
 
   if (request.refundAmount === undefined || request.refundAmount === null) {
     throw new Error(
-      "No approved refund amount has been assigned to this request.",
+      "No approved refund amount has been assigned to this request."
     );
   }
 
@@ -198,7 +199,7 @@ function getRefundableOrderItems(order) {
       toCents(unitPrice * quantity) !== toCents(subtotal)
     ) {
       throw new Error(
-        `Invalid pricing information for order item ${index + 1}.`,
+        `Invalid pricing information for order item ${index + 1}.`
       );
     }
 
@@ -272,7 +273,7 @@ function prepareRefundApproval(request, order) {
 
   if (selectedRefundItems.length === 0) {
     throw new Error(
-      "Select at least one affected item before approving the refund.",
+      "Select at least one affected item before approving the refund."
     );
   }
 
@@ -309,7 +310,7 @@ function updateCalculatedRefund() {
 
     const amount = calculateItemRefund(
       selectedRefundOrder,
-      selectedRefundItems,
+      selectedRefundItems
     );
 
     calculatedRefundAmount.textContent = formatMoney(amount);
@@ -378,12 +379,12 @@ function renderAffectedOrderItems(order, readOnly = false) {
     quantityInput.className = "refund-quantity-input";
     quantityInput.setAttribute(
       "aria-label",
-      `Refund quantity for ${item.productName}`,
+      `Refund quantity for ${item.productName}`
     );
 
     const updateSelection = () => {
       selectedRefundItems = selectedRefundItems.filter(
-        (selection) => selection.index !== item.index,
+        (selection) => selection.index !== item.index
       );
 
       if (checkbox.checked) {
@@ -552,15 +553,15 @@ function updateStatistics() {
   const total = refundRequests.length;
 
   const pending = refundRequests.filter(
-    (request) => request.status === "pending",
+    (request) => request.status === "pending"
   ).length;
 
   const approved = refundRequests.filter(
-    (request) => request.status === "approved",
+    (request) => request.status === "approved"
   ).length;
 
   const rejected = refundRequests.filter(
-    (request) => request.status === "rejected",
+    (request) => request.status === "rejected"
   ).length;
 
   if (totalRequests) {
@@ -662,7 +663,7 @@ function renderRefundRequests() {
     // Order number
     const orderNumberCell = createCell(
       request.orderNumber || request.orderId,
-      "order-number-cell",
+      "order-number-cell"
     );
 
     // Customer
@@ -670,13 +671,13 @@ function renderRefundRequests() {
 
     // Issue
     const issueCell = createCell(
-      REASON_LABELS[request.reason] || request.reason,
+      REASON_LABELS[request.reason] || request.reason
     );
 
     // Resolution
     const resolutionCell = createCell(
       RESOLUTION_LABELS[request.requestedResolution] ||
-        request.requestedResolution,
+        request.requestedResolution
     );
 
     // Date
@@ -699,7 +700,7 @@ function renderRefundRequests() {
       resolutionCell,
       dateCell,
       statusCell,
-      actionCell,
+      actionCell
     );
 
     refundTableBody.appendChild(row);
@@ -728,7 +729,7 @@ function openReviewDialog(requestId) {
   setText(
     "reviewResolution",
     RESOLUTION_LABELS[request.requestedResolution] ||
-      request.requestedResolution,
+      request.requestedResolution
   );
 
   setText("reviewReason", REASON_LABELS[request.reason] || request.reason);
@@ -737,7 +738,7 @@ function openReviewDialog(requestId) {
 
   setText(
     "reviewDescription",
-    request.description || "No description provided.",
+    request.description || "No description provided."
   );
 
   if (adminReviewNote) {
@@ -764,13 +765,13 @@ function openReviewDialog(requestId) {
   // ==========================================
 
   const fulfillmentSection = document.getElementById(
-    "refundFulfillmentSection",
+    "refundFulfillmentSection"
   );
 
   const fixedAmountElement = document.getElementById("fixedRefundAmount");
 
   const startProcessingButton = document.getElementById(
-    "startRefundProcessingBtn",
+    "startRefundProcessingBtn"
   );
 
   const completeRefundButton = document.getElementById("completeRefundBtn");
@@ -916,7 +917,7 @@ async function reviewRefundRequest(nextStatus) {
 
   const confirmed = window.confirm(
     `Are you sure you want to ${actionLabel} ` +
-      `request ${request.orderNumber || request.id}?`,
+      `request ${request.orderNumber || request.id}?`
   );
 
   if (!confirmed) return;
@@ -962,7 +963,7 @@ async function reviewRefundRequest(nextStatus) {
         !refundApproval
       ) {
         throw new Error(
-          "Select affected items and calculate the refund amount before approval.",
+          "Select affected items and calculate the refund amount before approval."
         );
       }
 
@@ -979,7 +980,7 @@ async function reviewRefundRequest(nextStatus) {
         // Verify the refund belongs to the original customer
         if (originalOrder.userId !== latestRequest.userId) {
           throw new Error(
-            "Refund request does not belong to the original order customer.",
+            "Refund request does not belong to the original order customer."
           );
         }
 
@@ -991,12 +992,12 @@ async function reviewRefundRequest(nextStatus) {
         // Recalculate using the latest original order document.
         const verifiedAmount = calculateItemRefund(
           originalOrder,
-          refundApproval.refundItems,
+          refundApproval.refundItems
         );
 
         if (toCents(verifiedAmount) !== toCents(refundApproval.refundAmount)) {
           throw new Error(
-            "Order pricing changed. Please reopen and review this request.",
+            "Order pricing changed. Please reopen and review this request."
           );
         }
 
@@ -1013,7 +1014,7 @@ async function reviewRefundRequest(nextStatus) {
     alert(
       nextStatus === "approved"
         ? "Request approved successfully. Any refund payment must still be processed separately."
-        : "Request rejected successfully.",
+        : "Request rejected successfully."
     );
   } catch (error) {
     console.error("Unable to review refund request:", error);
@@ -1048,17 +1049,19 @@ async function updateRefundFulfillment(nextStatus) {
   }
 
   if (currentRole !== "admin") {
-    alert("Only administrators can process refunds on this page.");
+    alert("Only administrators can process refunds.");
     return;
   }
 
   const user = auth.currentUser;
+
   if (!user) {
     alert("Please sign in again.");
     return;
   }
 
   const method = document.getElementById("refundMethod")?.value;
+
   const reference =
     document.getElementById("refundReference")?.value.trim() || "";
 
@@ -1087,7 +1090,9 @@ async function updateRefundFulfillment(nextStatus) {
   const confirmed = confirm(
     nextStatus === "processing"
       ? `Start processing the refund of ${formatMoney(fixedAmount)}?`
-      : `Confirm that ${formatMoney(fixedAmount)} has actually been returned to the customer?`,
+      : `Confirm that ${formatMoney(
+          fixedAmount
+        )} has actually been returned to the customer?`
   );
 
   if (!confirmed) return;
@@ -1095,49 +1100,71 @@ async function updateRefundFulfillment(nextStatus) {
   isSaving = true;
 
   try {
-    const requestRef = doc(db, "refundRequests", request.id);
+    if (nextStatus === "processing") {
+      // STEP 1: Start processing directly through Firestore.
+      const requestRef = doc(db, "refundRequests", request.id);
 
-    await runTransaction(db, async (transaction) => {
-      const snapshot = await transaction.get(requestRef);
+      await runTransaction(db, async (transaction) => {
+        const snapshot = await transaction.get(requestRef);
 
-      if (!snapshot.exists()) {
-        throw new Error("Refund request no longer exists.");
+        if (!snapshot.exists()) {
+          throw new Error("Refund request no longer exists.");
+        }
+
+        const latest = snapshot.data();
+
+        if (
+          latest.status !== "approved" ||
+          latest.requestedResolution !== "refund" ||
+          latest.refundStatus !== "not_processed"
+        ) {
+          throw new Error("Refund status changed. Please reopen the request.");
+        }
+
+        getFixedRefundAmount(latest);
+
+        transaction.update(requestRef, {
+          refundStatus: "processing",
+          refundMethod: method,
+          refundReference: reference,
+          refundProcessedBy: user.uid,
+          updatedAt: serverTimestamp(),
+        });
+      });
+
+      alert("Refund marked as processing.");
+    } else if (nextStatus === "completed") {
+      // STEP 2: Complete through the protected Vercel API.
+      const token = await user.getIdToken();
+
+      const response = await fetch(
+        `${REFUND_API_BASE_URL}/api/completeRefund`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            orderId: request.orderId || request.id,
+            refundMethod: method,
+            refundReference: reference,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to complete refund.");
       }
 
-      const latest = snapshot.data();
-
-      if (
-        latest.status !== "approved" ||
-        latest.requestedResolution !== "refund" ||
-        latest.refundStatus !== expectedStatus
-      ) {
-        throw new Error("Refund status changed. Please reopen the request.");
-      }
-
-      getFixedRefundAmount(latest);
-
-      const updates = {
-        refundStatus: nextStatus,
-        refundMethod: method,
-        refundReference: reference,
-        refundProcessedBy: user.uid,
-        updatedAt: serverTimestamp(),
-      };
-
-      if (nextStatus === "completed") {
-        updates.refundCompletedAt = serverTimestamp();
-      }
-
-      transaction.update(requestRef, updates);
-    });
+      alert("Refund marked as completed. Email notification is pending.");
+    } else {
+      throw new Error("Invalid refund status.");
+    }
 
     closeAfterSave();
-
-    alert(
-      nextStatus === "processing"
-        ? "Refund marked as processing."
-        : "Refund marked as completed.",
-    );
   } catch (error) {
     console.error("Refund fulfillment failed:", error);
 
@@ -1146,6 +1173,8 @@ async function updateRefundFulfillment(nextStatus) {
     if (message) {
       message.textContent = error.message || "Unable to update refund status.";
     }
+
+    alert(error.message || "Unable to update refund status.");
   } finally {
     isSaving = false;
   }
@@ -1183,7 +1212,7 @@ function subscribeToRefundRequests(generation) {
             ...request,
             customerName: getCustomerName(order),
           };
-        }),
+        })
       );
 
       // Ignore callbacks from an old login session.
@@ -1221,7 +1250,7 @@ function subscribeToRefundRequests(generation) {
         row.appendChild(cell);
         refundTableBody.appendChild(row);
       }
-    },
+    }
   );
 }
 
