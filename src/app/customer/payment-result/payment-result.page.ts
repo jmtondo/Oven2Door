@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { refreshOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -25,7 +24,7 @@ import {
 } from 'ionicons/icons';
 
 import { auth } from '../../firebase.config';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 type PaymentResultStatus =
   | 'verifying'
@@ -63,7 +62,7 @@ export class PaymentResultPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
       checkmarkCircleOutline,
@@ -75,8 +74,6 @@ export class PaymentResultPage implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    const params = this.route.snapshot.queryParamMap;
-
     this.orderNumber = sessionStorage.getItem('pendingMayaOrderNumber') || '';
 
     // Always verify the actual payment status with
@@ -89,24 +86,18 @@ export class PaymentResultPage implements OnInit {
     await this.verifyPayment();
   }
 
-  private waitForFirebaseUser(): Promise<User | null> {
-    return new Promise((resolve) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          unsubscribe();
-          resolve(user);
-        },
-        (error) => {
-          unsubscribe();
-          console.error('Firebase authentication check failed:', error);
-          resolve(null);
-        },
-      );
-    });
+  private async waitForFirebaseUser(): Promise<User | null> {
+    try {
+      await auth.authStateReady();
+      return auth.currentUser;
+    } catch (error) {
+      console.error('Firebase authentication check failed:', error);
+      return null;
+    }
   }
 
   async verifyPayment(): Promise<void> {
+    this.verifiedOrderId = '';
     this.status = 'verifying';
     this.message = 'Checking your payment with Maya...';
 
@@ -148,7 +139,7 @@ export class PaymentResultPage implements OnInit {
           },
           body: JSON.stringify({ orderId }),
           signal: AbortSignal.timeout(15000),
-        },
+        }
       );
 
       const data = await response.json().catch(() => null);
@@ -157,7 +148,7 @@ export class PaymentResultPage implements OnInit {
         throw new Error(
           data?.message ||
             data?.error ||
-            `Payment verification failed (HTTP ${response.status}).`,
+            `Payment verification failed (HTTP ${response.status}).`
         );
       }
 
@@ -227,8 +218,8 @@ export class PaymentResultPage implements OnInit {
         error instanceof Error && error.name === 'TimeoutError'
           ? 'Payment verification timed out. Please check your order history.'
           : error instanceof Error
-            ? error.message
-            : 'Payment verification is temporarily unavailable.';
+          ? error.message
+          : 'Payment verification is temporarily unavailable.';
     } finally {
       this.cdr.detectChanges();
     }
